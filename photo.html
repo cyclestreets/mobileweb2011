@@ -1,0 +1,118 @@
+<!DOCTYPE HTML> 
+<html lang="en-US"> 
+<head> 
+<meta charset="utf-8"> 
+<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1"> 
+<title>CycleStreets</title> 
+<!-- Stylesheets --> 
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css" />
+<link rel="stylesheet" href="css/cyclestreets.css" />
+<!-- Scripts --> 
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
+<script type="text/javascript">
+$('document').ready(function() {
+     $.mobile.pageLoading(); 
+    //******************************************************
+    /* Check for GET parameter. If found, display photo
+    /* and get photo information from API.
+    /******************************************************/
+	function getUrlVars()
+	{
+	    var vars = [], hash;
+	    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+	    for(var i = 0; i < hashes.length; i++)
+	    {
+	        hash = hashes[i].split('=');
+	        vars.push(hash[0]);
+	        vars[hash[0]] = hash[1];
+	    }
+	    return vars;
+	}
+	var CS_API_KEY = '68f786d958d1dbfb';
+	var CS_API = 'http://www.cyclestreets.net/api/';
+    var getparams = getUrlVars();
+    var caption = '';
+	if (getparams['message']!=undefined) {
+        caption = unescape(getparams['message']);
+    }
+    if (getparams['p']!=undefined) {
+        var photo_id = getparams['p'];
+        var photo_url = 'http://www.cyclestreets.net/location/';
+        photo_url += photo_id + '/cyclestreets'+ photo_id + '-size640.jpg';
+        var photo_title = 'Photo from CycleStreets';
+        var photo_url = CS_API + 'photo.json';
+        var photodata = {};
+        photodata['key'] = CS_API_KEY;
+        photodata['id'] = photo_id
+        // Get photo information - latlng etc.
+        $.ajax({
+            url: photo_url,
+            data: photodata,
+            dataType: 'jsonp',
+            jsonpCallback: 'photo',
+            success: function(data) {
+               if (data.result.id!=undefined) {
+		           var image_url = data.result.imageUrl;
+		           if (typeof(data.result.caption)==='string') {
+		               caption += "<br/>" + data.result.caption;
+		           }
+		           var uploaded_by = data.result.username;
+		           var d = new Date(data.result.datetime*1000);
+		console.log(data.result.datetime);
+		           var uploaded_on = d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear();
+				   var live_sizes = data.result.thumbnailSizes;
+		           live_sizes = live_sizes.split("|").reverse();
+		           var chosen_size = live_sizes[0];
+				   var viewPortWidth = 600, viewPortHeight=800;
+				   if (typeof window.innerWidth != 'undefined') {
+					   viewPortWidth = window.innerWidth;
+					   viewPortHeight = window.innerHeight;
+				   }
+                   $.each(live_sizes, function(i, val) { 
+                     if (viewPortWidth > val) {
+                         chosen_size = val;
+                         return false;
+                     }
+                   });
+                   image_url = image_url.replace('.jpg','-size' + chosen_size + ".jpg");
+			        $('#photo-image').attr({
+			          src: image_url,
+			          alt: data.result.caption,
+			          title: caption
+			        });
+			        $('#photo-header').text('Photo ' + data.result.id);
+			        $('#photo-caption').html(caption + ' <em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>");
+		      } else {
+			       toastMessage('Sorry! ' + data.error.message);
+			       $('#photo-header').text('Photo not found');
+		      }
+	        },
+	        error: function(data) {
+		       toastMessage('Sorry, something went wrong!');
+	        }
+	   });
+       $.mobile.pageLoading(true); 
+    } else if (getparams['message']!=undefined) {
+        $('#photo-caption').text("Sorry! " + caption);
+        $.mobile.pageLoading(true);	
+    } else {
+         $('#photo-caption').text('Photo ID not specified.');
+         $.mobile.pageLoading(true); 
+    } 
+});
+</script>
+</head> 
+<body> 
+<div data-role="page" id="display-photo"> 
+    <div data-role="header" data-theme="z">
+            <a href='#' class='ui-btn-left' data-icon='arrow-l' onclick="history.back(); return false">Back</a><h1 id="photo-header">Photo</h1><a href="index.html" rel="external" class="ui-btn-right" data-icon='home'>Home</a>
+    </div>
+    <div data-role="content"> 
+        <p id="photo-caption">Loading photo...</p> 
+        <p id="photo-attribution"></p> 
+        <img id="photo-image" src='images/ajax-loader.png' alt="Loading photo" />
+    </div> 
+</div>
+</body> 
+</html> 

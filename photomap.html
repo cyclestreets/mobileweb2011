@@ -1,0 +1,66 @@
+<!DOCTYPE HTML> 
+<html> 
+<head>
+<!-- Meta tags to indicate mobile-friendly content -->
+<meta name="HandHeldFriendly" content="true" /> <!-- For BlackBerry -->
+<meta name="mobileoptimized" content="0" /> <!-- For IE Mobile -->
+<!-- iOS startup icons -->
+<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link rel="apple-touch-icon" href="apple-touch-icon-57x57.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png" />
+<link rel="apple-touch-startup-image" href="apple-touch-startup-image-320x460.png" />
+<link rel="apple-touch-startup-image" sizes="768x1004" href="apple-touch-startup-image-768x1004.png" />
+<title>CycleStreets &raquo; Photomap</title> 
+<!-- Stylesheets --> 
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.css" />
+<link rel="stylesheet" href="css/cyclestreets.css" />
+<!-- Scripts --> 
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;region=GB"></script>
+<script type="text/javascript" src="js/cyclestreets.js"></script>
+<script type="text/javascript">
+$('document').ready(function() {
+    // TODO: figure out what's going with page loading messages. 
+    $.mobile.showPageLoadingMsg(); 
+    // TODO: figure out why gpsFail/gpsSuccess is being called more than once. 
+	if (navigator.geolocation) { 
+		navigator.geolocation.getCurrentPosition(gpsSuccess,
+		      gpsFail('photomap'), {timeout:10000, maximumAge: 300000});
+	} else {
+		gpsFail('photomap');
+	}
+	$('#home').live('pageshow', function (event, ui) {
+	    $("div:jqmData(role='content')").first().height(
+		     $(window).height() -
+		     ($("div:jqmData(role='header')").first().height() + $("div:jqmData(role='footer')").first().height())
+		);
+		//google.maps.event.trigger(map, 'resize');
+		$('#locate-me').css({
+	       'top': $("div:jqmData(role='header')").first().height() + 10,
+	    });
+	});
+});
+</script>
+</head> 
+<body> 
+<div id="home" data-role="page" class="page-map" style="width:100%; height:100%;"> 
+     <div data-role="header" data-theme="z" id='header'>
+     <a href='#' class='ui-btn-left' data-icon='arrow-l' onclick="history.back(); return false">Back</a>
+     <h1>Photomap</h1>
+     <a href="index.html" rel="external" class="ui-btn-right" data-icon='home'>Home</a>
+     </div> 
+     <div data-role="content" style="width:100%; height:100%; padding: 0;"> 
+         <div id="map-canvas" style="width:100%; height:100%;"></div> 
+			<fieldset data-role="controlgroup" data-type="horizontal" id="locate-me">
+			<input type="checkbox" name="loc" id="loc" checked="checked" />
+			<label for="loc" id="loc-label"><img src="images/location.png" alt="Location dot" title="Location dot" /></label> 
+			</fieldset>
+     </div> 
+ </div>
+</body> 
+</html> 
+
