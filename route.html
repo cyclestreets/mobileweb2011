@@ -33,8 +33,8 @@ $('document').ready(function() {
 </head> 
 <body> 
     
-    <div id="home" data-role="page" class="page-map" style="width:100%; height:100%;"><!-- data-fullscreen="true"-->       
-        <div data-role="header" data-theme="z" id="first-header"> <!--  data-position="fixed"-->
+    <div id="home" data-role="page" class="page-map" style="width:100%; height:100%;">
+        <div data-role="header" data-theme="z" id="first-header"> 
              <h1 id="route-header">Route using map</h1>
              <a href="index.html" rel="external" class="ui-btn-right" data-icon='home' id="home-button">Home</a>
            <div data-role="navbar" data-theme="c" id='navbar-strategy'>
@@ -45,15 +45,15 @@ $('document').ready(function() {
             </ul>
         </div>
         </div> 
-         
         <div data-role="content" style="width:100%; height:100%; padding: 0;"> 
             <fieldset data-role="controlgroup" data-type="horizontal" id="locate-me" class="hidden"> 
             <input type="checkbox" name="loc" id="loc" checked="checked" />
             <label for="loc" id="loc-label"><img src="images/location.png" alt="Location dot" title="Location dot" /></label>
             </fieldset>
-            <div id="getting-location"><br/><br/><br/>
-            <img src="/images/ajax-loader.gif" alt="Loading icon" /></div>
+
             <div id="map-canvas" style="width:100%; height:100%;">  
+	            <div id="getting-location"><br/><br/><br/>
+	            <img src="/images/ajax-loader.gif" alt="Loading icon" /></div>
             </div>
             <span id="crosshairs" class="hidden"><img src="images/crosshairs.png" alt="Crosshairs" id="crosshairs_img" style="pointer-events: none;" /></span>
             <span id="marker-remove" data-role="button" data-icon="delete" data-iconpos="right" class="hidden">Remove start point</span>
@@ -63,7 +63,7 @@ $('document').ready(function() {
 <img src="images/cs_finish.png" alt="Finish marker" class="hidden" />
         </div> 
         
-        <div data-role="footer" id="instructions-footer" data-theme='z'> <!--  data-position="fixed"-->
+        <div data-role="footer" id="instructions-footer" data-theme='z' class='hidden'>
                 <table class="routesegment"><tr><td class="button left">
                 <span id="prev-segment" data-role="button" class="left" data-icon="arrow-l">Prev</span>
                 </td><td class="center-text">
