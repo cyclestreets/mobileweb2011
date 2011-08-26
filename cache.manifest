@@ -1,17 +1,18 @@
 CACHE MANIFEST
+# Add a reference to this in <head> when ready to use.
 # Local HTML
-index.html
-route.html
-photomap.html
-photo.html
+#index.html
+#route.html
+#route-as-text.html
+#photomap.html
+#photo.html
 # Local JS
-js/cyclestreets.js
-js/gmaps.js
+#js/cyclestreets.js
 # Local CSS
-css/cyclestreets.css
+#css/cyclestreets.css
 # jQuery JS
-js/jquery-1.5.2.js
-js/jquery.mobile-1.0a4.min.js
+http://code.jquery.com/jquery-1.6.1.min.js"></script>
+http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js
 # jQuery CSS
 http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css
 # Google Maps JS
