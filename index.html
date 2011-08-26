@@ -20,7 +20,6 @@
 <link rel="stylesheet" href="css/cyclestreets.css" />
 <!-- Scripts --> 
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
-<script type="text/javascript" src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js"></script>
 <script type="text/javascript" src="js/cyclestreets.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -107,8 +106,6 @@ $(document).ready(function() {
     });  
     if (getItem("username")===null) {
         $("#cleardetails").hide();
-    } else {
-	    $("#clearusername").value('Hello world');
     }
     $('#clearusername').click(function() {
         removeItem("username");
@@ -136,15 +133,6 @@ $(document).ready(function() {
 });
 </script>
 <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js"></script>
-<!-- iOS startup icons -->
-<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-<link rel="apple-touch-icon" href="apple-touch-icon-57x57.png" />
-<link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png" />
-<link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png" />
-<link rel="apple-touch-startup-image" href="apple-touch-startup-image-320x460.png" />
-<link rel="apple-touch-startup-image" sizes="768x1004" href="apple-touch-startup-image-768x1004.png" />
 <script type="text/javascript">
 
 $(document).ready(function() {
