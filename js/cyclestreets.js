@@ -376,7 +376,7 @@ if (window.google) {
 
     // We can't find the user's location. 
     function gpsFail(err) {  
-        //console.log('gpsFail');    
+        //console.log('gpsFail', err.code);    
         // Warn about errors IFF the user is not already located.
         current_latlng = new google.maps.LatLng(52.2025441, 0.1312368);
         if (is_user_position_initialised==false) {
@@ -798,11 +798,10 @@ if (window.google) {
         if (map_height!==0) {
             $("<img/>")
                 .attr("src", $(img).attr("src"))
-                .attr("height", 100)
                 .load(function() {
                     pic_real_width = this.width;   
                     pic_real_height = this.height; 
-                    var top_position = (($("div#map-canvas").height() - pic_real_height) / 2);
+                    var top_position = (($("div#map-canvas").height() - pic_real_height) / 2) + $("div:jqmData(role='header')").first().outerHeight();
                     var left_position = ($("div#map-canvas").width() - pic_real_width) / 2;
                     $('#crosshairs_img').css({
                         'position': 'absolute',
@@ -898,14 +897,14 @@ if (window.google) {
                             finish_point = null;
                             finish_marker.setMap(null);
                             $('#marker-remove .ui-btn-text').text('Remove start point');
-			                $('#marker-remove').click(function() { 
-			                    if (start_point!==null) {
-			                        start_point = null;
-			                        start_marker.setMap(null);
-			                    }
-			                    $(this).hide();
-			                    $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
-			                });
+                            $('#marker-remove').click(function() { 
+                                if (start_point!==null) {
+                                    start_point = null;
+                                    start_marker.setMap(null);
+                                }
+                                $(this).hide();
+                                $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
+                            });
                         }
                         $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
                     });
