@@ -806,7 +806,7 @@ if (window.google) {
                     $('#crosshairs_img').css({
                         'position': 'absolute',
                         'top': top_position,
-                        'left': left_position,
+                        'left': left_position + 3,
                         'margin': 0,
                         'padding': 0,
                         'z-index': '1000'
@@ -818,7 +818,7 @@ if (window.google) {
 
     // Set up the map and its listeners, once we know its centre. 
     function setupMap(lat, lng) {
-        //console.log('setupMap');
+	    //console.log('setupMap');
         $('#getting-location').hide();
         var loc = new google.maps.LatLng(lat, lng);
         // Basic setup. 
@@ -887,6 +887,9 @@ if (window.google) {
                         return false;
                     }
                     $('#marker-instructions .ui-btn-text').text(COMPLETE_ROUTE);
+			        $('#marker-instructions').css({
+			            'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+			        });
                     $('#marker-instructions').show(); 
                     // Set up the 'remove marker' button.
                     $('#marker-remove').unbind('click');
@@ -904,9 +907,15 @@ if (window.google) {
                                 }
                                 $(this).hide();
                                 $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
+						        $('#marker-instructions').css({
+						            'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+						        });
                             });
                         }
                         $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
+				        $('#marker-instructions').css({
+				            'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+				        });
                     });
                 } else {
                 // Add first marker. 
@@ -947,7 +956,11 @@ if (window.google) {
 
 // Called on init and on window resize. 
 function organizeCSS(page_type) {
+	//console.log('organizeCSS');
     var window_height;
+    $("div:jqmData(role='page')").first().height($(window).height());
+	//alert('Window height is ' + $(window).height());
+	//alert('Page height is ' + $("div:jqmData(role='page')").first().outerHeight());
     if (page_type === "photomap") {
         window_height = $(window).height() - $("div:jqmData(role='header')").first().outerHeight();
         $("div:jqmData(role='content')").first().height(window_height);
@@ -955,7 +968,7 @@ function organizeCSS(page_type) {
         $('#locate-me').show();
         $('#locate-me').css({
             'position': 'absolute',
-            'bottom': 5
+            'top': window_height - 20,
         });
     } else if ((page_type === "new_route") || (page_type === "existing_route")) {
         if (global_page_type === "new_route") {
@@ -978,7 +991,7 @@ function organizeCSS(page_type) {
         }
         $('#marker-instructions').css({
             'position': 'absolute',
-            'bottom': 10,
+            'top': window_height - 20,
             'left': left_margin,
             'z-index': '1000',
             'color' : 'black'
