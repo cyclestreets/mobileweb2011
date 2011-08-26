@@ -5,115 +5,134 @@
 <!-- Meta tags to indicate mobile-friendly content -->
 <meta name="HandHeldFriendly" content="true" /> <!-- For BlackBerry -->
 <meta name="mobileoptimized" content="0" /> <!-- For IE Mobile -->
+<!-- iOS startup icons -->
+<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<link rel="apple-touch-icon" href="apple-touch-icon-57x57.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png" />
+<link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png" />
+<link rel="apple-touch-startup-image" href="apple-touch-startup-image-320x460.png" />
+<link rel="apple-touch-startup-image" sizes="768x1004" href="apple-touch-startup-image-768x1004.png" />
+<link href="/images/favicon.ico" rel="icon" type="image/x-icon" />
 <!-- Stylesheets --> 
-<!-- <link rel="stylesheet" href="css/jquery.mobile-1.0a4.css" /> -->
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.css" />
 <link rel="stylesheet" href="css/cyclestreets.css" />
 <!-- Scripts --> 
-<!-- <script type="text/javascript" src="js/jquery-1.5.2.js"></script> -->
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js"></script>
 <script type="text/javascript" src="js/cyclestreets.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-// We need to initialise dynamic content in hash pages here,
-// onDomLoad, but before jQuery Mobile has loaded. 
-// Logic to load the Category lists. 
-var categoryselect = $('#category');
-var metacategoryselect = $('#metacategory');  
-if ((getItem('categories')==null)||(getItem('metacategories')==null)) { 
-    $.mobile.pageLoading(); 
-    var category_url = CS_API + 'photomapcategories.json';
-    var catdata = { 'key' : CS_API_KEY };
-    $.ajax({
-        url: category_url,
-        dataType: 'jsonp',
-        data: catdata,
-        jsonpCallback: 'photomapcategories',
-        success: function(data) {
-            $.mobile.pageLoading(true); 
-            if ($(data).length > 0) {
-                var category_list = '';
-                var metacategory_list = '';
-                var categories = data.categories.category;
-                var metacategories = data.metacategories.metacategory;
-                $.each(categories, function(i,v) {
-                    var name = v.name;
-                    var tag = v.tag;
-                    categoryselect.append("<option value="+tag+">"+name+"</option>");
-                });
-                $.each(metacategories, function(i,v) {
-                    var name = v.name;
-                    var tag = v.tag;
-                    metacategoryselect.append("<option value="+tag+">"+name+"</option>");
+    // We need to initialise dynamic content in hash pages here,
+    // onDomLoad, but before jQuery Mobile has loaded. 
+    
+    // Logic to load the Category lists. 
+    var categoryselect = $('#category');
+    var metacategoryselect = $('#metacategory');  
+    if ((getItem('categories')==null)||(getItem('metacategories')==null)) { 
+        $.mobile.pageLoading(); 
+        var category_url = CS_API + 'photomapcategories.json';
+        var catdata = { 'key' : CS_API_KEY };
+        $.ajax({
+            url: category_url,
+            dataType: 'jsonp',
+            data: catdata,
+            jsonpCallback: 'photomapcategories',
+            success: function(data) {
+                $.mobile.pageLoading(true); 
+                if ($(data).length > 0) {
+                    var category_list = '';
+                    var metacategory_list = '';
+                    var categories = data.categories.category;
+                    var metacategories = data.metacategories.metacategory;
+                    $.each(categories, function(i,v) {
+                        var name = v.name;
+                        var tag = v.tag;
+                        categoryselect.append("<option value="+tag+">"+name+"</option>");
+                    });
+                    $.each(metacategories, function(i,v) {
+                        var name = v.name;
+                        var tag = v.tag;
+                        metacategoryselect.append("<option value="+tag+">"+name+"</option>");
                     
-                });
-                // Store the categories locally. 
-                setItem('categories',categories);
-                setItem('metacategories', metacategories);
-            } else {
-                 toastMessage("Sorry, no categories found!");                    
+                    });
+                    // Store the categories locally. 
+                    setItem('categories',categories);
+                    setItem('metacategories', metacategories);
+                } else {
+                     toastMessage("Sorry, no categories found!");                    
+                }
+            },
+            error: function() {
+                $.mobile.pageLoading(true); 
+                toastMessage("Sorry, error retrieving categories!");
             }
-        },
-        error: function() {
-            $.mobile.pageLoading(true); 
-            toastMessage("Sorry, error retrieving categories!");
-        }
-    });
-} else { 
-    var catlist = getItem('categories');
-    var metacatlist = getItem('metacategories');
-    categoryselect.find('option').remove();
-    metacategoryselect.find('option').remove()
-    $.each(catlist, function(index, value) { 
-      categoryselect.append("<option value=" + value['tag'] + ">" + value['name'] + "</option>");
-    });
-    $.each(metacatlist, function(index, value) { 
-      metacategoryselect.append("<option value=" + value['tag'] + ">" + value['name'] + "</option>");
-    });
-}
-// Select correct default options.      
-categoryselect.val("cycleparking");
-metacategoryselect.val("bad");
+        });
+    } else { 
+        var catlist = getItem('categories');
+        var metacatlist = getItem('metacategories');
+        categoryselect.find('option').remove();
+        metacategoryselect.find('option').remove()
+        $.each(catlist, function(index, value) { 
+          categoryselect.append("<option value=" + value['tag'] + ">" + value['name'] + "</option>");
+        });
+        $.each(metacatlist, function(index, value) { 
+          metacategoryselect.append("<option value=" + value['tag'] + ">" + value['name'] + "</option>");
+        });
+    }
+    
+    // Select correct default options for photo upload.     
+    categoryselect.val("cycleparking");
+    metacategoryselect.val("bad");
 
-// Logic for the Prefs page.
-if (getItem("routetype")!=null) {
-$("#routetype").val(getItem("routetype"));
-}
-if (getItem("cyclingspeed")!=null) {
-$("#cyclingspeed").val(getItem("cyclingspeed"));
-}
-if (getItem("maptype")!=null) {
-$("#maptype").val(getItem("maptype"));
-}
-$('#routetype').change(function() {
-setItem("routetype", $('#routetype').val());
-});
-$('#cyclingspeed').change(function() {
-setItem("cyclingspeed", $('#cyclingspeed').val());
-});
-$('#maptype').change(function() {
-setItem("maptype", $('#maptype').val());
-});  
-if (getItem("username")===null) {
-$("#cleardetails").hide();
-}
+    // Logic for the Prefs page.
+    if (getItem("routetype")!=null) {
+        $("#routetype").val(getItem("routetype"));
+    }
+    if (getItem("cyclingspeed")!=null) {
+        $("#cyclingspeed").val(getItem("cyclingspeed"));
+    }
+    if (getItem("maptype")!=null) {
+        $("#maptype").val(getItem("maptype"));
+    }
+    $('#routetype').change(function() {
+        setItem("routetype", $('#routetype').val());
+    });
+    $('#cyclingspeed').change(function() {
+        setItem("cyclingspeed", $('#cyclingspeed').val());
+    });
+    $('#maptype').change(function() {
+        setItem("maptype", $('#maptype').val());
+    });  
+    if (getItem("username")===null) {
+        $("#cleardetails").hide();
+    } else {
+	    $("#clearusername").value('Hello world');
+    }
+    $('#clearusername').click(function() {
+        removeItem("username");
+        $('#cleardetails').hide();
+        alert("Your username has been cleared.")
+    });
 
-// Logic for Saved Routes page.  
-var all_keys = getRouteKeys();
-for (var i = 0; i < all_keys.length; i++) {
-(function () {   
-	var key = all_keys[i];
-	var route_num = key.split('-')[1]; 
-	var route_info = getItem(key); //eval('(' + all_routes[i][key] + ')');
-	var route_url = '/route.html?r=' + route_num + "&p=" + route_info.strategy;
-	var list_route = "<li><a rel='external' href='" + route_url + "'>";
-	list_route += "<p><strong>" + route_info.from + " to " + route_info.to + "</strong></p>";
-	list_route += "<p>" + route_info.distance +  " miles, ";
-	list_route += route_info.time + " mins at ";
-	list_route += route_info.speed + "mph, " + route_info.strategy + "</p></a></li>";
-	$('#saved-list').append($(list_route));  
-}());   
-}
+    // Logic for Saved Routes page.  
+    var all_keys = getRouteKeys();
+    for (var i = 0; i < all_keys.length; i++) { 
+        (function () {   
+            var key = all_keys[i];
+            var route_num = key.split('-')[1]; 
+            var route_info = getItem(key); //eval('(' + all_routes[i][key] + ')');
+            var route_url = '/route.html?r=' + route_num + "&p=" + route_info.strategy;
+            var list_route = "<li><a rel='external' href='" + route_url + "'>";
+            list_route += "<p><strong>" + route_info.from + " to " + route_info.to + "</strong></p>";
+            list_route += "<p>" + route_info.distance +  " miles, ";
+            list_route += route_info.time + " mins at ";
+            list_route += route_info.speed + "mph, " + route_info.strategy + "</p></a></li>";
+            $('#saved-list').append($(list_route));  
+            }());   
+    }
+    
 });
 </script>
 <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js"></script>
@@ -130,120 +149,116 @@ for (var i = 0; i < all_keys.length; i++) {
 
 $(document).ready(function() {
 
-// Detect iPhone/Android and suggest native apps.    
-var ua = navigator.userAgent;
-var uachecker = {
-	iphone: ua.match(/iPhone/),
-	android: ua.match(/Android/)
-};
-if (uachecker.android) {
-	$('#user-agent-link').attr('href','https://market.android.com/details?id=net.cyclestreets');
-	$('#market-name').text("Android Market");
-	$('#native-app').show();
-} else if (uachecker.iphone) {
-	$('#user-agent-link').attr('href','http://itunes.apple.com/app/ishare/id391984737');
-	$('#market-name').text("iTunes");
-	$('#native-app').show();
-	$('#uploadfields').hide();    
-	$('#not-available-apple').show(); 
-}      
-$('#hide-native').click(function() {
-    $('#native-app').fadeOut();
-});
+    // Detect iPhone/Android and suggest native apps.    
+    var ua = navigator.userAgent;
+    var uachecker = {
+        iphone: ua.match(/iPhone/),
+        android: ua.match(/Android/)
+    };
+    if (uachecker.android) {
+        $('#user-agent-link').attr('href','https://market.android.com/details?id=net.cyclestreets');
+        $('#market-name').text("Android Market");
+        $('#native-app').show();
+    } else if (uachecker.iphone) {
+        $('#user-agent-link').attr('href','http://itunes.apple.com/app/ishare/id391984737');
+        $('#market-name').text("iTunes");
+        $('#native-app').show();
+        $('#uploadfields').hide();    
+        $('#not-available-apple').show(); 
+    }      
+    $('#hide-native').click(function() {
+        $('#native-app').fadeOut();
+    });
 
-// Logic to load the Category lists. 
-var categoryselect = $('#category');
-var metacategoryselect = $('#metacategory');
+    // Logic to load the Category lists. 
+    var categoryselect = $('#category');
+    var metacategoryselect = $('#metacategory');
 
-// Saved Routes logic. 
-
-$('#clear-saved-routes').hide();
-
-if ($('#saved-list li').length>0) {
-    $('#clear-saved-routes').show();   
-    $('#no-routes-yet').hide();
-}      
-
-$('#clear-saved-routes').click(function() {
-if(!confirm("Clear all routes?")) return false; 
-if (eraseRoutes()) { 
-    $('#saved-list li').hide();
+    // Saved Routes logic. 
     $('#clear-saved-routes').hide();
-    $('#cleared-routes').text('Routes have been cleared.');
-} else {
-    toastMessage("Sorry, something went wrong");
-}
-});
+    if ($('#saved-list li').length>0) {
+        $('#clear-saved-routes').show();   
+        $('#no-routes-yet').hide();
+    }      
+    $('#clear-saved-routes').click(function() {
+        if(!confirm("Clear all routes?")) return false; 
+        if (eraseRoutes()) { 
+            $('#saved-list li').hide();
+            $('#clear-saved-routes').hide();
+            $('#cleared-routes').text('Routes have been cleared.');
+        } else {
+            toastMessage("Sorry, something went wrong");
+        }
+    });
 
-// Logic for the Upload page. 
-$('#signinfields').hide();     
-// TODO: disable link until user has selected category. 
-var accountform = $('#account-form');
-var description =  $('#description');
+    // Logic for the Upload page. 
+    $('#signinfields').hide();     
+    var accountform = $('#account-form');
+    var description =  $('#description');
 
-// Validate categories when user clicks link. 
-$('a#signin-link').click(function(event) {
-	event.preventDefault();
-	if ((categoryselect.val()==='') || (metacategoryselect.val()==='')) {
-		toastMessage("Please choose a category & type!");
-		return false;
-	}
-	if ($('#mediaupload').val()=='') {
-		toastMessage("Please choose a file!");
-		return false;
-	}
-	$('#signinfields').show();
-	$('#uploadfields').hide();        
-	// Hide all registration fields, by default. 
-	$('div.registration').hide();
-	// Load username from local storage, if it exists.
-	$('#username').val(getItem('username')); 
-	// Toggle signin/register switch. 
-	$("input[name='login']").change(function(){
-		if ($("input[name='login']:checked").val()=='register') {
-		 $('div.registration').show();
-		 $('signin-submit').text("Register & upload");
-		} else { 
-		  $('div.registration').hide();
-		}
-	});         
-	// Validate submitted fields. 
-	$('input#signin-submit').click(function(event) {
-	    $.mobile.pageLoading(); 
-		if ($('#username').val() === "") {
-			$.mobile.pageLoading(true); 
-			toastMessage("Please supply a username!");
-			return false;
-		}
-		if ((/^([a-z0-9]{5,})$/.test($('#username').val()))===false) {
-			$.mobile.pageLoading(true); 
-			toastMessage("Please use only letters & numbers in your username!");
-			return false;
-		}
-		setItem("username", $('#username').val());
-		if ($('#password').val() === "") {
-			$.mobile.pageLoading(true); 
-			toastMessage("Please supply a password!");
-			return false;
-		}           
-		if ($("input#email").is(":visible"))  {
-			if ($("input#email").val()===''){
-			    $.mobile.pageLoading(true); 
-			    toastMessage('Please supply an email address!');
-			    return false;
-			}                    
-			// Check passwords match, if visible. 
-			if ($("input#password2").is(":visible"))  {
-			    if ($("input#password").val() != $("input#password2").val()){
-			        $.mobile.pageLoading(true); 
-			        toastMessage('Your passwords do not match!');
-			        return false;
-			    }      
-			}
-	    }
-	    return true;
-	});
-});
+    // Validate categories when user clicks link. 
+    $('a#signin-link').click(function(event) {
+        event.preventDefault();
+        if ((categoryselect.val()==='') || (metacategoryselect.val()==='')) {
+            toastMessage("Please choose a category & type!");
+            return false;
+        }
+        if ($('#mediaupload').val()=='') {
+            toastMessage("Please choose a file!");
+            return false;
+        }
+        $('#signinfields').show();
+        $('#uploadfields').hide();        
+        // Hide all registration fields, by default. 
+        $('div.registration').hide();
+        // Load username from local storage, if it exists.
+        $('#username').val(getItem('username')); 
+        // Toggle signin/register switch. 
+        $("input[name='login']").change(function(){
+            if ($("input[name='login']:checked").val()=='register') {
+             $('div.registration').show();
+             $('signin-submit').text("Register & upload");
+            } else { 
+              $('div.registration').hide();
+            }
+        });         
+        // Validate submitted fields. 
+        $('input#signin-submit').click(function(event) {
+            $.mobile.pageLoading(); 
+            if ($('#username').val() === "") {
+                $.mobile.pageLoading(true); 
+                toastMessage("Please supply a username!");
+                return false;
+            }
+            if ((/^([a-z0-9]{5,})$/.test($('#username').val()))===false) {
+                $.mobile.pageLoading(true); 
+                toastMessage("Please use only letters & numbers in your username!");
+                return false;
+            }
+            setItem("username", $('#username').val());
+            if ($('#password').val() === "") {
+                $.mobile.pageLoading(true); 
+                toastMessage("Please supply a password!");
+                return false;
+            }           
+            if ($("input#email").is(":visible"))  {
+                if ($("input#email").val()===''){
+                    $.mobile.pageLoading(true); 
+                    toastMessage('Please supply an email address!');
+                    return false;
+                }                    
+                // Check passwords match, if visible. 
+                if ($("input#password2").is(":visible"))  {
+                    if ($("input#password").val() != $("input#password2").val()){
+                        $.mobile.pageLoading(true); 
+                        toastMessage('Your passwords do not match!');
+                        return false;
+                    }      
+                }
+            }
+            return true;
+        });
+    });
 });
 </script>
 </head> 
@@ -257,7 +272,8 @@ $('a#signin-link').click(function(event) {
       <h1>CycleStreets</h1> 
       <a href="#prefs" data-rel="dialog" data-icon="gear" class="ui-btn-right">Prefs</a>
   </div> 
-  <div data-role="content">          
+  <div data-role="content">      
+    <p>Welcome to CycleStreets - plan a cycling route, upload a photo, or see photos nearby.</p>    
       <p><a href="route.html" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Route on map</a></p>  
       <p><a href="route-as-text.html" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Route by address</a></p>  
       <p id='saved-routes-button'><a href="#saved-routes" data-role="button" data-icon="arrow-r" data-iconpos="right">Saved routes</a></p>  
@@ -275,7 +291,7 @@ Get the Cyclestreets app!
 
 <div data-role="page" id="saved-routes" data-title="CycleStreets &raquo; Saved routes"> 
   <div data-role="header" data-theme="z">
-  <a href='#' class='ui-btn-left' data-icon='arrow-l' onclick="history.back();">Back</a><h1>Saved routes</h1><a href="#home" class="ui-btn-right" data-icon='home'>Home</a>
+  <h1>Saved routes</h1><a href="#home" class="ui-btn-right" data-icon='home'>Home</a>
   </div>
   <div data-role="content"> 
       <ul data-role="listview" id='saved-list' data-inset="true">
@@ -293,7 +309,7 @@ Get the Cyclestreets app!
 
 <div data-role="page" id="upload" data-title="CycleStreets &raquo; Upload a photo"> 
   <div data-role="header" data-theme="z"> 
-          <a href='#' class='ui-btn-left' data-icon='arrow-l' onclick="history.back(); return false">Back</a><h1>Upload a photo</h1><a href="#home" class="ui-btn-right" data-icon='home'>Home</a> 
+          <h1>Upload a photo</h1><a href="#home" class="ui-btn-right" data-icon='home'>Home</a> 
           <!-- <script type="text/javascript" src="js/jquery.iframe-post-form.min.js"></script> -->
   </div> 
   <div data-role="content"> 
@@ -326,10 +342,10 @@ Get the Cyclestreets app!
               <label for="description">Description (optional):</label> 
               <input type="text" name="description" id="description" value=""  /> 
           </div> -->
-		<div data-role="fieldcontain">
-			<label for="description">Description (optional):</label>
-			<textarea cols="40" rows="8" name="description" id="description"></textarea>
-		</div>
+        <div data-role="fieldcontain">
+            <label for="description">Description (optional):</label>
+            <textarea cols="40" rows="8" name="description" id="description"></textarea>
+        </div>
           <div class="ui-grid-a"> 
            <div class="ui-block-b">
           <p><a id="signin-link" href="" data-role="button" data-icon="arrow-r" data-iconpos="right">Upload photo</a></p>  
@@ -340,14 +356,14 @@ Get the Cyclestreets app!
 
 <!-- Signin div, initially hidden -->
 <div id="signinfields">
-	<p>Sign in to your CycleStreets account to upload this photo. If you don't already have an account, it's free to register.</p>
-	<!-- Radio buttons to choose signin/register -->
-	<fieldset data-role="controlgroup" data-theme="z" data-type="horizontal" >
-	    <input type="radio" name="login" id="radio-signin" value="signin" checked="checked" />
-	 	<label for="radio-signin">Signin</label>
-	 	<input type="radio" name="login" id="radio-register" value="register" />
-	 	<label for="radio-register">Register</label>
-	</fieldset>
+    <p>Sign in to your CycleStreets account to upload this photo. If you don't already have an account, it's free to register.</p>
+    <!-- Radio buttons to choose signin/register -->
+    <fieldset data-role="controlgroup" data-theme="z" data-type="horizontal" >
+        <input type="radio" name="login" id="radio-signin" value="signin" checked="checked" />
+        <label for="radio-signin">Signin</label>
+        <input type="radio" name="login" id="radio-register" value="register" />
+        <label for="radio-register">Register</label>
+    </fieldset>
     <fieldset>
     <div data-role="fieldcontain" id="userfield"> 
         <label for="username">Username:</label> 
@@ -385,8 +401,9 @@ Get the Cyclestreets app!
         <h1>Preferences</h1> 
     </div> 
     <div data-role="content" data-position="inline"> 
+        <p>Set your preferred route type, map type, and typical cycling speed here.</p>
         <div data-role="fieldcontain"> 
-            <label for="routetype">Route:</label> 
+            <label for="routetype">Route type:</label> 
             <select name="routetype" id="routetype"> 
                 <option value="fastest">Fastest</option> 
                 <option value="balanced" selected="selected">Balanced</option> 
@@ -394,19 +411,19 @@ Get the Cyclestreets app!
             </select> 
         </div> 
         <div data-role="fieldcontain"> 
-            <label for="cyclingspeed">Assumed speed:</label> 
-            <select name="cyclingspeed" id="cyclingspeed"> 
-                <option value="10">Relaxed (10 mph)</option> 
-                <option value="12" selected="selected">Medium (12 mph)</option> 
-                <option value="15">Quick (15 mph)</option> 
-            </select> 
-        </div> 
-        <div data-role="fieldcontain"> 
-            <label for="maptype">Map:</label> 
+            <label for="maptype">Map type:</label> 
             <select name="maptype" id="maptype"> 
                 <option value="OSM">OpenStreetMap</option> 
                 <option value="OCM">OpenCycleMap</option> 
                 <option value="OS">Ordnance Survey</option> 
+            </select> 
+        </div>
+        <div data-role="fieldcontain"> 
+            <label for="cyclingspeed">Typical speed:</label> 
+            <select name="cyclingspeed" id="cyclingspeed"> 
+                <option value="10">Relaxed (10 mph)</option> 
+                <option value="12" selected="selected">Medium (12 mph)</option> 
+                <option value="15">Quick (15 mph)</option> 
             </select> 
         </div> 
         <div data-role="fieldcontain" id="cleardetails"> 
@@ -428,10 +445,40 @@ Get the Cyclestreets app!
         <h1>About</h1> 
     </div> 
     <div data-role="content"> 
-        <p>OpenStreetMap and OpenCycleMap attribution here. Also Glyphish icon attribution.</p>
+    
+        <p>CycleStreets is a UK-wide cycle journey planner system, which lets you plan routes from A to B by bike. It is designed by cyclists, for cyclists, and caters for the needs of both confident and less confident cyclists.</p>
+    
+        <h3>People</h3>
+
+        <p>CycleStreets was created by Simon Nuttall (lead developer) and Martin Lucas-Smith, both regular cyclists based in Cambridge.</p>
+
+        <p>Development of this mobile HTML application was supported by <a href="http://www.cyclingscotland.org/">Cycling Scotland</a> and written by <a href="http://twitter.com/darkgreener">Anna Powell-Smith</a>.</p>
+    
+        <h3>Attributions</h3>
+
+        <p>The map data is from <a href="http://www.openstreetmap.org/">OpenStreetMap</a>, and we are immensely grateful to all the volunteers who created the base data. Please consider <a href="http://wiki.openstreetmap.org/index.php/Donate">donating to OpenStreetMap</a>.</p>
+        
+        <p>Map tiles are also provided from <a href="http://www.opencyclemap.org/">OpenCycleMap</a>, which is based on OpenStreetMap, and Ordnance Survey's <a href="http://openspace.ordnancesurvey.co.uk/openspace/">OpenSpace</a>.The mobile HTML application was developed using <a href="http://jquerymobile.com/">jQuery Mobile</a> and <a href="http://glyphish.com/">Glyphish icons</a>.</p>
+        
+        <h3>Licensing</h3>
+        
+        <p>CycleStreets routes are based on OpenStreetMap data, and can therefore be re-used freely under the <a href="http://creativecommons.org/licenses/by-sa/2.0/">Creative Commons Attribution-ShareAlike 2.0 licence</a>.</p>
+        
+        <h3>Support CycleStreets</h3>   
+        
+        <p>CycleStreets is a non-profit organisation run by cyclists, for cyclists. You can support our work by:</p>
+
+        <ul>
+        <li>donating to help us pay for bandwidth and keep the lead programmers fed!</li>
+        <li>promoting CycleStreets by telling other cyclists and writing about us.</li>
+        <li>contributing code to our project, or data to OpenStreetMap.</li>
+        </ul>
+    
+        <p>Donate now with PayPal:</p>
+        
         <div class="ui-grid-a"> 
          <div class="ui-block-b">
-             <p><a href="#home" data-role="button" data-rel="back" data-theme="z">Close</a></p>  
+             <p><a href="http://www.cyclestreets.net/donate" data-role="button" data-theme="z">Donate to CycleStreets</a></p>  
           </div>
         </div>
    </div>

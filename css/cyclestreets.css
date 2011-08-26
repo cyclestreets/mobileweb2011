@@ -208,6 +208,10 @@ table.routesegment {
 table.routesegment td.button {
 	min-width:70px;
 }
+td.left {
+	align: left;
+	text-align: left;
+}
 p.ui-li-aside {
     margin-top: 20px;
 }
@@ -226,7 +230,14 @@ a.ul-li-has-alt-left {
 }
 #locate-me {
     position: absolute ! important;
-    top: 43px;
     left: 10px ! important;
     z-index: 1000  ! important;
+}
+#getting-location, #getting-photo {
+	text-align:center;
+}
+#crosshairs, #crosshairs_img {
+	z-index: 1000 ! important;
+	padding: 0;
+	margin: 0;
 }

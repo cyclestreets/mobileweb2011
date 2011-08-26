@@ -12,29 +12,33 @@
 <script type="text/javascript" src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
 <script type="text/javascript">
 $('document').ready(function() {
-     $.mobile.pageLoading(); 
+
     //******************************************************
-    /* Check for GET parameter. If found, display photo
-    /* and get photo information from API.
+    /* Generic code repeated here to avoid loading external JS.
     /******************************************************/
-	function getUrlVars()
-	{
-	    var vars = [], hash;
-	    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-	    for(var i = 0; i < hashes.length; i++)
-	    {
-	        hash = hashes[i].split('=');
-	        vars.push(hash[0]);
-	        vars[hash[0]] = hash[1];
-	    }
-	    return vars;
-	}
-	var CS_API_KEY = '68f786d958d1dbfb';
-	var CS_API = 'http://www.cyclestreets.net/api/';
+    var CS_API_KEY = '68f786d958d1dbfb';
+    var CS_API = 'http://www.cyclestreets.net/api/';
+    function getUrlVars()
+    {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+    
+    //******************************************************
+    /* Get information from API, display photo and caption.
+    /******************************************************/
+    $('#getting-photo').show(); 
     var getparams = getUrlVars();
     var caption = '';
-	if (getparams['message']!=undefined) {
-        caption = unescape(getparams['message']);
+    if (getparams['message']!=undefined) {
+        caption = unescape(getparams['message']) + "<br/>";
     }
     if (getparams['p']!=undefined) {
         var photo_id = getparams['p'];
@@ -53,52 +57,57 @@ $('document').ready(function() {
             jsonpCallback: 'photo',
             success: function(data) {
                if (data.result.id!=undefined) {
-		           var image_url = data.result.imageUrl;
-		           if (typeof(data.result.caption)==='string') {
-		               caption += "<br/>" + data.result.caption;
-		           }
-		           var uploaded_by = data.result.username;
-		           var d = new Date(data.result.datetime*1000);
-		console.log(data.result.datetime);
-		           var uploaded_on = d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear();
-				   var live_sizes = data.result.thumbnailSizes;
-		           live_sizes = live_sizes.split("|").reverse();
-		           var chosen_size = live_sizes[0];
-				   var viewPortWidth = 600, viewPortHeight=800;
-				   if (typeof window.innerWidth != 'undefined') {
-					   viewPortWidth = window.innerWidth;
-					   viewPortHeight = window.innerHeight;
-				   }
+                   // Get URL, date etc. 
+                   $('#getting-photo').hide();  
+                   var image_url = data.result.imageUrl;
+                   if (typeof(data.result.caption)==='string') {
+                        caption += data.result.caption;
+                   }
+                   var uploaded_by = data.result.username;
+                   var d = new Date(data.result.datetime*1000);
+                   var uploaded_on = d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear();
+                   // Get the best size to display the photo. 
+                   var live_sizes = data.result.thumbnailSizes;
+                   live_sizes = live_sizes.split("|").reverse();
+                   var chosen_size = live_sizes[0];
+                   var viewPortWidth = 600, viewPortHeight=800;
+                   if (typeof window.innerWidth != 'undefined') {
+                        viewPortWidth = window.innerWidth;
+                        viewPortHeight = window.innerHeight;
+                   }
                    $.each(live_sizes, function(i, val) { 
-                     if (viewPortWidth > val) {
-                         chosen_size = val;
-                         return false;
-                     }
+                        if (viewPortWidth > val) {
+                            chosen_size = val;
+                            return false;
+                        }
                    });
                    image_url = image_url.replace('.jpg','-size' + chosen_size + ".jpg");
-			        $('#photo-image').attr({
-			          src: image_url,
-			          alt: data.result.caption,
-			          title: caption
-			        });
-			        $('#photo-header').text('Photo ' + data.result.id);
-			        $('#photo-caption').html(caption + ' <em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>");
-		      } else {
-			       toastMessage('Sorry! ' + data.error.message);
-			       $('#photo-header').text('Photo not found');
-		      }
-	        },
-	        error: function(data) {
-		       toastMessage('Sorry, something went wrong!');
-	        }
-	   });
-       $.mobile.pageLoading(true); 
+                    $('#photo-image').attr({
+                        src: image_url,
+                        alt: caption,
+                        title: caption
+                    });
+                    $('#photo-image').load(function() {
+                        $('#loading-icon').hide();
+                        $('#photo-image').show();
+                    });
+                    $('#photo-header').text('Photo ' + data.result.id);
+                    $('#photo-caption').html(caption + '<br/><em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>");
+              } else {
+                   toastMessage('Sorry! ' + data.error.message);
+                   $('#photo-header').text('Photo not found');
+              }
+            },
+            error: function(data) {
+               toastMessage('Sorry, something went wrong!');
+            }
+       });
     } else if (getparams['message']!=undefined) {
         $('#photo-caption').text("Sorry! " + caption);
-        $.mobile.pageLoading(true);	
+        $('#loading-icon').hide();
     } else {
-         $('#photo-caption').text('Photo ID not specified.');
-         $.mobile.pageLoading(true); 
+        $('#photo-caption').text('Photo ID not specified.');
+        $('#loading-icon').hide();
     } 
 });
 </script>
@@ -109,9 +118,12 @@ $('document').ready(function() {
             <a href='#' class='ui-btn-left' data-icon='arrow-l' onclick="history.back(); return false">Back</a><h1 id="photo-header">Photo</h1><a href="index.html" rel="external" class="ui-btn-right" data-icon='home'>Home</a>
     </div>
     <div data-role="content"> 
-        <p id="photo-caption">Loading photo...</p> 
+        <div id="getting-photo"><br/>Getting photo information...<br/><br/>
+            </div>
+        <p id="photo-caption"></p> 
         <p id="photo-attribution"></p> 
-        <img id="photo-image" src='images/ajax-loader.png' alt="Loading photo" />
+        <img src="/images/ajax-loader.gif" alt="Loading icon" id="loading-icon" />
+        <img id="photo-image" alt="CycleStreets photo" class="hidden" />
     </div> 
 </div>
 </body> 
