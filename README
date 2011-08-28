@@ -3,3 +3,10 @@ Mobile HTML version of CycleStreets - in beta.
 Created using jQuery Mobile.
 
 Uses experimental crosshairs feature.
+
+TODO (order of priority):
+
+* Add geolocation for photo uploads.
+* Check user is in UK, fail gracefully otherwise. 
+* Use 'heading' feature in geolocation to display the user's direction of travel.
+* Add support for offline routes with cache-manifest (if we can cache map tiles in sufficient numbers).
