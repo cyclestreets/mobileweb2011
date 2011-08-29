@@ -960,9 +960,9 @@ function organizeCSS(page_type) {
 	//console.log('organizeCSS');
     var window_height;
     $("div:jqmData(role='page')").first().height($(window).height());
-	//alert('Window height is ' + $(window).height());
-	//alert('Page height is ' + $("div:jqmData(role='page')").first().outerHeight());
     if (page_type === "photomap") {
+	    $('#instructions-footer').hide();
+	    $('#navbar-strategy').hide();
         window_height = $(window).height() - $("div:jqmData(role='header')").first().outerHeight();
         $("div:jqmData(role='content')").first().height(window_height);
         $("#map-canvas").height(window_height);
@@ -971,6 +971,7 @@ function organizeCSS(page_type) {
             'position': 'absolute',
             'top': window_height - 20,
         });
+        $('#route-header').text('Photos near me')
     } else if ((page_type === "new_route") || (page_type === "existing_route")) {
         if (global_page_type === "new_route") {
             $('#navbar-strategy').hide();

@@ -28,7 +28,12 @@
 // Ensure we can write to the hash to save routes. 
 $.mobile.hashListeningEnabled = false;
 $('document').ready(function() {
-    setUpPage('route');         
+	 var params = getUrlVars();
+	if (params['photomap'] === "true") { 
+        setUpPage('photomap');	
+	} else {
+        setUpPage('route');
+    }         
 });
 </script>
 </head> 
