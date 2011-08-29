@@ -163,6 +163,23 @@ $(document).ready(function() {
     var categoryselect = $('#category');
     var metacategoryselect = $('#metacategory');
 
+    // Route by Address: validate form. 
+    $('#route-form').submit(function(event) {
+      event.preventDefault();
+      $.mobile.pageLoading(); 
+      $('#routebutton').text('Searching...');
+      var routefrom = $('#routefrom').val().trim();
+      var routeto = $('#routeto').val().trim();
+      // Make sure that the user has entered something. 
+      if ((routeto==='')&&(routefrom==='')) {
+        toastMessage("Please enter at least one address!");
+        $.mobile.pageLoading(true); 
+        return false;
+      }
+       $('#route-header').text('Getting route...');
+       geocodeWithCycleStreets(routefrom,routeto);
+    });
+
     // Saved Routes logic. 
     $('#clear-saved-routes').hide();
     if ($('#saved-list li').length>0) {
@@ -264,7 +281,7 @@ $(document).ready(function() {
   <div data-role="content">      
     <p>Welcome to CycleStreets - plan a cycling route, upload a photo, or see photos nearby.</p>    
       <p><a href="route.html" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Route on map</a></p>  
-      <p><a href="route-as-text.html" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Route by address</a></p>  
+      <p><a href="#route-by-address" data-role="button" data-icon="arrow-r" data-iconpos="right">Route by address</a></p>  
       <p id='saved-routes-button'><a href="#saved-routes" data-role="button" data-icon="arrow-r" data-iconpos="right">Saved routes</a></p>  
       <p><a href="#upload" data-role="button" data-icon="arrow-r" data-iconpos="right">Upload a photo</a></p>
       <p><a href="photomap.html" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Photos near me</a></p>           
@@ -275,7 +292,33 @@ Get the Cyclestreets app!
        <div id="native-button"><a href="http://itunes.apple.com/app/ishare/id391984737" id="user-agent-link" data-role="button">Go to <span id="market-name">iTunes</span></a></div>
   </div>
 </div> 
-    
+
+<!-- Route by address -->  
+
+<div data-role="page" id="route-by-address" data-title="CycleStreets &raquo;  Route by address">   
+<div data-role="header" data-theme="z" id="first-header"> 
+ <a href="index.html" rel="external" class="ui-btn-left" data-icon='home'>Home</a>
+ <h1 id="route-header">Route by address or postcode</h1>
+</div> 
+<div data-role="content"> 
+<form id="route-form" action="route-without-js.php" method="get" data-ajax="false" class="inset">
+    <div data-role="fieldcontain">
+        <label for="routefrom">From:</label>
+        <input type="text" id="routefrom" placeholder="Leave blank to use current location" />
+<div data-role="fieldcontain">
+</div>
+        <label for="routeto">To:</label>
+        <input type="text" id="routeto" />
+    </div>
+    <fieldset class="ui-grid-a">
+    <div class="ui-block-b">
+    <button type="submit" data-theme="z" id="routebutton">Find route</button>
+    </div>     
+    </fieldset>
+</form>
+</div>
+</div>
+
 <!-- Saved routes page -->  
 
 <div data-role="page" id="saved-routes" data-title="CycleStreets &raquo; Saved routes"> 
