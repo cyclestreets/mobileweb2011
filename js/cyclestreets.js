@@ -94,7 +94,7 @@ function setItem(key, value) {
         window.localStorage.setItem(key, value); 
         //console.log('setItem: ' + key + " " + value);
     } catch (e) {
-        toastMessage('Sorry, item cannot be saved.'); 
+        //toastMessage('Sorry, item cannot be saved.'); 
     }
     return true;
 }
@@ -110,7 +110,7 @@ function removeItem(key) {
     try {
         window.localStorage.removeItem(key); 
     } catch (e) {
-        toastMessage('Sorry, item cannot be deleted.'); 
+        //toastMessage('Sorry, item cannot be deleted.'); 
     }
 }
 
@@ -497,7 +497,7 @@ if (window.google) {
         $.mobile.pageLoading(); 
         $('#marker-instructions').hide();
         $('#marker-remove').hide();
-        $('#route-header').text("Looking up route...");
+        $('#route-header').text("Obtaining route...");
         var journey_url = CS_API + 'journey.json';
         var journeydata = {};
         journeydata['key'] = CS_API_KEY;
