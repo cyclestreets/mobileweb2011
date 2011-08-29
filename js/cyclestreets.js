@@ -828,6 +828,7 @@ if (window.google) {
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             panControl: false,
             zoomControl: true,
+            streetViewControl: false,
             zoomControlOptions: {
                 position: google.maps.ControlPosition.LEFT_TOP
             },
