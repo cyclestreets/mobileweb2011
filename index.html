@@ -280,7 +280,8 @@ Get the Cyclestreets app!
 
 <div data-role="page" id="saved-routes" data-title="CycleStreets &raquo; Saved routes"> 
   <div data-role="header" data-theme="z">
-  <h1>Saved routes</h1><a href="#home" class="ui-btn-right" data-icon='home'>Home</a>
+  <a href="#home" class="ui-btn-left" data-icon='home'>Home</a>
+  <h1>Saved routes</h1>
   </div>
   <div data-role="content"> 
       <ul data-role="listview" id='saved-list' data-inset="true">
@@ -297,12 +298,11 @@ Get the Cyclestreets app!
 <!-- Upload photo page -->
 
 <div data-role="page" id="upload" data-title="CycleStreets &raquo; Upload a photo"> 
-  <div data-role="header" data-theme="z"> 
-          <h1>Upload a photo</h1><a href="#home" class="ui-btn-right" data-icon='home'>Home</a> 
-          <!-- <script type="text/javascript" src="js/jquery.iframe-post-form.min.js"></script> -->
+  <div data-role="header" data-theme="z">
+	  <a href="#home" class="ui-btn-left" data-icon='home'>Home</a>
+          <h1>Upload a photo</h1>
   </div> 
   <div data-role="content"> 
-	<p>Intro here</p>
       <form id="account-form" method="post" enctype="multipart/form-data" data-ajax="false" action="upload.php" > 
           <!-- Upload div, initially visible -->
           <div id="not-available-apple" class="hidden">
@@ -314,6 +314,7 @@ Get the Cyclestreets app!
           <input type="hidden" id="datetime" name="datetime" value="auto" />  
           <input type="hidden" id="latitude" name="latitude" value="auto" />  
           <input type="hidden" id="longitude" name="longitude" value="auto" />   
+	  <p>Upload photographs of road problems or good practice here.</p>
           <div data-role="fieldcontain"> 
               <label for="mediaupload">Pick photo: </label> 
               <input type="file" id="mediaupload" name="mediaupload" accept="image/jpeg, image/jpg" /> 
@@ -328,10 +329,6 @@ Get the Cyclestreets app!
               <select name="category" id="category"> 
               </select>                    
           </div>
-          <!-- <div data-role="fieldcontain"> 
-              <label for="description">Description (optional):</label> 
-              <input type="text" name="description" id="description" value=""  /> 
-          </div> -->
         <div data-role="fieldcontain">
             <label for="description">Description (optional):</label>
             <textarea cols="40" rows="8" name="description" id="description"></textarea>
@@ -346,7 +343,7 @@ Get the Cyclestreets app!
 
 <!-- Signin div, initially hidden -->
 <div id="signinfields">
-    <p>Sign in to your CycleStreets account to upload this photo. If you don't already have an account, it's free to register.</p>
+    <p>Provide your CycleStreets account details to upload this photo. If you don't already have an account, it's free to register.</p>
     <!-- Radio buttons to choose signin/register -->
     <fieldset data-role="controlgroup" data-theme="z" data-type="horizontal" >
         <input type="radio" name="login" id="radio-signin" value="signin" checked="checked" />
