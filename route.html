@@ -42,7 +42,8 @@ $('document').ready(function() {
     <div id="home" data-role="page" class="page-map" style="width:100%; height:100%;">
         <div data-role="header" data-theme="z" id="first-header"> 
              <a href="index.html" rel="external" class="ui-btn-left" data-icon='home' id="home-button">Home</a>
-             <h1 id="route-header">Route using map</h1>
+             <h1 id="route-header">Route on map</h1>
+             <a href="" data-icon="plus" class="ui-btn-right" id="locate-me" class='hidden'>Loc: On</a>
            <div data-role="navbar" data-theme="c" id='navbar-strategy'>
             <ul id='route-strategy'>
                 <li><a id="quietest">Quietest</a></li>
@@ -52,10 +53,6 @@ $('document').ready(function() {
         </div>
         </div> 
         <div data-role="content" style="width:100%; height:100%; padding: 0;"> 
-            <fieldset data-role="controlgroup" data-type="horizontal" id="locate-me" class="hidden"> 
-            <input type="checkbox" name="loc" id="loc" checked="checked" />
-            <label for="loc" id="loc-label"><img src="images/location.png" alt="Location dot" title="Location dot" /></label>
-            </fieldset>
 
             <div id="map-canvas" style="width:100%; height:100%;">  
 	            <div id="getting-location"><br/><br/><br/>

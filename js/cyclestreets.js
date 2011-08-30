@@ -23,7 +23,7 @@ var photo_markers = [];
 
 // Geolocation. 
 var current_latlng = null;
-var watchId;
+var watchId = null;
 var is_user_position_initialised = false;
 var position_marker = null;
 
@@ -203,6 +203,12 @@ function kmToMph(kph, mph) {
     }
 }
 
+function gToKG(grammes) {
+	if (grammes < 1001) {
+		return grammes + "g";
+	}
+	return (grammes/1000) + "kg";
+}
 function toTitleCase(str) {
     if (str !== null) {
         return str.charAt(0).toUpperCase() + str.slice(1);
@@ -330,15 +336,15 @@ if (window.google) {
 
     function addPosMarker (lat, lng) {
         //console.log('addPosMarker');
+        if (position_marker !== null) { 
+            position_marker.setMap(null); 
+        }
         var bluedot = new google.maps.MarkerImage('images/blue-dot.png',
            new google.maps.Size(16, 16),
            new google.maps.Point(0,0),
            new google.maps.Point(8,8));
-        if (position_marker !== null) { 
-            position_marker.setMap(null); 
-        }
         mylatlng = new google.maps.LatLng(lat, lng);
-        position_marker = new google.maps.Marker({
+	    position_marker = new google.maps.Marker({
             position: mylatlng, 
             map: map,
             icon: bluedot,
@@ -364,6 +370,7 @@ if (window.google) {
         }
         if ((global_page_type!=="new_route")&&(global_page_type!=="route_text")) {
             addPosMarker(lat, lng);
+            $('#locate-me').show(); 
         }
         $('#getting-location').hide();
         if (is_user_position_initialised === false) {
@@ -376,10 +383,11 @@ if (window.google) {
 
     // We can't find the user's location. 
     function gpsFail(err) {  
-        //console.log('gpsFail', err.code);    
+        //console.log('gpsFail', err.code); 
         // Warn about errors IFF the user is not already located.
-        current_latlng = new google.maps.LatLng(52.2025441, 0.1312368);
         if (is_user_position_initialised==false) {
+	        $('#locate-me').hide(); 
+	        current_latlng = new google.maps.LatLng(52.2025441, 0.1312368);
             if (err.code==1) {
                 toastMessage('Using CycleStreets default location...');
                 setupMap(52.2025441, 0.1312368);
@@ -402,9 +410,10 @@ if (window.google) {
     function stopTracking() {
         //console.log('stopTracking');
         //console.log('watchId: ' + watchId);
-        if ((navigator.geolocation) && (watchId!==undefined)) {     
+        if ((navigator.geolocation) && (watchId !== null)) {     
             navigator.geolocation.clearWatch(watchId);
-            if (position_marker!==null) { 
+            watchId = null;
+            if (position_marker !== null) { 
                 position_marker.setMap(null); 
             }
         }
@@ -497,7 +506,7 @@ if (window.google) {
         $.mobile.pageLoading(); 
         $('#marker-instructions').hide();
         $('#marker-remove').hide();
-        $('#route-header').text("Obtaining route...");
+        $('#route-header').text("Fetching route...");
         var journey_url = CS_API + 'journey.json';
         var journeydata = {};
         journeydata['key'] = CS_API_KEY;
@@ -561,8 +570,12 @@ if (window.google) {
                     // Show route summary information. 
                     var route_distance = markers[0]['@attributes'].length;
                     var route_time = markers[0]['@attributes'].time;
+                    var co2g = markers[0]['@attributes'].grammesCO2saved;
+                    var calories = markers[0]['@attributes'].calories;
                     $('#route-header').text(toTitleCase(strategy) + ": " + secondsToMinutes(route_time) + ' min');
-                    $('#summary').html(metresToMiles(route_distance) + ' miles at ' + speed + ' mph');
+                    var summary_html = metresToMiles(route_distance) + ' miles at ' + speed + ' mph<br/>';
+                    summary_html += calories + " kcal, " + gToKG(co2g) + " CO<sup>2</sup> saved"
+                    $('#summary').html(summary_html);
                     $('#prev-segment').hide();
                     var route_id = markers[0]['@attributes'].itinerary;
                     // Save in localStorage.
@@ -650,8 +663,8 @@ if (window.google) {
                     });
                     $('#navbar-options').hide();
                     $('#crosshairs').hide();
-                    $('#locate-me').show();
                     $('#navbar-strategy').show();   
+                    //addPosMarker();
                     routePath.setMap(map);
                     var window_height = $(window).height() - $("div:jqmData(role='header')").first().outerHeight();
                     if ($('#instructions-footer').is(":visible")) {
@@ -850,20 +863,34 @@ if (window.google) {
                 google.maps.event.addListener(map, 'maptypeid_changed', function() { 
                     setItem("maptype", this.getMapTypeId());
                  });
-                // Geolocate button: toggle geotracking. 
-        $("#loc-label").click(function(){
-            if ($('#loc').is(':checked')) {
-                 toastMessage('No longer tracking your location');
-                         stopTracking();
+        // Geolocate button: toggle geotracking. 
+        $("#locate-me").click(function(){
+            if (watchId !== null) {
+                toastMessage('No longer tracking your location');
+                $("#locate-me span.ui-icon").addClass("ui-icon-minus").removeClass("ui-icon-plus");
+                $("#locate-me .ui-btn-text").text("Loc: Off");
+                stopTracking();
             } else {
                 toastMessage('Tracking your location');
                 watchId = navigator.geolocation.watchPosition(gpsSuccess,
-                      gpsFail, {timeout:5000, maximumAge: 300000}); 
+                      gpsFail, {timeout:10000, maximumAge: 300000}); 
                 if (current_latlng!==null) {
                     map.panTo(current_latlng);
+                    addPosMarker(current_latlng.lat(), current_latlng.lng());
                 }
+                $("#locate-me span.ui-icon").addClass("ui-icon-plus").removeClass("ui-icon-minus");
+                $("#locate-me .ui-btn-text").text("Loc: On");
             }
         });
+        // If we are on a page that requires geolocation, add markers etc.
+        if (global_page_type !== "new_route") {  
+	        if (current_latlng!==null) {
+                addPosMarker(current_latlng.lat(), current_latlng.lng());
+                $('#locate-me').show();
+            } else { 
+                $('#locate-me').hide();
+	        }
+        }
         // If we are on the photomap page, add markers. 
         if (global_page_type==="photomap") {    
             google.maps.event.addListener(map, 'tilesloaded', function() {
@@ -938,14 +965,9 @@ if (window.google) {
                 });
             }
           });
-        if (global_page_type!=="new_route") {
-            addPosMarker(current_latlng);
-        }
         if (global_page_type=="new_route") {
             createCrosshairs();
             $('#marker-instructions').show();
-        } else {
-            $('#locate-me').show();
         }
         return true;
     }
@@ -966,17 +988,14 @@ function organizeCSS(page_type) {
         window_height = $(window).height() - $("div:jqmData(role='header')").first().outerHeight();
         $("div:jqmData(role='content')").first().height(window_height);
         $("#map-canvas").height(window_height);
-        $('#locate-me').show();
-        $('#locate-me').css({
-            'position': 'absolute',
-            'top': window_height - 20,
-        });
-        $('#route-header').text('Photos near me')
+        $('#route-header').text('Photos near me');
+        document.title = 'CycleStreets \u00bb Photos near me';
     } else if ((page_type === "new_route") || (page_type === "existing_route")) {
         if (global_page_type === "new_route") {
             $('#navbar-strategy').hide();
             $('#instructions-footer').hide();
-            createCrosshairs();     
+            createCrosshairs();
+            document.title = 'CycleStreets \u00bb Route on map';     
         } else {
             $('#navbar-strategy').show();
             $('#instructions-footer').show();       
@@ -1009,9 +1028,6 @@ function organizeCSS(page_type) {
             'z-index': '1000',
             'color' : 'red'
         });
-        $('#locate-me').css({
-           'bottom': 5 + $("div:jqmData(role='footer')").first().height()
-        });
     }
 }
 
@@ -1042,10 +1058,9 @@ function setUpPage(page_type) {
     if (navigator.geolocation) { 
         toastMessage('Getting your location...');
         watchId = navigator.geolocation.watchPosition(gpsSuccess,
-              gpsFail, {timeout:5000, maximumAge: 300000});
+              gpsFail, {timeout:10000, maximumAge: 300000});
     } else {
         toastMessage("Sorry, can't get your current location!");
-        $('#locate-me').hide();
         // Use default location of Cambridge. 
         setupMap(52.2025441, 0.1312368);
     }

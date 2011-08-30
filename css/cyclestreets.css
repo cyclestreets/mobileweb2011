@@ -228,11 +228,6 @@ a.ul-li-has-alt-left {
     padding-right: auto ! important;
     margin-left: 104px ! important;
 }
-#locate-me {
-    position: absolute ! important;
-    left: 10px ! important;
-    z-index: 1000  ! important;
-}
 #getting-location, #getting-photo {
 	text-align:center;
 }
