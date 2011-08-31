@@ -185,6 +185,7 @@ $(document).ready(function() {
     if ($('#saved-list li').length>0) {
         $('#clear-saved-routes').show();   
         $('#no-routes-yet').hide();
+        $('#begin-a-route').hide();
     }      
     $('#clear-saved-routes').click(function() {
         if(!confirm("Clear all routes?")) return false; 
@@ -282,7 +283,7 @@ $(document).ready(function() {
     <p>Welcome to CycleStreets! Plan a cycle route &amp; add/view cycling-related photos.</p>    
       <p><a href="/journey" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Route on map</a></p>  
       <p><a href="#route-by-address" data-role="button" data-icon="arrow-r" data-iconpos="right">Route by address</a></p>  
-      <p id='saved-routes-button'><a href="#saved-routes" data-role="button" data-icon="arrow-r" data-iconpos="right">Saved routes</a></p>  
+      <p><a href="#saved-routes" data-role="button" data-icon="arrow-r" data-iconpos="right">Saved routes</a></p>  
       <p><a href="#upload" data-role="button" data-icon="arrow-r" data-iconpos="right">Upload a photo</a></p>
       <p><a href="/photomap" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Photos near me</a></p>           
   </div> 
@@ -329,12 +330,10 @@ Get the Cyclestreets app!
   <div data-role="content"> 
       <ul data-role="listview" id='saved-list' data-inset="true">
       </ul>   
-      <div id="no-routes-yet"> 
       <p>You don't have any saved routes yet.</p>
-      <a data-role="button" rel="external" data-icon="arrow-r" data-iconpos="right" data-theme="z" href="/journey">Begin a route</a>
-      </div>
-      <p id="clear-saved-routes" data-role="button" data-icon="delete" data-iconpos="right" data-theme="z">Clear saved routes</p>
       <p id="cleared-routes"></p>
+      <p id="clear-saved-routes" data-role="button" data-icon="delete" data-iconpos="right" data-theme="z">Clear saved routes</p>
+      <a data-role="button" rel="external" data-icon="arrow-r" data-iconpos="right" data-theme="z" href="/journey" id="begin-a-route">Begin a route</a>
   </div> 
 </div>
 
