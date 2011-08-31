@@ -153,17 +153,28 @@ String.prototype.ellipsisText = function (maxCharacters) {
     return text;
 };
 
+// Return querystring or hash params if present.
+// Prioritise hash params over querystring. 
 function getUrlVars() {
-    var vars = [], delimiter = window.location.href.indexOf('#'), hash, hashes, i;
-    if (delimiter === -1) {
-        delimiter = window.location.href.indexOf('?');
-    }
-    hashes = window.location.href.slice(delimiter + 1).split('&');
-    for (i = 0; i < hashes.length; i++) {
-        hash = hashes[i].split('=');
-        vars.push(hash[0]);
-        vars[hash[0]] = hash[1];
-    }
+    var vars = [], delimiter, hash, hashes, i;
+    delimiter = window.location.href.indexOf('#');
+    if (delimiter !== -1) {
+	    hashes = window.location.href.slice(delimiter + 1).split('/');
+	    vars['r'] = hashes[0];
+	    if (hashes.length > 1) {
+	        vars['p'] = hashes[1];
+	    }
+	} else { 
+		delimiter = window.location.href.indexOf('?');
+		if (delimiter !== -1) {
+			hashes = window.location.href.slice(delimiter + 1).split('&');
+		    for (i = 0; i < hashes.length; i++) {
+		        hash = hashes[i].split('=');
+		        vars.push(hash[0]);
+		        vars[hash[0]] = hash[1];
+		    }
+		}
+	}
     return vars;
 }
 
@@ -311,12 +322,12 @@ if (window.google) {
     function createMapMarker (location, marker_type) {
         var marker_icon; 
         if (marker_type == "finish") { 
-            marker_icon = new google.maps.MarkerImage('images/cs_finish.png',
+            marker_icon = new google.maps.MarkerImage('/images/cs_finish.png',
               new google.maps.Size(50, 55),
               new google.maps.Point(0, 0),
               new google.maps.Point(13, 53));
         } else {
-            marker_icon = new google.maps.MarkerImage('images/cs_start.png',
+            marker_icon = new google.maps.MarkerImage('/images/cs_start.png',
               new google.maps.Size(50, 55),
               new google.maps.Point(0, 0),
               new google.maps.Point(13, 53));            
@@ -339,7 +350,7 @@ if (window.google) {
         if (position_marker !== null) { 
             position_marker.setMap(null); 
         }
-        var bluedot = new google.maps.MarkerImage('images/blue-dot.png',
+        var bluedot = new google.maps.MarkerImage('/images/blue-dot.png',
            new google.maps.Size(16, 16),
            new google.maps.Point(0,0),
            new google.maps.Point(8,8));
@@ -466,7 +477,7 @@ if (window.google) {
                            var map_marker = new google.maps.Marker({
                              position: marker_latlng,
                              title: marker.caption,
-                             icon: 'images/photomap.png'
+                             icon: '/images/photomap.png'
                            });
                            map_marker.setMap(map);                           
                            google.maps.event.addListener(map_marker, 'click', function() {
@@ -574,7 +585,7 @@ if (window.google) {
                     var calories = markers[0]['@attributes'].calories;
                     $('#route-header').text(toTitleCase(strategy) + ": " + secondsToMinutes(route_time) + ' min');
                     var summary_html = metresToMiles(route_distance) + ' miles at ' + speed + ' mph<br/>';
-                    summary_html += calories + " kcal, " + gToKG(co2g) + " CO<sup>2</sup> saved"
+                    summary_html += calories + " kcal, " + gToKG(co2g) + " CO<sub>2</sub> saved"
                     $('#summary').html(summary_html);
                     $('#prev-segment').hide();
                     var route_id = markers[0]['@attributes'].itinerary;
@@ -590,7 +601,7 @@ if (window.google) {
                     setItem(ls_name,ls_values);
                     // Update hash and header.
                     document.title = 'CycleStreets \u00bb ' + toTitleCase(journeydata['plan']) + ' route from ' + route_from + ' to ' + route_to;
-                    window.location.hash = 'r=' + route_id + '&p=' + journeydata['plan'];
+                    window.location.hash = route_id + '/' + journeydata['plan'];
                     // Draw map route and set map bounds. 
                     var coords = parseCoordinates(coordinates);
                     if (routePath!==null) {
@@ -789,15 +800,15 @@ if (window.google) {
         }
         if (place_from=='') {
             $.when(geocode(place_to,geodata,'finish')).then(function(){
-                window.location = '/route.html?s_lat=' + start_coords[0] + '&s_lng=' + start_coords[1] +  
+                window.location = '/journey/?s_lat=' + start_coords[0] + '&s_lng=' + start_coords[1] +  
                                         '&f_lat=' + finish_coords[0] + '&f_lng=' + finish_coords[1]; });
         } else if (place_to=="") {
             $.when(geocode(place_from,geodata,'start')).then(function(){  
-                window.location = '/route.html?s_lat=' + start_coords[0] + '&s_lng=' + start_coords[1] +  
+                window.location = '/journey/?s_lat=' + start_coords[0] + '&s_lng=' + start_coords[1] +  
                                         '&f_lat=' + finish_coords[0] + '&f_lng=' + finish_coords[1]; });
         } else {
             $.when(geocode(place_from,geodata,'start'),geocode(place_to,geodata,'finish')).then(function(){
-                window.location = '/route.html?s_lat=' + start_coords[0] + '&s_lng=' + start_coords[1] +  
+                window.location = '/journey/?s_lat=' + start_coords[0] + '&s_lng=' + start_coords[1] +  
                                         '&f_lat=' + finish_coords[0] + '&f_lng=' + finish_coords[1]; });
         }
         return true;

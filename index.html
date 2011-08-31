@@ -121,7 +121,7 @@ $(document).ready(function() {
             var key = all_keys[i];
             var route_num = key.split('-')[1]; 
             var route_info = getItem(key); //eval('(' + all_routes[i][key] + ')');
-            var route_url = '/route.html?r=' + route_num + "&p=" + route_info.strategy;
+            var route_url = '/journey/#' + route_num + "/" + route_info.strategy;
             var list_route = "<li><a rel='external' href='" + route_url + "'>";
             list_route += "<p><strong>" + route_info.from + " to " + route_info.to + "</strong></p>";
             list_route += "<p>" + route_info.distance +  " miles, ";
@@ -280,11 +280,11 @@ $(document).ready(function() {
   </div> 
   <div data-role="content">      
     <p>Welcome to CycleStreets! Plan a cycle route &amp; add/view cycling-related photos.</p>    
-      <p><a href="route.html" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Route on map</a></p>  
+      <p><a href="/journey" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Route on map</a></p>  
       <p><a href="#route-by-address" data-role="button" data-icon="arrow-r" data-iconpos="right">Route by address</a></p>  
       <p id='saved-routes-button'><a href="#saved-routes" data-role="button" data-icon="arrow-r" data-iconpos="right">Saved routes</a></p>  
       <p><a href="#upload" data-role="button" data-icon="arrow-r" data-iconpos="right">Upload a photo</a></p>
-      <p><a href="route.html?photomap=true" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Photos near me</a></p>           
+      <p><a href="/photomap" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Photos near me</a></p>           
   </div> 
   <div data-role="footer" data-theme="z" id='native-app' class="native-footer"> 
 Get the Cyclestreets app!
@@ -297,7 +297,7 @@ Get the Cyclestreets app!
 
 <div data-role="page" id="route-by-address" data-title="CycleStreets &raquo;  Route by address">   
 <div data-role="header" data-theme="z" id="first-header"> 
- <a href="index.html" rel="external" class="ui-btn-left" data-icon='home'>Home</a>
+ <a href="/" rel="external" class="ui-btn-left" data-icon='home'>Home</a>
  <h1 id="route-header">Route by address or postcode</h1>
 </div> 
 <div data-role="content"> 
@@ -331,7 +331,7 @@ Get the Cyclestreets app!
       </ul>   
       <div id="no-routes-yet"> 
       <p>You don't have any saved routes yet.</p>
-      <a data-role="button" rel="external" data-icon="arrow-r" data-iconpos="right" data-theme="z" href="/route.html">Begin a route</a>
+      <a data-role="button" rel="external" data-icon="arrow-r" data-iconpos="right" data-theme="z" href="/journey">Begin a route</a>
       </div>
       <p id="clear-saved-routes" data-role="button" data-icon="delete" data-iconpos="right" data-theme="z">Clear saved routes</p>
       <p id="cleared-routes"></p>
