@@ -3,7 +3,7 @@ CycleStreets custom theme
 **************************/
 .ui-bar-z {
     border: 1px solid #060;
-    background: ;#009900;
+    background: #009900;
     color: #ffffff;
     font-weight: bold;
     text-shadow: 0 -1px 1px #000000;
@@ -12,12 +12,6 @@ CycleStreets custom theme
         color-stop(0, #006300),
         color-stop(1, #009900));
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#3c3c3c', EndColorStr='#009900')";
-}
-.ui-bar-z, .ui-bar-z input, .ui-bar-z select, .ui-bar-z textarea, .ui-bar-z button {
-    font-family: Helvetica, Arial, sans-serif;
-}
-.ui-bar-z .ui-link-inherit {
-    color: #fff;
 }
 .ui-bar-z .ui-link {
     color: #7cc4e7;
@@ -34,12 +28,6 @@ CycleStreets custom theme
         color-stop(0, #666666),
         color-stop(1, #222222));
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#222222)')";
-}
-.ui-body-z, .ui-body-z input, .ui-body-z select, .ui-body-z textarea, .ui-body-z button {
-    font-family: Helvetica, Arial, sans-serif;
-}
-.ui-body-z .ui-link-inherit {
-    color: #fff;
 }
 .ui-body-z .ui-link {
     color: #2489CE;
@@ -63,9 +51,6 @@ CycleStreets custom theme
         color-stop(1, #08C908));
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#555555', EndColorStr='#333333')";
 }
-.ui-btn-up-z a.ui-link-inherit {
-    color:#fff;
-}
 .ui-btn-hover-z {
     border: 1px solid #000;
     background: #009900;
@@ -78,9 +63,6 @@ CycleStreets custom theme
         color-stop(1, #009900));
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#009900')";
 }
-.ui-btn-hover-z a.ui-link-inherit {
-    color: #fff;
-}
 .ui-btn-down-z {
     border: 1px solid #000;
     background: #055C05;
@@ -92,9 +74,6 @@ CycleStreets custom theme
         color-stop(0, #333333),
         color-stop(1, #055C05));
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333', EndColorStr='#5a5a5a')";
-}
-.ui-btn-down-z a.ui-link-inherit {
-    color:  #fff;
 }
 .ui-btn-up-z, .ui-btn-hover-z, .ui-btn-down-z {
     font-family: Helvetica, Arial, sans-serif;
@@ -115,7 +94,12 @@ CycleStreets custom theme
     -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#85bae4', EndColorStr='#5393c5')";
     outline: none;
 }
-.ui-btn-active a.ui-link-inherit {
+.ui-body-z, .ui-body-z input, .ui-body-z select, .ui-body-z textarea, .ui-body-z button, 
+ .ui-bar-z, .ui-bar-z input, .ui-bar-z select, .ui-bar-z textarea, .ui-bar-z button {
+    font-family: Helvetica, Arial, sans-serif;
+}
+.ui-bar-z .ui-link-inherit, .ui-btn-active a.ui-link-inherit, .ui-btn-down-z a.ui-link-inherit,
+ .ui-btn-hover-z a.ui-link-inherit, .ui-body-z .ui-link-inherit, .ui-btn-up-z a.ui-link-inherit {
     color: #fff;
 }
 
@@ -126,10 +110,10 @@ General useful styles
     float: right;
 }
 .hidden {
-    display:none;
+    display: none;
 }
 .center-text {
-    text-align:center;
+    text-align: center;
 }
 .inset {
     padding: 0 10px;
@@ -141,25 +125,23 @@ Other custom styles
 
 /* Home page */
 .native-footer {
-    display:none;
-    vertical-align:middle;
-    padding:10px;
-    text-align:center;
-    margin:auto;
-    align:center;
+    display: none;
+    vertical-align: middle;
+    padding: 10px;
+    text-align: center;
+    margin: auto;
 }
 #native-button {
-    margin-top:10px;
+    margin-top: 10px;
 }
 #itunes-button {
-    margin:auto;
-    align:center;
-    text-align:center;
+    margin: auto;
+    text-align: center;
 }
 #hide-native {
-    float:right;
-    margin-right:20px;
-    vertical-align:middle;
+    float: right;
+    margin-right: 20px;
+    vertical-align: middle;
 }
 
 /* Journey page */
@@ -170,20 +152,19 @@ Other custom styles
     pointer-events: none;
 }
 #getting-location, #getting-photo {
-    text-align:center;
+    text-align: center;
 }
 table.routesegment {
-    width:100%;
-    text-align:center;
-    font-size:0.8em;
-    margin-left:auto;
-    margin-right:auto;
+    width: 100%;
+    text-align: center;
+    font-size: 0.8em;
+    margin-left: auto;
+    margin-right: auto;
 }
 table.routesegment td.button {
-    min-width:70px;
+    min-width: 70px;
 }
 td.left {
-    align: left;
     text-align: left;
 }
 
