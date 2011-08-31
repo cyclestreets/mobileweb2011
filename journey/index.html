@@ -18,22 +18,22 @@
 <link href="/images/favicon.ico" rel="icon" type="image/x-icon" />
 <!-- Stylesheets --> 
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.css" />
-<link rel="stylesheet" href="css/cyclestreets.css" />
+<link rel="stylesheet" href="/css/cyclestreets.css" />
 <!-- Scripts --> 
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;region=GB"></script>
-<script type="text/javascript" src="js/cyclestreets.js"></script>
+<script type="text/javascript" src="/js/cyclestreets.js"></script>
 <script type="text/javascript">
 // Ensure we can write to the hash to save routes. 
 $.mobile.hashListeningEnabled = false;
 $('document').ready(function() {
-	 var params = getUrlVars();
+	var params = getUrlVars();
 	if (params['photomap'] === "true") { 
         setUpPage('photomap');	
 	} else {
         setUpPage('route');
-    }         
+    }        
 });
 </script>
 </head> 
@@ -41,7 +41,7 @@ $('document').ready(function() {
     
     <div id="home" data-role="page" class="page-map" style="width:100%; height:100%;">
         <div data-role="header" data-theme="z" id="first-header"> 
-             <a href="index.html" rel="external" class="ui-btn-left" data-icon='home' id="home-button">Home</a>
+             <a href="/" rel="external" class="ui-btn-left" data-icon='home' id="home-button">Home</a>
              <h1 id="route-header">Route on map</h1>
              <a href="" data-icon="plus" class="ui-btn-right" id="locate-me" class='hidden'>Loc: On</a>
            <div data-role="navbar" data-theme="c" id='navbar-strategy'>
@@ -58,12 +58,12 @@ $('document').ready(function() {
 	            <div id="getting-location"><br/><br/><br/>
 	            <img src="/images/ajax-loader.gif" alt="Loading icon" /></div>
             </div>
-            <span id="crosshairs" class="hidden"><img src="images/crosshairs.png" alt="Crosshairs" id="crosshairs_img" style="pointer-events: none;" /></span>
+            <span id="crosshairs" class="hidden"><img src="/images/crosshairs.png" alt="Crosshairs" id="crosshairs_img" style="pointer-events: none;" /></span>
             <span id="marker-remove" data-role="button" data-icon="delete" data-iconpos="right" class="hidden">Remove start point</span>
             <span id="marker-instructions" data-role="button" class="hidden">1. Click to set start</span>
-<img src="images/blue-dot.png" alt="Blue dot" class="hidden" />
-<img src="images/cs_start.png" alt="Start marker" class="hidden" />
-<img src="images/cs_finish.png" alt="Finish marker" class="hidden" />
+<img src="/images/blue-dot.png" alt="Blue dot" class="hidden" />
+<img src="/images/cs_start.png" alt="Start marker" class="hidden" />
+<img src="/images/cs_finish.png" alt="Finish marker" class="hidden" />
         </div> 
         
         <div data-role="footer" id="instructions-footer" data-theme='z' class='hidden'>
