@@ -120,15 +120,21 @@ $(document).ready(function() {
         (function () {   
             var key = all_keys[i];
             var route_num = key.split('-')[1]; 
-            var route_info = getItem(key); //eval('(' + all_routes[i][key] + ')');
+            var route_info = getItem(key); 
             var route_url = '/journey/#' + route_num + "/" + route_info.strategy;
             var list_route = "<li><a rel='external' href='" + route_url + "'>";
-            list_route += "<p><strong>" + route_info.from + " to " + route_info.to + "</strong></p>";
+            list_route += "<p><strong>";
+            if (route_info.date !== undefined) {
+                var d = new Date(route_info.date);
+                var curr_month = d.getMonth() + 1; 
+                list_route += d.getDate() + "/" + curr_month + "/" + d.getFullYear() + "<br/>";
+            }
+            list_route += route_info.from + " to " + route_info.to + "</strong></p>";
             list_route += "<p>" + route_info.distance +  " miles, ";
             list_route += route_info.time + " mins at ";
             list_route += route_info.speed + "mph, " + route_info.strategy + "</p></a></li>";
             $('#saved-list').append($(list_route));  
-            }());   
+        }());   
     }
     
 });
@@ -137,7 +143,7 @@ $(document).ready(function() {
 <script type="text/javascript">
 
 $(document).ready(function() {
-
+	
     // Detect iPhone/Android and suggest native apps.    
     var ua = navigator.userAgent;
     var uachecker = {
@@ -184,7 +190,7 @@ $(document).ready(function() {
     $('#clear-saved-routes').hide();
     if ($('#saved-list li').length>0) {
         $('#clear-saved-routes').show();   
-        $('#no-routes-yet').hide();
+        $('#no-routes').hide();
         $('#begin-a-route').hide();
     }      
     $('#clear-saved-routes').click(function() {
@@ -192,7 +198,8 @@ $(document).ready(function() {
         if (eraseRoutes()) { 
             $('#saved-list li').hide();
             $('#clear-saved-routes').hide();
-            $('#cleared-routes').text('Routes have been cleared.');
+            $('#no-routes').text('Routes have been cleared.');
+            $('#no-routes').show();
         } else {
             toastMessage("Sorry, something went wrong");
         }
@@ -281,11 +288,11 @@ $(document).ready(function() {
   </div> 
   <div data-role="content">      
     <p>Welcome to CycleStreets! Plan a cycle route &amp; add/view cycling-related photos.</p>    
-      <p><a href="/journey" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Route on map</a></p>  
+      <p><a href="/journey/" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Route on map</a></p>  
       <p><a href="#route-by-address" data-role="button" data-icon="arrow-r" data-iconpos="right">Route by address</a></p>  
       <p><a href="#saved-routes" data-role="button" data-icon="arrow-r" data-iconpos="right">Saved routes</a></p>  
       <p><a href="#upload" data-role="button" data-icon="arrow-r" data-iconpos="right">Upload a photo</a></p>
-      <p><a href="/photomap" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Photos near me</a></p>           
+      <p><a href="/location/" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Photos near me</a></p>           
   </div> 
   <div data-role="footer" data-theme="z" id='native-app' class="native-footer"> 
 Get the Cyclestreets app!
@@ -330,10 +337,9 @@ Get the Cyclestreets app!
   <div data-role="content"> 
       <ul data-role="listview" id='saved-list' data-inset="true">
       </ul>   
-      <p>You don't have any saved routes yet.</p>
-      <p id="cleared-routes"></p>
+      <p id="no-routes">You don't have any saved routes yet.</p>
       <p id="clear-saved-routes" data-role="button" data-icon="delete" data-iconpos="right" data-theme="z">Clear saved routes</p>
-      <a data-role="button" rel="external" data-icon="arrow-r" data-iconpos="right" data-theme="z" href="/journey" id="begin-a-route">Begin a route</a>
+      <a data-role="button" rel="external" data-icon="arrow-r" data-iconpos="right" data-theme="z" href="/journey/" id="begin-a-route">Begin a route</a>
   </div> 
 </div>
 
@@ -341,7 +347,7 @@ Get the Cyclestreets app!
 
 <div data-role="page" id="upload" data-title="CycleStreets &raquo; Upload a photo"> 
   <div data-role="header" data-theme="z">
-	  <a href="#home" class="ui-btn-left" data-icon='home'>Home</a>
+      <a href="#home" class="ui-btn-left" data-icon='home'>Home</a>
           <h1>Upload a photo</h1>
   </div> 
   <div data-role="content"> 
@@ -356,7 +362,7 @@ Get the Cyclestreets app!
           <input type="hidden" id="datetime" name="datetime" value="auto" />  
           <input type="hidden" id="latitude" name="latitude" value="auto" />  
           <input type="hidden" id="longitude" name="longitude" value="auto" />   
-	  <p>Upload photographs of road problems or good practice here.</p>
+      <p>Upload photographs of road problems or good practice here.</p>
           <div data-role="fieldcontain"> 
               <label for="mediaupload">Pick photo: </label> 
               <input type="file" id="mediaupload" name="mediaupload" accept="image/jpeg, image/jpg" /> 
@@ -508,6 +514,11 @@ Get the Cyclestreets app!
         <div class="ui-grid-a"> 
          <div class="ui-block-b">
              <p><a href="http://www.cyclestreets.net/donate" data-role="button" data-theme="z">Donate to CycleStreets</a></p>  
+          </div>
+        </div>
+        <div class="ui-grid-a"> 
+         <div class="ui-block-b">
+             <p><a href="#home" data-role="button" data-rel="back" data-theme="z">Close</a></p>  
           </div>
         </div>
    </div>
