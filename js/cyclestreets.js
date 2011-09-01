@@ -35,6 +35,8 @@ var finish_coords = [];
 // Saved routes. 
 var regexForRoutes = /^route-[\d]+$/;
 
+var current_marker = null;
+
 /*********************************************************
 / Styled popup (toast) messages.
 *********************************************************/
@@ -233,7 +235,7 @@ function gToKG(grammes) {
     if (grammes < 1001) {
         return grammes + "g";
     }
-    return (grammes/1000) + "kg";
+    return (grammes/1000).toFixed(2) + "kg";
 }
 function toTitleCase(str) {
     if (str !== null) {
@@ -400,7 +402,7 @@ if (window.google) {
         }
         $('#getting-location').hide();
         if (is_user_position_initialised === false) {
-	        is_user_position_initialised = true;
+            is_user_position_initialised = true;
             if (window.google) {
                 setupMap(lat, lng);
             }
@@ -449,6 +451,78 @@ if (window.google) {
     /* Photomap markers.
     /******************************************************/
 
+    function getIndividualPhoto(photo_id, caption, include_link) {
+        var photo_url = 'http://www.cyclestreets.net/location/';
+        photo_url += photo_id + '/cyclestreets'+ photo_id + '-size640.jpg';
+        var photo_title = 'Photo from CycleStreets';
+        var photo_url = CS_API + 'photo.json';
+        var photodata = {};
+        photodata['key'] = CS_API_KEY;
+        photodata['id'] = photo_id
+        // Get photo information - latlng etc.
+        $.ajax({
+            url: photo_url,
+            data: photodata,
+            dataType: 'jsonp',
+            jsonpCallback: 'photo',
+            success: function(data) {
+               if (data.result.id!=undefined) {
+                   // Get URL, date etc. 
+                   $('#getting-photo').hide();  
+                   var image_url = data.result.imageUrl;
+                   if (typeof(data.result.caption)==='string') {
+                        caption += data.result.caption;
+                   }
+                   var uploaded_by = data.result.username;
+                   var d = new Date(data.result.datetime*1000);
+                   var uploaded_on = d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear();
+                   // Get the best size to display the photo. 
+                   var live_sizes = data.result.thumbnailSizes;
+                   live_sizes = live_sizes.split("|").reverse();
+                   var chosen_size = live_sizes[0];
+                   var viewPortWidth = 600, viewPortHeight=800;
+                   if (typeof window.innerWidth != 'undefined') {
+                        viewPortWidth = window.innerWidth;
+                        viewPortHeight = window.innerHeight;
+                   }
+                   $.each(live_sizes, function(i, val) { 
+                        if (viewPortWidth > val) {
+                            chosen_size = val;
+                            return false;
+                        }
+                   });
+                   image_url = image_url.replace('.jpg','-size' + chosen_size + ".jpg");
+                    $('#photo-image').attr({
+                        src: image_url,
+                        alt: caption,
+                        title: caption
+                    });
+                    $('#photo-image').load(function() {
+                        $('#loading-icon').hide();
+                        //$('#photo-image').show();
+                    });
+                    $('#photo-header').text('Photo ' + data.result.id);
+                    caption += '<br/><em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>";
+                    if (include_link === true) {
+                        caption += '. <a rel="external" href="/location/photo/#' + photo_id + '">Full link to photo page</a> (for tweeting etc).';
+                    }
+                    $('#photo-caption').html(caption);
+              } else {
+                  $('#photo-header').text('Sorry...');
+                  $('#photo-caption').html("Sorry, could not retrieve data for photo number " + photo_id + ".");
+                  $('#loading-icon').hide();
+                  $('#getting-photo').hide();
+              }
+            },
+            error: function(data) {
+                $('#photo-header').text('Sorry...');
+                $('#photo-caption').html("Sorry, could not retrieve data for photo number " + photo_id + ".");
+                $('#loading-icon').hide();
+                $('#getting-photo').hide();
+            }
+       });
+    }
+
     function removeMarkers() {
         for (i in photo_markers) {
           photo_markers[i].setMap(null);
@@ -496,7 +570,8 @@ if (window.google) {
                            });
                            map_marker.setMap(map);                           
                            google.maps.event.addListener(map_marker, 'click', function() {
-                               window.location = '/location/photo/#' + marker.id;
+                               current_marker = marker.id;
+                               $("#lnkDialog").click();
                            });
                            photo_markers.push(map_marker);
                        }
@@ -703,19 +778,23 @@ if (window.google) {
                     // Bind each strategy type to lookup.  
                     $('a#' + strategy).addClass('ui-btn-active');
                     if ($('a#fastest').data("events")===undefined){
-                        $("a#fastest").click(function() {  
+                        $("a#fastest").click(function(event) {  
+                              event.preventDefault();
                              $.mobile.pageLoading();
                              routeWithCycleStreets(null,null,null,null,route_id,'fastest'); } );  
                     }
                     if ($('a#balanced').data("events")===undefined){                
-                        $("a#balanced").click(function() {
+                        $("a#balanced").click(function(event) {
+                            event.preventDefault();
                             $.mobile.pageLoading();
                              routeWithCycleStreets(null,null,null,null,route_id,'balanced');} );
                     }
                     if ($('a#quietest').data("events")===undefined){
-                        $("a#quietest").click(function() { 
+                        $("a#quietest").click(function(event) { 
+                            event.preventDefault();
                             $.mobile.pageLoading();
-                            routeWithCycleStreets(null,null,null,null,route_id,'quietest');} );
+                            routeWithCycleStreets(null,null,null,null,route_id,'quietest');
+                            return false; });
                    }
                     global_page_type = "existing_route";
                     // Check before leaving page now. 
@@ -834,7 +913,7 @@ if (window.google) {
     function createCrosshairs() { 
         var img = $("#crosshairs_img"); 
         // Only use large crosshairs in browsers known to support pointer-events CSS property.
-	    var ua = navigator.userAgent;
+        var ua = navigator.userAgent;
         if ((ua.indexOf("Firefox") !== -1) || (ua.indexOf("Fennec") !== -1) || (ua.indexOf("Chrome") !== -1)
             || (ua.indexOf("WebKit") !== -1)) {
             $(img).attr('src', '/images/crosshairs.png');
@@ -913,6 +992,7 @@ if (window.google) {
                 $("#locate-me span.ui-icon").addClass("ui-icon-plus").removeClass("ui-icon-minus");
                 $("#locate-me .ui-btn-text").text("Loc: On");
             }
+            return false;
         });
         // If we are on a page that requires geolocation, add markers etc.
         if (global_page_type !== "new_route") {  
@@ -927,6 +1007,9 @@ if (window.google) {
         if (global_page_type==="photomap") {    
             google.maps.event.addListener(map, 'tilesloaded', function() {
               addMarkers();
+            });
+            $('#photo').live('pageshow', function (event, ui) { 
+                getIndividualPhoto(current_marker, '', true);
             });
         }
         // If we are on a new route page, add reticle and listeners. 

@@ -10,6 +10,7 @@
 <!-- Scripts --> 
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.5.2.min.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.js"></script>
+<script type="text/javascript" src="/js/cyclestreets.js"></script>
 <script type="text/javascript">
 // Ensure we can use the hash, in order to get photo ID. 
 $.mobile.hashListeningEnabled = false;
@@ -18,8 +19,6 @@ $('document').ready(function() {
     /* Get information from API, display photo and caption.
     /******************************************************/
     $('#getting-photo').show(); 
-    var CS_API_KEY = '68f786d958d1dbfb';
-    var CS_API = 'http://www.cyclestreets.net/api/';
     var delimiter, photo_id, message;
     delimiter = window.location.href.indexOf('#');
     if (delimiter !== -1) {
@@ -34,71 +33,7 @@ $('document').ready(function() {
         caption = unescape(message) + "<br/>";
     }
     if ((photo_id !== undefined) && (photo_id !== "-1")) {
-        var photo_url = 'http://www.cyclestreets.net/location/';
-        photo_url += photo_id + '/cyclestreets'+ photo_id + '-size640.jpg';
-        var photo_title = 'Photo from CycleStreets';
-        var photo_url = CS_API + 'photo.json';
-        var photodata = {};
-        photodata['key'] = CS_API_KEY;
-        photodata['id'] = photo_id
-        // Get photo information - latlng etc.
-        $.ajax({
-            url: photo_url,
-            data: photodata,
-            dataType: 'jsonp',
-            jsonpCallback: 'photo',
-            success: function(data) {
-               if (data.result.id!=undefined) {
-                   // Get URL, date etc. 
-                   $('#getting-photo').hide();  
-                   var image_url = data.result.imageUrl;
-                   if (typeof(data.result.caption)==='string') {
-                        caption += data.result.caption;
-                   }
-                   var uploaded_by = data.result.username;
-                   var d = new Date(data.result.datetime*1000);
-                   var uploaded_on = d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear();
-                   // Get the best size to display the photo. 
-                   var live_sizes = data.result.thumbnailSizes;
-                   live_sizes = live_sizes.split("|").reverse();
-                   var chosen_size = live_sizes[0];
-                   var viewPortWidth = 600, viewPortHeight=800;
-                   if (typeof window.innerWidth != 'undefined') {
-                        viewPortWidth = window.innerWidth;
-                        viewPortHeight = window.innerHeight;
-                   }
-                   $.each(live_sizes, function(i, val) { 
-                        if (viewPortWidth > val) {
-                            chosen_size = val;
-                            return false;
-                        }
-                   });
-                   image_url = image_url.replace('.jpg','-size' + chosen_size + ".jpg");
-                    $('#photo-image').attr({
-                        src: image_url,
-                        alt: caption,
-                        title: caption
-                    });
-                    $('#photo-image').load(function() {
-                        $('#loading-icon').hide();
-                        $('#photo-image').show();
-                    });
-                    $('#photo-header').text('Photo ' + data.result.id);
-                    $('#photo-caption').html(caption + '<br/><em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>");
-              } else {
-			      $('#photo-header').text('Sorry...');
-		          $('#photo-caption').html("Sorry, could not retrieve data for photo number " + photo_id + ".");
-		          $('#loading-icon').hide();
-		          $('#getting-photo').hide();
-              }
-            },
-            error: function(data) {
-			    $('#photo-header').text('Sorry...');
-		        $('#photo-caption').html("Sorry, could not retrieve data for photo number " + photo_id + ".");
-		        $('#loading-icon').hide();
-		        $('#getting-photo').hide();
-	        }
-       });
+        getIndividualPhoto(photo_id, caption, false);
     } else if (message!=undefined) {
 	    $('#photo-header').text('Sorry...');
         $('#photo-caption').html(caption);
@@ -124,7 +59,6 @@ $('document').ready(function() {
     <div data-role="content"> 
         <div id="getting-photo"><br/>Getting photo information...<br/><br/></div>
         <p id="photo-caption"></p> 
-        <p id="photo-attribution"></p> 
         <img src="/images/ajax-loader.gif" alt="Loading icon" id="loading-icon" />
         <img id="photo-image" alt="" class="hidden" />
     </div> 

@@ -2,7 +2,7 @@
 <html> 
 <head>
 <title>CycleStreets &raquo; Photomap</title>
-<meta charset="utf-8">	
+<meta charset="utf-8">  
 <!-- Meta tags to indicate mobile-friendly content -->
 <meta name="HandHeldFriendly" content="true" /> <!-- For BlackBerry -->
 <meta name="mobileoptimized" content="0" /> <!-- For IE Mobile -->
@@ -26,24 +26,41 @@
 <script type="text/javascript" src="/js/cyclestreets.js"></script>
 <script type="text/javascript">
 $('document').ready(function() {
+    $("#photo").dialog({ autoOpen: false });
     setUpPage('photomap');
 });
 </script>
 </head> 
 <body> 
+    
     <div id="home" data-role="page" class="page-map" style="width:100%; height:100%;">
         <div data-role="header" data-theme="z" id="header"> 
-             <a href="index.html" rel="external" class="ui-btn-left" data-icon='home'>Home</a>
+             <a href="/" rel="external" class="ui-btn-left" data-icon='home'>Home</a>
              <h1 id="route-header">Photos near me</h1>
-             <a href="" data-icon="plus" class="ui-btn-right" id="locate-me" class='hidden'>Loc: On</a>
+            <!-- <input type="button" class="ui-btn-right" name="locate-me" id="locate-me" data-icon="plus" data-iconpos="left" value="Loc: On" style="float: right;" /> -->
+             <a href="" rel="external" data-icon="plus" class="ui-btn-right" id="locate-me" class='hidden'>Loc: On</a> 
         </div> 
         <div data-role="content" style="width:100%; height:100%; padding: 0;"> 
         <div id="map-canvas" style="width:100%; height:100%;">
             <div id="getting-location"><br/><br/><br/>
-            <img src="/images/ajax-loader.gif" alt="Loading icon" /></div> 	
+            <img src="/images/ajax-loader.gif" alt="Loading icon" /></div>  
         </div>
             <img src="/images/blue-dot.png" alt="Location blue dot" class="hidden" />
         </div> 
+        <a id='lnkDialog' href="#photo" data-rel="dialog" data-transition="pop" style='display:none;'></a>
     </div>
+        
+    <div data-role="page" id="photo" data-position="inline" data-title="CycleStreets &raquo; Photo"> 
+        <div data-role="header" data-theme="z" data-position="inline"> 
+            <h1 id="photo-header">Photo</h1> 
+        </div> 
+        <div data-role="content"> 
+            <div id="getting-photo"><br/>Getting photo information...<br/><br/></div>
+            <p id="photo-caption"></p> 
+            <img src="/images/ajax-loader.gif" alt="Loading icon" id="loading-icon" />
+            <img id="photo-image" alt="" class="hidden" />
+        </div>
+    </div>
+    
 </body> 
 </html> 
