@@ -23,11 +23,11 @@ if (($_POST["login"])=='register') {
     $message = $obj->{'result'}->{'message'};
     if (isset($obj->{'result'}->{'code'})) {
         if ($obj->{'result'}->{'code'}=="0") {
-            $photo_url = 'photo.html?message=' . rawurlencode($message);        
+            $photo_url = '/location/photo/#-1/' . rawurlencode($message);        
             header("Location: $photo_url");
         } 
     } else {
-        $photo_url = 'photo.html?message=' . rawurlencode('Problem creating new user');     
+        $photo_url = '/location/photo/#-1/' . rawurlencode('Problem creating new user');     
         header("Location: $photo_url");
     }
     curl_close ($ch);
@@ -35,7 +35,7 @@ if (($_POST["login"])=='register') {
 
 if ($_FILES["file"]["error"] > 0) {
     $message = "File error: " . $_FILES["mediaupload"]["error"];
-    $photo_url = 'photo.html?message=' . rawurlencode($message);        
+    $photo_url = '/location/photo/#-1/' . rawurlencode($message);        
     header("Location: $photo_url");
 } else {
     $file = $_FILES['mediaupload'];
@@ -64,7 +64,7 @@ if ($_FILES["file"]["error"] > 0) {
     $obj = json_decode($response);
     if (isset($obj->{'error'}->{'message'})) {
         $message = $obj->{'error'}->{'message'};
-        $photo_url = 'photo.html?message=' . rawurlencode($message);        
+        $photo_url = '/location/photo/#-1/' . rawurlencode($message);        
         header("Location: $photo_url");
     } else {
         $photo_url = $obj->{'result'}->{'url'};
@@ -72,7 +72,7 @@ if ($_FILES["file"]["error"] > 0) {
         $photo_url = explode("/",$photo_url);
         $num = (count($photo_url) - 2);
         $photo_id = $photo_url[$num];
-        $photo_url = 'photo.html?p=' . rawurlencode($photo_id) . '&message=' . rawurlencode('Photo successfully uploaded');
+        $photo_url = '/location/photo/#' . rawurlencode($photo_id) . '/' . rawurlencode('Photo successfully uploaded');
         header("Location: $photo_url");
     }
 }
