@@ -87,22 +87,23 @@ function supportsLocalStorage() {
     }
 }
 
-function setItem(key, value) {
-    if (!supportsLocalStorage()) { createCookie(key, value); }
-    try {
-        value = JSON.stringify(value);
-        window.localStorage.setItem(key, value); 
-        //console.log('setItem: ' + key + " " + value);
-    } catch (e) {
-        //toastMessage('Sorry, item cannot be saved.'); 
-    }
-    return true;
-}
-
 function getItem(key) {
     if (!supportsLocalStorage()) { return readCookie(key); }
     var val = window.localStorage.getItem(key);
     return eval('(' + val + ')');
+}
+
+function setItem(key, value) {
+    if (!supportsLocalStorage()) { createCookie(key, value); }
+    try {
+        value = JSON.stringify(value);
+        if (getItem(key) === null) { 
+            window.localStorage.setItem(key, value); 
+        }
+    } catch (e) {
+        //toastMessage('Sorry, item cannot be saved.'); 
+    }
+    return true;
 }
 
 function removeItem(key) {
@@ -117,12 +118,26 @@ function removeItem(key) {
 function getRouteKeys() {
     if (!supportsLocalStorage()) { return false; }
     var ls = window.localStorage, routes = [], matched_route = {}, key, i;
+    // Look through all our localStorage objects for routes. 
     for (i = 0; i < ls.length; i++) {
         key = ls.key(i);
         if (key.match(regexForRoutes) !== null) {
             routes.push(key);
         } 
     }
+    // Sort by reverse ID.
+    function compare(a,b) {
+        var n1 = a.match(/\d+$/);
+        n1 = parseInt(n1, 10);
+        var n2 = b.match(/\d+$/);
+        n2 = parseInt(n2, 10);
+        if (n1 < n2) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+    routes.sort(compare); 
     return routes;
 }
 
@@ -159,22 +174,22 @@ function getUrlVars() {
     var vars = [], delimiter, hash, hashes, i;
     delimiter = window.location.href.indexOf('#');
     if (delimiter !== -1) {
-	    hashes = window.location.href.slice(delimiter + 1).split('/');
-	    vars['r'] = hashes[0];
-	    if (hashes.length > 1) {
-	        vars['p'] = hashes[1];
-	    }
-	} else { 
-		delimiter = window.location.href.indexOf('?');
-		if (delimiter !== -1) {
-			hashes = window.location.href.slice(delimiter + 1).split('&');
-		    for (i = 0; i < hashes.length; i++) {
-		        hash = hashes[i].split('=');
-		        vars.push(hash[0]);
-		        vars[hash[0]] = hash[1];
-		    }
-		}
-	}
+        hashes = window.location.href.slice(delimiter + 1).split('/');
+        vars['r'] = hashes[0];
+        if (hashes.length > 1) {
+            vars['p'] = hashes[1];
+        }
+    } else { 
+        delimiter = window.location.href.indexOf('?');
+        if (delimiter !== -1) {
+            hashes = window.location.href.slice(delimiter + 1).split('&');
+            for (i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+        }
+    }
     return vars;
 }
 
@@ -215,10 +230,10 @@ function kmToMph(kph, mph) {
 }
 
 function gToKG(grammes) {
-	if (grammes < 1001) {
-		return grammes + "g";
-	}
-	return (grammes/1000) + "kg";
+    if (grammes < 1001) {
+        return grammes + "g";
+    }
+    return (grammes/1000) + "kg";
 }
 function toTitleCase(str) {
     if (str !== null) {
@@ -355,7 +370,7 @@ if (window.google) {
            new google.maps.Point(0,0),
            new google.maps.Point(8,8));
         mylatlng = new google.maps.LatLng(lat, lng);
-	    position_marker = new google.maps.Marker({
+        position_marker = new google.maps.Marker({
             position: mylatlng, 
             map: map,
             icon: bluedot,
@@ -385,10 +400,10 @@ if (window.google) {
         }
         $('#getting-location').hide();
         if (is_user_position_initialised === false) {
+	        is_user_position_initialised = true;
             if (window.google) {
                 setupMap(lat, lng);
             }
-            is_user_position_initialised = true;
         }
     }   
 
@@ -396,9 +411,9 @@ if (window.google) {
     function gpsFail(err) {  
         //console.log('gpsFail', err.code); 
         // Warn about errors IFF the user is not already located.
-        if (is_user_position_initialised==false) {
-	        $('#locate-me').hide(); 
-	        current_latlng = new google.maps.LatLng(52.2025441, 0.1312368);
+        if (is_user_position_initialised === false) {
+            $('#locate-me').hide(); 
+            current_latlng = new google.maps.LatLng(52.2025441, 0.1312368);
             if (err.code==1) {
                 toastMessage('Using CycleStreets default location...');
                 setupMap(52.2025441, 0.1312368);
@@ -481,7 +496,7 @@ if (window.google) {
                            });
                            map_marker.setMap(map);                           
                            google.maps.event.addListener(map_marker, 'click', function() {
-                               window.location = '/photo.html?p=' + marker.id;
+                               window.location = '/location/photo/#' + marker.id;
                            });
                            photo_markers.push(map_marker);
                        }
@@ -598,6 +613,7 @@ if (window.google) {
                     ls_values['distance'] = metresToMiles(route_distance);
                     ls_values['strategy'] = journeydata['plan'];
                     ls_values['speed'] = speed;
+                    ls_values['date'] = new Date();
                     setItem(ls_name,ls_values);
                     // Update hash and header.
                     document.title = 'CycleStreets \u00bb ' + toTitleCase(journeydata['plan']) + ' route from ' + route_from + ' to ' + route_to;
@@ -817,8 +833,13 @@ if (window.google) {
     // CSS for crosshairs. 
     function createCrosshairs() { 
         var img = $("#crosshairs_img"); 
+        // Only use large crosshairs in browsers known to support pointer-events CSS property.
+	    var ua = navigator.userAgent;
+        if ((ua.indexOf("Firefox") !== -1) || (ua.indexOf("Fennec") !== -1) || (ua.indexOf("Chrome") !== -1)
+            || (ua.indexOf("WebKit") !== -1)) {
+            $(img).attr('src', '/images/crosshairs.png');
+        }
         var map_height = $('#map-canvas').height();
-        //console.log('map height = ' + map_height);
         if (map_height!==0) {
             $("<img/>")
                 .attr("src", $(img).attr("src"))
@@ -842,7 +863,7 @@ if (window.google) {
 
     // Set up the map and its listeners, once we know its centre. 
     function setupMap(lat, lng) {
-	    //console.log('setupMap');
+        //console.log('setupMap');
         $('#getting-location').hide();
         var loc = new google.maps.LatLng(lat, lng);
         // Basic setup. 
@@ -895,12 +916,12 @@ if (window.google) {
         });
         // If we are on a page that requires geolocation, add markers etc.
         if (global_page_type !== "new_route") {  
-	        if (current_latlng!==null) {
+            if ((current_latlng !== null) && (is_user_position_initialised !== false)) {
                 addPosMarker(current_latlng.lat(), current_latlng.lng());
                 $('#locate-me').show();
             } else { 
                 $('#locate-me').hide();
-	        }
+            }
         }
         // If we are on the photomap page, add markers. 
         if (global_page_type==="photomap") {    
@@ -926,9 +947,9 @@ if (window.google) {
                         return false;
                     }
                     $('#marker-instructions .ui-btn-text').text(COMPLETE_ROUTE);
-			        $('#marker-instructions').css({
-			            'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
-			        });
+                    $('#marker-instructions').css({
+                        'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+                    });
                     $('#marker-instructions').show(); 
                     // Set up the 'remove marker' button.
                     $('#marker-remove').unbind('click');
@@ -946,15 +967,15 @@ if (window.google) {
                                 }
                                 $(this).hide();
                                 $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
-						        $('#marker-instructions').css({
-						            'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
-						        });
+                                $('#marker-instructions').css({
+                                    'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+                                });
                             });
                         }
                         $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
-				        $('#marker-instructions').css({
-				            'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
-				        });
+                        $('#marker-instructions').css({
+                            'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+                        });
                     });
                 } else {
                 // Add first marker. 
@@ -980,7 +1001,6 @@ if (window.google) {
             createCrosshairs();
             $('#marker-instructions').show();
         }
-        return true;
     }
 
 }
@@ -990,12 +1010,12 @@ if (window.google) {
 
 // Called on init and on window resize. 
 function organizeCSS(page_type) {
-	//console.log('organizeCSS');
+    //console.log('organizeCSS');
     var window_height;
     $("div:jqmData(role='page')").first().height($(window).height());
     if (page_type === "photomap") {
-	    $('#instructions-footer').hide();
-	    $('#navbar-strategy').hide();
+        $('#instructions-footer').hide();
+        $('#navbar-strategy').hide();
         window_height = $(window).height() - $("div:jqmData(role='header')").first().outerHeight();
         $("div:jqmData(role='content')").first().height(window_height);
         $("#map-canvas").height(window_height);
