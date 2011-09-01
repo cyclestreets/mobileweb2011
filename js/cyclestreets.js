@@ -851,7 +851,7 @@ if (window.google) {
                     $('#crosshairs_img').css({
                         'position': 'absolute',
                         'top': top_position,
-                        'left': left_position + 3,
+                        'left': left_position,
                         'margin': 0,
                         'padding': 0,
                         'z-index': '1000'
