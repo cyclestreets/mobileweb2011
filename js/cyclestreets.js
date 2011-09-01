@@ -778,20 +778,20 @@ if (window.google) {
                     // Bind each strategy type to lookup.  
                     $('a#' + strategy).addClass('ui-btn-active');
                     if ($('a#fastest').data("events")===undefined){
-                        $("a#fastest").click(function(event) {  
-                              event.preventDefault();
+                        $("a#fastest").bind('tap', function(e){  
+                             e.preventDefault();
                              $.mobile.pageLoading();
                              routeWithCycleStreets(null,null,null,null,route_id,'fastest'); } );  
                     }
                     if ($('a#balanced').data("events")===undefined){                
-                        $("a#balanced").click(function(event) {
-                            event.preventDefault();
+                        $("a#balanced").bind('tap', function(e){ 
+                            e.preventDefault();
                             $.mobile.pageLoading();
                              routeWithCycleStreets(null,null,null,null,route_id,'balanced');} );
                     }
                     if ($('a#quietest').data("events")===undefined){
-                        $("a#quietest").click(function(event) { 
-                            event.preventDefault();
+                        $("a#quietest").bind('tap', function(e){  
+                            e.preventDefault();
                             $.mobile.pageLoading();
                             routeWithCycleStreets(null,null,null,null,route_id,'quietest');
                             return false; });
@@ -975,7 +975,7 @@ if (window.google) {
                     setItem("maptype", this.getMapTypeId());
                  });
         // Geolocate button: toggle geotracking. 
-        $("#locate-me").click(function(){
+        $("#locate-me").bind('tap', function(e){ 
             if (watchId !== null) {
                 toastMessage('No longer tracking your location');
                 $("#locate-me span.ui-icon").addClass("ui-icon-minus").removeClass("ui-icon-plus");
