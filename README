@@ -2,11 +2,4 @@ Mobile HTML version of CycleStreets - in beta.
 
 Created using jQuery Mobile.
 
-Uses experimental crosshairs feature.
-
-TODO (order of priority):
-
-* Check user is in UK, fail gracefully otherwise. 
-* Use 'heading' feature in geolocation to display the user's direction of travel.
-* Add support for offline routes with cache-manifest (if we can cache map tiles in sufficient numbers). (UPDATE: Android cache is 2MB, each map tile is about 20KB, so probably not.)
-* Add dates on saved routes. 
+See About page for credits, GitHub issues list for pre- and post-release issues. 
