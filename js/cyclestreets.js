@@ -201,7 +201,7 @@ function secondsToMinutes(seconds) {
     if (seconds < 10) {
         seconds = "0" + seconds;
     }
-    return (minutes + ":" + seconds)
+    return (minutes + ":" + seconds);
 }
 
 function metresToMiles(metres) {
@@ -338,7 +338,7 @@ if (window.google) {
     // Create marker of appropriate type, used on route page. 
     function createMapMarker (location, marker_type) {
         var marker_icon; 
-        if (marker_type == "finish") { 
+        if (marker_type === "finish") { 
             marker_icon = new google.maps.MarkerImage('/images/cs_finish.png',
               new google.maps.Size(50, 55),
               new google.maps.Point(0, 0),
@@ -452,6 +452,7 @@ if (window.google) {
     /******************************************************/
 
     function getIndividualPhoto(photo_id, caption, include_link) {
+        //console.log('getIndividualPhoto');
         var photo_url = 'http://www.cyclestreets.net/location/';
         photo_url += photo_id + '/cyclestreets'+ photo_id + '-size640.jpg';
         var photo_title = 'Photo from CycleStreets';
