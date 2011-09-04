@@ -572,7 +572,10 @@ if (window.google) {
                            map_marker.setMap(map);                           
                            google.maps.event.addListener(map_marker, 'click', function() {
                                current_marker = marker.id;
-                               $("#lnkDialog").click();
+                               $.mobile.changePage( "#photo", {
+                               	transition: "pop",
+                               	changeHash: false
+                               });
                            });
                            photo_markers.push(map_marker);
                        }
