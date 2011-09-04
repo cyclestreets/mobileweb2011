@@ -2,20 +2,17 @@
 <html> 
 <head>
 <title>CycleStreets &raquo; Route on map</title> 
-<meta charset="utf-8"> 
+<meta charset="utf-8">  
+<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+<link href="favicon.ico" rel="icon" type="image/x-icon" />
 <!-- Meta tags to indicate mobile-friendly content -->
 <meta name="HandHeldFriendly" content="true" /> <!-- For BlackBerry -->
 <meta name="mobileoptimized" content="0" /> <!-- For IE Mobile -->
 <!-- iOS startup icons -->
-<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-<link rel="apple-touch-icon" href="apple-touch-icon-57x57.png" />
-<link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png" />
-<link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png" />
-<link rel="apple-touch-startup-image" href="apple-touch-startup-image-320x460.png" />
-<link rel="apple-touch-startup-image" sizes="768x1004" href="apple-touch-startup-image-768x1004.png" />
-<link href="/images/favicon.ico" rel="icon" type="image/x-icon" />
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+<link rel="apple-touch-startup-image" href="/images/apple-touch-startup-image.png" />
 <!-- Stylesheets --> 
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.css" />
 <link rel="stylesheet" href="/css/cyclestreets.css" />
@@ -28,14 +25,6 @@
 // Ensure we can write to the hash to save routes. 
 $.mobile.hashListeningEnabled = false;
 $('document').ready(function() {
-	// When ready...
-	window.addEventListener("load",function() {
-	  // Set a timeout...
-	  setTimeout(function(){
-	    // Hide the address bar!
-	    window.scrollTo(0, 1);
-	  }, 0);
-	});
 	setUpPage('route');       
 });
 </script>
