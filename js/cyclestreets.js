@@ -505,7 +505,7 @@ if (window.google) {
                     $('#photo-header').text('Photo ' + data.result.id);
                     caption += '<br/><em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>";
                     if (include_link === true) {
-                        caption += '. <a rel="external" href="/location/photo/#' + photo_id + '">Full link to photo page</a> (for tweeting etc).';
+                        caption += '. <a rel="external" href="/location/#' + photo_id + '">Full link to photo page</a> (for tweeting etc).';
                     }
                     $('#photo-caption').html(caption);
               } else {
