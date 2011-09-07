@@ -451,7 +451,7 @@ if (window.google) {
     /* Photomap markers.
     /******************************************************/
 
-    function getIndividualPhoto(photo_id, caption, include_link) {
+    function getIndividualPhoto(photo_id, caption) {
         //console.log('getIndividualPhoto');
         var photo_url = 'http://www.cyclestreets.net/location/';
         photo_url += photo_id + '/cyclestreets'+ photo_id + '-size640.jpg';
@@ -504,9 +504,10 @@ if (window.google) {
                     });
                     $('#photo-header').text('Photo ' + data.result.id);
                     caption += '<br/><em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>";
-                    if (include_link === true) {
-                        caption += '. <a rel="external" href="/location/#' + photo_id + '">Full link to photo page</a> (for tweeting etc).';
-                    }
+                    $("a#twitter_link").attr("href", "http://twitter.com/?status=Great+photo+on+%40CycleStreets%21+http%3A%2F%2Fwww.cyclestreets.net%2Flocation%2F" + photo_id + "%2F");
+                    $("a#facebook_link").attr("href", "http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.cyclestreets.net%2Flocation%2F" + photo_id + "%2F");
+                    $("a#permalink").attr("href", "http://www.cyclestreets.net/location/" + photo_id + "/");
+                    $('#social_links').show();
                     $('#photo-caption').html(caption);
               } else {
                   $('#photo-header').text('Sorry...');
@@ -1013,7 +1014,7 @@ if (window.google) {
               addMarkers();
             });
             $('#photo').live('pageshow', function (event, ui) { 
-                getIndividualPhoto(current_marker, '', true);
+                getIndividualPhoto(current_marker, '');
             });
         }
         // If we are on a new route page, add reticle and listeners. 
