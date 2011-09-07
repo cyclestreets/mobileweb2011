@@ -1150,6 +1150,9 @@ function organizeCSS(page_type) {
 }
 
 function setUpPage(page_type) {
+  
+    // Delete redirection cookie, if it exists. 
+    document.cookie = "nomobileredirect=-1;domain=.cyclestreets.net;path=/";
 
     global_page_type = page_type;
 
