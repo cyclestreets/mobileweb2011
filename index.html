@@ -146,9 +146,12 @@ $(document).ready(function() {
 $(document).ready(function() {
 	
     // Detect iPhone/Android OS and suggest native apps.    
+    // Also, disable photo upload for iPhone/iPad/iPod.
     var ua = navigator.userAgent;
     var uachecker = {
         iphone: ua.match(/iPhone/),
+        ipad: ua.match(/iPad/),
+        ipod: ua.match(/iPod/),
         android: ua.match(/Android/)
     };
     if (uachecker.android) {
@@ -161,7 +164,10 @@ $(document).ready(function() {
         $('#native-app').show();
         $('#uploadfields').hide();    
         $('#not-available-apple').show(); 
-    }      
+    } else if ((uachecker.ipad) || (uachecker.ipod)) {
+	    $('#uploadfields').hide();   
+        $('#not-available-apple').show(); 	
+    }  
     $('#hide-native').click(function() {
         $('#native-app').fadeOut();
     });
