@@ -3,7 +3,7 @@
 <head> 
 <title>CycleStreets mobile web site</title>
 <meta charset="utf-8" />
-<meta name='description' content='Plan cycling journeys on the move with CycleStreets Mobile' />
+<meta name='description' content='Plan cycle journeys on the move with CycleStreets Mobile. Route from A to B on a map and see turn-by-turn OpenStreetMap directions, with estimated journey times. Set your preferred speed and route type. Upload photos of cycling issues and see other photos from the CycleStreets community.' />
 <meta name="author" content="Anna Powell-Smith" />
 <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" />
 <link href="favicon.ico" rel="icon" type="image/x-icon" />
@@ -146,9 +146,12 @@ $(document).ready(function() {
 $(document).ready(function() {
 	
     // Detect iPhone/Android OS and suggest native apps.    
+    // Also, disable photo upload for iPhone/iPad/iPod.
     var ua = navigator.userAgent;
     var uachecker = {
         iphone: ua.match(/iPhone/),
+        ipad: ua.match(/iPad/),
+        ipod: ua.match(/iPod/),
         android: ua.match(/Android/)
     };
     if (uachecker.android) {
@@ -161,7 +164,10 @@ $(document).ready(function() {
         $('#native-app').show();
         $('#uploadfields').hide();    
         $('#not-available-apple').show(); 
-    }      
+    } else if ((uachecker.ipad) || (uachecker.ipod)) {
+	    $('#uploadfields').hide();   
+        $('#not-available-apple').show(); 	
+    }  
     $('#hide-native').click(function() {
         $('#native-app').fadeOut();
     });

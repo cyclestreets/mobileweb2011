@@ -3,7 +3,7 @@
 <head>
 <title>CycleStreets &raquo; Photomap</title>
 <meta charset="utf-8" />  
-<meta name='description' content='Cycling photos uploaded to CycleStreets' />
+<meta name='description' content='Cycling photos uploaded to CycleStreets - see photos near you on a map' />
 <meta name="author" content="Anna Powell-Smith" />
 <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" />
 <link href="favicon.ico" rel="icon" type="image/x-icon" />
@@ -56,6 +56,11 @@ $('document').ready(function() {
         <div data-role="content"> 
             <div id="getting-photo"><br/>Getting photo information...<br/><br/></div>
             <p id="photo-caption"></p> 
+	        <p id="social_links" class="hidden">
+		       <a rel="external" target="_blank" href="#" id="twitter_link"><img src="http://www.cyclestreets.net/images/icons/extras/twitter.png" alt="Twitter icon" /> Tweet</a> |
+		       <a rel="external" target="_blank" href="#" id="facebook_link"><img src="http://www.cyclestreets.net/images/icons/extras/facebook.png" alt="Facebook icon" /> Share</a> |
+		       <a rel="external" target="_blank" href="#" id="permalink">Permalink</a>
+		    </p>
             <img src="/images/ajax-loader.gif" alt="Loading icon" id="loading-icon" />
             <img id="photo-image" alt="" class="hidden" />
         </div>
