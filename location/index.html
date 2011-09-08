@@ -46,7 +46,7 @@ $('document').ready(function() {
         caption = unescape(message) + "<br/>";
     }
     if ((photo_id !== undefined) && (photo_id !== "-1")) {
-        getIndividualPhoto(photo_id, caption, false);
+        getIndividualPhoto(photo_id, caption);
     } else if (message!=undefined) {
 	    $('#photo-header').text('Sorry...');
         $('#photo-caption').html(caption);

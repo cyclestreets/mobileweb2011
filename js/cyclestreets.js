@@ -249,6 +249,84 @@ function toTitleCase(str) {
 / Everything map-related. 
 *********************************************************/
 
+//******************************************************
+/* Get an individual photo.
+/******************************************************/
+
+function getIndividualPhoto(photo_id, caption) {
+    //console.log('getIndividualPhoto');
+    var photo_url = 'http://www.cyclestreets.net/location/';
+    photo_url += photo_id + '/cyclestreets'+ photo_id + '-size640.jpg';
+    var photo_title = 'Photo from CycleStreets';
+    var photo_url = CS_API + 'photo.json';
+    var photodata = {};
+    photodata['key'] = CS_API_KEY;
+    photodata['id'] = photo_id
+    // Get photo information - latlng etc.
+    $.ajax({
+        url: photo_url,
+        data: photodata,
+        dataType: 'jsonp',
+        jsonpCallback: 'photo',
+        success: function(data) {
+           if (data.result.id!=undefined) {
+               // Get URL, date etc. 
+               $('#getting-photo').hide();  
+               var image_url = data.result.imageUrl;
+               if (typeof(data.result.caption)==='string') {
+                    caption += data.result.caption;
+               }
+               var uploaded_by = data.result.username;
+               var d = new Date(data.result.datetime*1000);
+               var uploaded_on = d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear();
+               // Get the best size to display the photo. 
+               var live_sizes = data.result.thumbnailSizes;
+               live_sizes = live_sizes.split("|").reverse();
+               var chosen_size = live_sizes[0];
+               var viewPortWidth = 600, viewPortHeight=800;
+               if (typeof window.innerWidth != 'undefined') {
+                    viewPortWidth = window.innerWidth;
+                    viewPortHeight = window.innerHeight;
+               }
+               $.each(live_sizes, function(i, val) { 
+                    if (viewPortWidth > val) {
+                        chosen_size = val;
+                        return false;
+                    }
+               });
+               image_url = image_url.replace('.jpg','-size' + chosen_size + ".jpg");
+                $('#photo-image').attr({
+                    src: image_url,
+                    alt: caption,
+                    title: caption
+                });
+                $('#photo-image').load(function() {
+                    $('#loading-icon').hide();
+                    //$('#photo-image').show();
+                });
+                $('#photo-header').text('Photo ' + data.result.id);
+                caption += '<br/><em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>";
+                $("a#twitter_link").attr("href", "http://twitter.com/?status=Great+photo+on+%40CycleStreets%21+http%3A%2F%2Fwww.cyclestreets.net%2Flocation%2F" + photo_id + "%2F");
+                $("a#facebook_link").attr("href", "http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.cyclestreets.net%2Flocation%2F" + photo_id + "%2F");
+                $("a#permalink").attr("href", "http://www.cyclestreets.net/location/" + photo_id + "/");
+                $('#social_links').show();
+                $('#photo-caption').html(caption);
+          } else {
+              $('#photo-header').text('Sorry...');
+              $('#photo-caption').html("Sorry, could not retrieve data for photo number " + photo_id + ".");
+              $('#loading-icon').hide();
+              $('#getting-photo').hide();
+          }
+        },
+        error: function(data) {
+            $('#photo-header').text('Sorry...');
+            $('#photo-caption').html("Sorry, could not retrieve data for photo number " + photo_id + ".");
+            $('#loading-icon').hide();
+            $('#getting-photo').hide();
+        }
+   });
+}
+
 if (window.google) {
 
     // OSM/OCM/OS map types. 
@@ -445,84 +523,6 @@ if (window.google) {
                 position_marker.setMap(null); 
             }
         }
-    }
-
-    //******************************************************
-    /* Photomap markers.
-    /******************************************************/
-
-    function getIndividualPhoto(photo_id, caption) {
-        //console.log('getIndividualPhoto');
-        var photo_url = 'http://www.cyclestreets.net/location/';
-        photo_url += photo_id + '/cyclestreets'+ photo_id + '-size640.jpg';
-        var photo_title = 'Photo from CycleStreets';
-        var photo_url = CS_API + 'photo.json';
-        var photodata = {};
-        photodata['key'] = CS_API_KEY;
-        photodata['id'] = photo_id
-        // Get photo information - latlng etc.
-        $.ajax({
-            url: photo_url,
-            data: photodata,
-            dataType: 'jsonp',
-            jsonpCallback: 'photo',
-            success: function(data) {
-               if (data.result.id!=undefined) {
-                   // Get URL, date etc. 
-                   $('#getting-photo').hide();  
-                   var image_url = data.result.imageUrl;
-                   if (typeof(data.result.caption)==='string') {
-                        caption += data.result.caption;
-                   }
-                   var uploaded_by = data.result.username;
-                   var d = new Date(data.result.datetime*1000);
-                   var uploaded_on = d.getDay() + "/" + d.getMonth() + "/" + d.getFullYear();
-                   // Get the best size to display the photo. 
-                   var live_sizes = data.result.thumbnailSizes;
-                   live_sizes = live_sizes.split("|").reverse();
-                   var chosen_size = live_sizes[0];
-                   var viewPortWidth = 600, viewPortHeight=800;
-                   if (typeof window.innerWidth != 'undefined') {
-                        viewPortWidth = window.innerWidth;
-                        viewPortHeight = window.innerHeight;
-                   }
-                   $.each(live_sizes, function(i, val) { 
-                        if (viewPortWidth > val) {
-                            chosen_size = val;
-                            return false;
-                        }
-                   });
-                   image_url = image_url.replace('.jpg','-size' + chosen_size + ".jpg");
-                    $('#photo-image').attr({
-                        src: image_url,
-                        alt: caption,
-                        title: caption
-                    });
-                    $('#photo-image').load(function() {
-                        $('#loading-icon').hide();
-                        //$('#photo-image').show();
-                    });
-                    $('#photo-header').text('Photo ' + data.result.id);
-                    caption += '<br/><em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>";
-                    $("a#twitter_link").attr("href", "http://twitter.com/?status=Great+photo+on+%40CycleStreets%21+http%3A%2F%2Fwww.cyclestreets.net%2Flocation%2F" + photo_id + "%2F");
-                    $("a#facebook_link").attr("href", "http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fwww.cyclestreets.net%2Flocation%2F" + photo_id + "%2F");
-                    $("a#permalink").attr("href", "http://www.cyclestreets.net/location/" + photo_id + "/");
-                    $('#social_links').show();
-                    $('#photo-caption').html(caption);
-              } else {
-                  $('#photo-header').text('Sorry...');
-                  $('#photo-caption').html("Sorry, could not retrieve data for photo number " + photo_id + ".");
-                  $('#loading-icon').hide();
-                  $('#getting-photo').hide();
-              }
-            },
-            error: function(data) {
-                $('#photo-header').text('Sorry...');
-                $('#photo-caption').html("Sorry, could not retrieve data for photo number " + photo_id + ".");
-                $('#loading-icon').hide();
-                $('#getting-photo').hide();
-            }
-       });
     }
 
     function removeMarkers() {
@@ -1092,6 +1092,7 @@ if (window.google) {
     }
 
 }
+
 //******************************************************
 /* Page layout and setup. 
 /******************************************************/
