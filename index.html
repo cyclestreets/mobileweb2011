@@ -158,16 +158,13 @@ $('#home').live('pagecreate',function(event){
         $('#user-agent-link').attr('href','https://market.android.com/details?id=net.cyclestreets');
         $('#market-name').text("Android Market");
         $('#native-app').show();
-    } else if (uachecker.iphone) {
+    } else if ((uachecker.iphone) || (uachecker.ipad) || (uachecker.ipod)) {
         $('#user-agent-link').attr('href','http://itunes.apple.com/app/ishare/id391984737');
         $('#market-name').text("iTunes");
         $('#native-app').show();
         $('#uploadfields').hide();    
         $('#not-available-apple').show(); 
-    } else if ((uachecker.ipad) || (uachecker.ipod)) {
-	    $('#uploadfields').hide();   
-        $('#not-available-apple').show(); 	
-    }  
+    } 
     $('#hide-native').click(function() {
         $('#native-app').fadeOut();
     });
