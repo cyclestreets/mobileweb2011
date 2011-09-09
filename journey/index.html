@@ -28,7 +28,7 @@
 <script type="text/javascript">
 // Ensure we can write to the hash to save routes. 
 $.mobile.hashListeningEnabled = false;
-$('document').ready(function() {
+$('#home').live('pagecreate',function(event){
 	setUpPage('route');       
 });
 </script>

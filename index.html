@@ -143,7 +143,7 @@ $(document).ready(function() {
 <script type="text/javascript" src="http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js"></script>
 <script type="text/javascript">
 
-$(document).ready(function() {
+$('#home').live('pagecreate',function(event){
 	
     // Detect iPhone/Android OS and suggest native apps.    
     // Also, disable photo upload for iPhone/iPad/iPod.
@@ -158,16 +158,13 @@ $(document).ready(function() {
         $('#user-agent-link').attr('href','https://market.android.com/details?id=net.cyclestreets');
         $('#market-name').text("Android Market");
         $('#native-app').show();
-    } else if (uachecker.iphone) {
+    } else if ((uachecker.iphone) || (uachecker.ipad) || (uachecker.ipod)) {
         $('#user-agent-link').attr('href','http://itunes.apple.com/app/ishare/id391984737');
         $('#market-name').text("iTunes");
         $('#native-app').show();
         $('#uploadfields').hide();    
         $('#not-available-apple').show(); 
-    } else if ((uachecker.ipad) || (uachecker.ipod)) {
-	    $('#uploadfields').hide();   
-        $('#not-available-apple').show(); 	
-    }  
+    } 
     $('#hide-native').click(function() {
         $('#native-app').fadeOut();
     });

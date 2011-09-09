@@ -533,6 +533,7 @@ if (window.google) {
 
     function addMarkers() { 
         //console.log('addMarkers');
+        $.mobile.showPageLoadingMsg();
         var bounds = map.getBounds();
         var map_zoom = map.getZoom();
         var ne = bounds.getNorthEast();
@@ -589,14 +590,17 @@ if (window.google) {
                    } else {
                        addNewMarker(data.marker);
                    }
+                   $.mobile.hidePageLoadingMsg();
                } else {
                   // Empty results. 
+                  $.mobile.hidePageLoadingMsg();
                   if (global_page_type=="photomap") {
                       toastMessage("No photos found in this area - try zooming out");       
                   } 
             }
            },
            error: function() {
+               $.mobile.hidePageLoadingMsg();
                toastMessage("Sorry, error retrieving photos!");
            }
         });
@@ -609,7 +613,7 @@ if (window.google) {
     // Route journey using CycleStreets API, display map. 
     function routeWithCycleStreets(start_lat, start_lng, finish_lat, finish_lng, route_id, strategy) {
        // console.log('routeWithCycleStreets');
-        $.mobile.pageLoading(); 
+        $.mobile.showPageLoadingMsg();
         $('#marker-instructions').hide();
         $('#marker-remove').hide();
         $('#route-header').text("Fetching route...");
@@ -785,19 +789,19 @@ if (window.google) {
                     if ($('a#fastest').data("events")===undefined){
                         $("a#fastest").bind('tap', function(e){  
                              e.preventDefault();
-                             $.mobile.pageLoading();
+                             $.mobile.showPageLoadingMsg();
                              routeWithCycleStreets(null,null,null,null,route_id,'fastest'); } );  
                     }
                     if ($('a#balanced').data("events")===undefined){                
                         $("a#balanced").bind('tap', function(e){ 
                             e.preventDefault();
-                            $.mobile.pageLoading();
+                            $.mobile.showPageLoadingMsg();
                              routeWithCycleStreets(null,null,null,null,route_id,'balanced');} );
                     }
                     if ($('a#quietest').data("events")===undefined){
                         $("a#quietest").bind('tap', function(e){  
                             e.preventDefault();
-                            $.mobile.pageLoading();
+                            $.mobile.showPageLoadingMsg();
                             routeWithCycleStreets(null,null,null,null,route_id,'quietest');
                             return false; });
                    }
@@ -807,20 +811,20 @@ if (window.google) {
                     $('#home-button').click(function() { 
                         return confirm('Leave route? You can find it again in your saved routes.');
                     });
-                    $.mobile.pageLoading(true); 
+                    $.mobile.hidePageLoadingMsg();
                     return true;
                 } else {
                     toastMessage("Sorry, unable to find route!");
                     $('#route-header').text("Routing problem");
                     $('#getting-location').html("<p>Sorry, please try again.</p>");
-                    $.mobile.pageLoading(true);
+                    $.mobile.hidePageLoadingMsg();
                     return false;                   
                 }
                 } else {
                     toastMessage("Sorry, unable to find route!");
                     $('#route-header').text("Routing problem");
                     $('#getting-location').html("<p>Sorry, please try again.</p>");
-                    $.mobile.pageLoading(true);
+                    $.mobile.hidePageLoadingMsg();
                     return false;                    
                 }
             },
@@ -828,7 +832,7 @@ if (window.google) {
                 toastMessage("Sorry, there's a problem with the routing server.");
                 $('#route-header').text("Routing problem");
                 $('#getting-location').html("<p>Sorry, please try again.</p>");
-                $.mobile.pageLoading(true);
+                $.mobile.hidePageLoadingMsg();
                 return false;
             }
         });
@@ -862,13 +866,13 @@ if (window.google) {
                   }
                 } else {
                     toastMessage("Sorry, unable to geocode " + address);
-                    $.mobile.pageLoading(true); 
+                    $.mobile.hidePageLoadingMsg();
                     return false;
                 }
             },
             error: function(data) {
                 toastMessage("Sorry, there's a problem with the geocoding server.");
-                $.mobile.pageLoading(true); 
+                $.mobile.hidePageLoadingMsg();
                 return false;
             }   
         }); 
@@ -880,7 +884,7 @@ if (window.google) {
         if ((place_from=='')||(place_to=='')) {
             if (current_latlng==null) {
                 toastMessage('Sorry, location not found, please try again in a few seconds.');
-                $.mobile.pageLoading(true); 
+                $.mobile.hidePageLoadingMsg();
                 return false;
             } else {
                 if (place_from=='') {
