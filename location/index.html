@@ -27,7 +27,7 @@
 <script type="text/javascript">
 // Ensure we can use the hash, in order to get photo ID. 
 $.mobile.hashListeningEnabled = false;
-$('document').ready(function() {
+$('#display-photo').live('pagecreate',function(event){
     //******************************************************
     /* Get information from API, display photo and caption.
     /******************************************************/
