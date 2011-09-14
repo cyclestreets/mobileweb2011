@@ -621,6 +621,10 @@ if (window.google) {
         $('#marker-instructions').hide();
         $('#marker-remove').hide();
         $('#route-header').text("Fetching route...");
+        if ((start_lat===undefined) || (start_lng===undefined) || (finish_lat===undefined) || (finish_lng===undefined)) { 
+            toastMessage("Sorry, there's a problem with the route markers. Please refresh page and try again.");
+            return false;
+        }
         var journey_url = CS_API + 'journey.json';
         var journeydata = {};
         journeydata['key'] = CS_API_KEY;
@@ -1046,7 +1050,7 @@ if (window.google) {
         });
         // If we are on a new route page, add reticle and listeners. 
         $('#marker-instructions').click(function() {
-             if (finish_point!==null) {
+             if ((finish_point!==null) && (start_point!=null)) {
                  $('#route-header').text('Getting route...');
                  routeWithCycleStreets(start_point.lat(),start_point.lng(),finish_point.lat(),finish_point.lng(),null,null);
               } else if (start_point!==null) {
