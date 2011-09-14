@@ -1046,7 +1046,7 @@ if (window.google) {
         });
         // If we are on a new route page, add reticle and listeners. 
         $('#marker-instructions').click(function() {
-             if (finish_point!==null) {
+             if ((finish_point!==null) && (start_point!=null)) {
                  $('#route-header').text('Getting route...');
                  routeWithCycleStreets(start_point.lat(),start_point.lng(),finish_point.lat(),finish_point.lng(),null,null);
               } else if (start_point!==null) {
