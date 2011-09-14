@@ -621,6 +621,10 @@ if (window.google) {
         $('#marker-instructions').hide();
         $('#marker-remove').hide();
         $('#route-header').text("Fetching route...");
+        if ((start_lat===undefined) || (start_lng===undefined) || (finish_lat===undefined) || (finish_lng===undefined)) { 
+            toastMessage("Sorry, there's a problem with the route markers. Please refresh page and try again.");
+            return false;
+        }
         var journey_url = CS_API + 'journey.json';
         var journeydata = {};
         journeydata['key'] = CS_API_KEY;
