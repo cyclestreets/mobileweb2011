@@ -42,6 +42,8 @@ var current_marker = null;
 *********************************************************/
 
 function toastMessage(msg) {
+    // Hide existing toast messages. 
+    $('div.ui-loader').hide();
     var msg_text = "<div class='ui-loader ui-overlay-shadow ui-body-e ui-corner-all'>";
     msg_text += "<h1>" + msg + "</h1></div>";
     $(msg_text).css({ "display": "block", "opacity": 0.96, "z-index": 1000, "top": $(window).scrollTop() + 150 })
@@ -58,6 +60,7 @@ function toastMessage(msg) {
 *********************************************************/
 
 function readCookie(name) {
+    //console.log('readCookie: ' + name);
     var nameEQ = name + "=", ca = document.cookie.split(';'), i, c;
     for (i = 0; i < ca.length; i++) {
         c = ca[i];
@@ -71,9 +74,10 @@ function readCookie(name) {
     return null;
 }
 
-function createCookie(name, value) {
+function createCookie(name, value, expires) {
+    //console.log('createCookie: ' + name + ", " + escape(value) + ", " + expires);
     if (readCookie(name) !== value) {
-        document.cookie = name + "=" + value + "; path=/";
+        document.cookie = name + "=" + escape(value) + "; path=/"+ ((expires == null) ? "" : "; expires=" + expires.toGMTString()); 
     }
 }
 
@@ -952,11 +956,22 @@ if (window.google) {
     // Set up the map and its listeners, once we know its centre. 
     function setupMap(lat, lng) {
         //console.log('setupMap');
+        // Check if we know the user's recent location: use that instead, if it exists.
+        var mapzoom = 14;
+        var last_location_known = readCookie('map_last_location');
+        if (last_location_known != null) {
+            toastMessage("Using your most recent location...");
+            var loadedstring = readCookie("map_last_location"); 
+            var splitstr = loadedstring.split("_"); 
+            lat = parseFloat(splitstr[0]);
+            lng = parseFloat(splitstr[1]);
+            mapzoom = parseFloat(splitstr[2]); 
+        }
         $('#getting-location').hide();
         var loc = new google.maps.LatLng(lat, lng);
         // Basic setup. 
         var myOptions = {
-            zoom: 14,
+            zoom: mapzoom,
             center: loc,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             panControl: false,
@@ -1021,6 +1036,14 @@ if (window.google) {
                 getIndividualPhoto(current_marker, '');
             });
         }
+        // Add an event listener: save latest location, so we can reload it if the user navigates away from the page. 
+        google.maps.event.addListener(map, 'tilesloaded', function() {
+            var mapcenter=map.getCenter(); 
+            var cookiestring = mapcenter.lat() + "_" + mapcenter.lng() + "_" + map.getZoom(); 
+            var exp = new Date(); //set new date object 
+            exp.setTime(exp.getTime() + (1000 * 60 * 5)); //set it 5 minutes ahead
+            createCookie("map_last_location",cookiestring, exp); 
+        });
         // If we are on a new route page, add reticle and listeners. 
         $('#marker-instructions').click(function() {
              if (finish_point!==null) {
