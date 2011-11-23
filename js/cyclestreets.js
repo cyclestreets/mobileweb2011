@@ -259,8 +259,11 @@ function toTitleCase(str) {
 
 function getIndividualPhoto(photo_id, caption) {
     //console.log('getIndividualPhoto');
-    var photo_url = 'http://www.cyclestreets.net/location/';
-    photo_url += photo_id + '/cyclestreets'+ photo_id + '-size640.jpg';
+
+    // Maplets have this form:
+    // http://www.cyclestreets.net/location/34751/photomaplet34751zoom16.png
+    var mapletUrl = 'http://www.cyclestreets.net/location/' + photo_id + '/photomaplet'+ photo_id + 'zoom';
+
     var photo_title = 'Photo from CycleStreets';
     var photo_url = CS_API + 'photo.json';
     var photodata = {};
@@ -315,6 +318,12 @@ function getIndividualPhoto(photo_id, caption) {
                 $("a#permalink").attr("href", "http://www.cyclestreets.net/location/" + photo_id + "/");
                 $('#social_links').show();
                 $('#photo-caption').html(caption);
+
+	       // Street, district and distant maplets
+                $('#photomaplet16').attr({src: mapletUrl + '16.png'});
+                $('#photomaplet13').attr({src: mapletUrl + '13.png'});
+                $('#photomaplet10').attr({src: mapletUrl + '10.png'});
+
           } else {
               $('#photo-header').text('Sorry...');
               $('#photo-caption').html("Sorry, could not retrieve data for photo number " + photo_id + ".");
