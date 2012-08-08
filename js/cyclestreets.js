@@ -4,9 +4,9 @@ var CS_API = 'http://www.cyclestreets.net/api/';
 var global_page_type = null;
 
 // Route markers and instructions. 
-var SET_FIRST_MARKER = '1. Click to set start';
-var SET_SECOND_MARKER = '2. Click to set end';
-var COMPLETE_ROUTE = '3. Click to route';
+var SET_FIRST_MARKER = '1. Tap to set start';
+var SET_SECOND_MARKER = '2. Tap to set finish';
+var COMPLETE_ROUTE = '3. Tap to route';
 var start_marker = null;
 var finish_marker = null;
 var start_point = null;
@@ -1081,7 +1081,7 @@ if (window.google) {
                     $('#marker-instructions').show(); 
                     // Set up the 'remove marker' button.
                     $('#marker-remove').unbind('click');
-                    $('#marker-remove .ui-btn-text').text('Remove end point');
+                    $('#marker-remove .ui-btn-text').text('Remove finish point');
                     $('#marker-remove').show();
                     $('#marker-remove').click(function() { 
                         if (finish_point!==null) {
