@@ -22,7 +22,7 @@ var route_data;
 var routePath = null;
 var individualPath = null;
 var routetype = null;
-var speed = null;
+var speedMph = null;
 var photo_markers = [];
 
 // Geolocation. 
@@ -97,6 +97,9 @@ function supportsLocalStorage() {
     }
 }
 
+/**
+ * Gets the value of a locally stored setting, such as the cyclingspeed
+*/
 function getItem(key) {
     if (!supportsLocalStorage()) { return readCookie(key); }
     var val = window.localStorage.getItem(key);
@@ -217,25 +220,17 @@ function metresToMiles(metres) {
     return miles.toFixed(2);
 }
 
-function kmToMph(kph, mph) {
-    if (kph !== null) {
-        switch (kph) {
-        case 16:
-            return 10;
-        case 24:
-            return 15;
-        default:
-            return 12;    
-        }    
-    } else {
-        switch (mph) {
-        case 10:
-            return 16;
-        case 15:
-            return 24;
-        default:
-            return 20;
-        }
+/**
+* Convert speed in miles per hour to km/h, for the purposes of routing. 
+*/
+function kmph(mph) {
+    switch (mph) {
+    case 10:
+        return 16;
+    case 15:
+        return 24;
+    default:
+        return 20;
     }
 }
 
@@ -629,21 +624,38 @@ if (window.google) {
 
     // Route journey using CycleStreets API, display map. 
     function routeWithCycleStreets(start_lat, start_lng, finish_lat, finish_lng, route_id, strategy) {
+
        // console.log('routeWithCycleStreets');
+
+	// Animation that shows the page is loading
         $.mobile.showPageLoadingMsg();
+
+	// Hide the main buttons
         $('#marker-instructions').hide();
         $('#marker-remove').hide();
+
+	// Update title
         $('#route-header').text("Fetching route...");
+
+	// Check end points are set
         if ((start_lat===undefined) || (start_lng===undefined) || (finish_lat===undefined) || (finish_lng===undefined)) { 
             toastMessage("Sorry, there's a problem with the route markers. Please refresh page and try again.");
             return false;
         }
+
+	// API url for journey planning
         var journey_url = CS_API + 'journey.json';
+
+	// Start an array of journey planner data
         var journeydata = {};
+
+	// Add the API key
         journeydata['key'] = CS_API_KEY;
-        speed = getItem("cyclingspeed");
-        if (speed==null) {
-          speed = "12";
+
+	// Speed of cycling (a global), read from the prefs page
+        speedMph = getItem("cyclingspeed");
+        if (speedMph==null) {
+          speedMph = "12";
         }
         if (route_id!==null) {
             // Look up by route. 
@@ -659,9 +671,7 @@ if (window.google) {
                 }   
             }  
             journeydata['plan'] = strategy;
-            // Convert speed to kph, for the purposes of routing. 
-            var speed_kph = kmToMph(null,speed);
-            journeydata['speed'] = speed_kph;
+            journeydata['speed'] = kmph(speedMph);
         }
         $.ajax({
             url: journey_url,
@@ -701,7 +711,7 @@ if (window.google) {
                     var co2g = markers[0]['@attributes'].grammesCO2saved;
                     var calories = markers[0]['@attributes'].calories;
                     $('#route-header').text(toTitleCase(strategy) + ": " + secondsToMinutes(route_time) + ' min');
-                    var summary_html = metresToMiles(route_distance) + ' miles at ' + speed + ' mph<br/>';
+                    var summary_html = metresToMiles(route_distance) + ' miles at ' + speedMph + ' mph<br/>';
                     summary_html += calories + " kcal, " + gToKG(co2g) + " CO<sub>2</sub> saved"
                     $('#summary').html(summary_html);
                     $('#prev-segment').hide();
@@ -714,7 +724,7 @@ if (window.google) {
                     ls_values['time'] = secondsToMinutes(route_time);
                     ls_values['distance'] = metresToMiles(route_distance);
                     ls_values['strategy'] = journeydata['plan'];
-                    ls_values['speed'] = speed;
+                    ls_values['speed'] = speedMph;
                     ls_values['date'] = new Date();
                     setItem(ls_name,ls_values);
                     // Update hash and header.
