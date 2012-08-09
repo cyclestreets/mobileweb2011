@@ -646,10 +646,7 @@ if (window.google) {
             journeydata['itinerary']=route_id;
             journeydata['plan']=strategy;
         } else {
-            journeydata['start_latitude'] = start_lat;
-            journeydata['start_longitude'] = start_lng;
-            journeydata['finish_latitude'] = finish_lat;                    
-            journeydata['finish_longitude'] = finish_lng;
+            journeydata['itinerarypoints'] = start_lng + ',' + start_lat + '|' + finish_lng + ',' + finish_lat;
             if (strategy===null) {
                 if (getItem("routetype")!==null) {
                    strategy = getItem("routetype");
