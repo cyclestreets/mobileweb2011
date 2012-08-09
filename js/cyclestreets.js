@@ -7,10 +7,8 @@ var global_page_type = null;
 var SET_FIRST_MARKER = '1. Tap to set start';
 var SET_SECOND_MARKER = '2. Tap to set finish';
 var COMPLETE_ROUTE = '3. Tap to route';
-var start_marker = null;
-var finish_marker = null;
-var start_point = null;
-var finish_point = null;
+// List of waypoints
+var itineraryMarkers = [];
 
 // Route display. 
 var map;
@@ -426,18 +424,13 @@ if (window.google) {
 
     // Create marker of appropriate type, used on route page. 
     function createMapMarker (location, marker_type) {
+
         var marker_icon; 
-        if (marker_type === "finish") { 
-            marker_icon = new google.maps.MarkerImage('/images/cs_finish.png',
-              new google.maps.Size(50, 55),
-              new google.maps.Point(0, 0),
-              new google.maps.Point(13, 53));
-        } else {
-            marker_icon = new google.maps.MarkerImage('/images/cs_start.png',
-              new google.maps.Size(50, 55),
-              new google.maps.Point(0, 0),
-              new google.maps.Point(13, 53));            
-        }
+        marker_icon = new google.maps.MarkerImage(marker_type === "finish" ? '/images/cs_finish.png' : '/images/cs_start.png',
+						  new google.maps.Size(50, 55),
+						  new google.maps.Point(0, 0),
+						  new google.maps.Point(13, 53));
+	
         var map_marker = new google.maps.Marker({
             position: location, 
             map: map,
@@ -708,16 +701,18 @@ if (window.google) {
                     var finish_lng = markers[0]['@attributes'].finish_longitude;
                     var startlatlng = new google.maps.LatLng(start_lat, start_lng);
                     var finishlatlng = new google.maps.LatLng(finish_lat, finish_lng);
+
                     // Set up map, if we haven't already, and markers.
                     if (map===undefined) {
+
                         setupMap(start_lat, start_lng);
-                        if (start_marker==null) {
-                            start_marker = createMapMarker(startlatlng, 'start');
-                        }
-                        if (finish_marker==null) {
-                            finish_marker = createMapMarker(finishlatlng, 'finish');    
-                        }
+
+			// #waypoints Add all the waypoints
+			// Note this may be un-necessary (but non-problematic) duplication as the markers may already be present - if done by route on map.
+			createMapMarker(startlatlng, 'start');
+			createMapMarker(finishlatlng, 'finish');    
                     }
+
                     // Show route summary information. 
                     var route_distance = markers[0]['@attributes'].length;
                     var route_time = markers[0]['@attributes'].time;
@@ -1100,29 +1095,30 @@ if (window.google) {
         $('#marker-instructions').click(function() {
 
 	    // If end points are set plan a route.
-             if ((finish_point!==null) && (start_point!=null)) {
+	    // #waypoints Will need a new button to distinguish bewteen planning a route and adding further waypoints.
+	    if (itineraryMarkers.length > 1) {
                  $('#route-header').text('Getting route...');
-                 routeWithCycleStreets(start_point.lat(),start_point.lng(),finish_point.lat(),finish_point.lng(),null,null);
+                 routeWithCycleStreets(itineraryMarkers[0].position.lat(),itineraryMarkers[0].position.lng(),itineraryMarkers[1].position.lat(),itineraryMarkers[1].position.lng(),null,null);
 		 return;
               }
 
 	    // If just the start has been set add a finish
-	    if (start_point!==null) {
+	    if (itineraryMarkers.length > 0) {
 
-                // Add finish point
-                finish_point = map.getCenter();
-                finish_marker = createMapMarker(finish_point, 'finish'); 
+		// The new position
+		var waypointPosition = map.getCenter();
 
-                // Check the two markers aren't too close together. 
-                var dist = finish_point.distanceFrom(start_point);
+                // Check the new position is not too close to the last
+                var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(waypointPosition);
                 if (dist < 200) {
                     toastMessage('Sorry, those points are too close together!');
-                    finish_point = null;
-                    finish_marker.setMap(null);
 
 		    // Exit
                     return;
                 }
+
+                // Add finish point
+		itineraryMarkers.push(createMapMarker(waypointPosition, 'finish'));
 
 		// Setup the button to offer route planning
                 $('#marker-instructions .ui-btn-text').text(COMPLETE_ROUTE);
@@ -1136,22 +1132,29 @@ if (window.google) {
                 $('#marker-remove .ui-btn-text').text('Remove finish point');
                 $('#marker-remove').show();
                 $('#marker-remove').click(function() { 
-                    if (finish_point!==null) {
-                        finish_point = null;
-                        finish_marker.setMap(null);
+
+		    // Remove the last waypoint
+		    if (itineraryMarkers.length > 0) {
+			var lastItineraryMarker = itineraryMarkers.pop();
+			lastItineraryMarker.setMap(null);
+
                         $('#marker-remove .ui-btn-text').text('Remove start point');
                         $('#marker-remove').click(function() { 
-                            if (start_point!==null) {
-                                start_point = null;
-                                start_marker.setMap(null);
-                            }
-                            $(this).hide();
+
+			    // Remove the latest marker
+			    if (itineraryMarkers.length > 0) {
+				var lastItineraryMarker = itineraryMarkers.pop();
+				lastItineraryMarker.setMap(null);
+			    }
+
+                            $(this).hide();			    
                             $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
                             $('#marker-instructions').css({
                                 'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
                             });
                         });
                     }
+
                     $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
                     $('#marker-instructions').css({
                         'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
@@ -1161,10 +1164,9 @@ if (window.google) {
 		return;
                 }
 
-            // Add start marker. 
-            // Record the latlng of the map center.
-            start_point = map.getCenter();
-            start_marker = createMapMarker(start_point, 'start'); 
+            // Add start marker
+	    itineraryMarkers.push(createMapMarker(map.getCenter(), 'start'));
+
             $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
             $('#marker-instructions').show(); 
 
@@ -1172,10 +1174,12 @@ if (window.google) {
             $('#marker-remove').show();
             $('#marker-remove').unbind('click');
             $('#marker-remove').click(function() { 
-                if (start_point!==null) {
-                    start_point = null;
-                    start_marker.setMap(null);
-                }
+		// Remove the latest marker
+		if (itineraryMarkers.length > 0) {
+		    var lastItineraryMarker = itineraryMarkers.pop();
+		    lastItineraryMarker.setMap(null);
+		}
+
                 $(this).hide();
                 $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
             });
