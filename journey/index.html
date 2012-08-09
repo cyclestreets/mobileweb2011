@@ -3,7 +3,7 @@
 <head>
 <title>CycleStreets &raquo; Route on map</title> 
 <meta charset="utf-8" />  
-<meta name='description' content='Plan cycle journeys on the move with CycleStreets Mobile. Route from A to B on a map and see turn-by-turn OpenStreetMap directions, with estimated journey times. Set your preferred speed and route type.' />
+<meta name="description" content="Plan cycle journeys on the move with CycleStreets Mobile. Route from A to B on a map and see turn-by-turn OpenStreetMap directions, with estimated journey times. Set your preferred speed and route type." />
 <meta name="author" content="Anna Powell-Smith" />
 <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" />
 <link href="favicon.ico" rel="icon" type="image/x-icon" />
@@ -37,11 +37,11 @@ $('#home').live('pagecreate',function(event){
     
     <div id="home" data-role="page" class="page-map" style="width:100%; height:100%;">
         <div data-role="header" data-theme="z" id="first-header"> 
-             <a href="/" rel="external" class="ui-btn-left" data-icon='home' id="home-button">Home</a>
+             <a href="/" rel="external" class="ui-btn-left" data-icon="home" id="home-button">Home</a>
              <h1 id="route-header">Route on map</h1>
-             <a href="" data-icon="plus" class="ui-btn-right" id="locate-me" class='hidden'>Loc: On</a>
-           <div data-role="navbar" data-theme="c" id='navbar-strategy'>
-            <ul id='route-strategy'>
+             <a href="" data-icon="plus" class="ui-btn-right" id="locate-me" class="hidden">Loc: On</a>
+           <div data-role="navbar" data-theme="c" id="navbar-strategy">
+            <ul id="route-strategy">
                 <li><a id="quietest">Quietest</a></li>
                 <li><a id="balanced">Balanced</a></li>
                 <li><a id="fastest">Fastest</a></li>
@@ -62,18 +62,17 @@ $('#home').live('pagecreate',function(event){
 <img src="/images/cs_finish.png" alt="Finish marker" class="hidden" />
         </div> 
         
-        <div data-role="footer" id="instructions-footer" data-theme='z' class='hidden'>
+        <div data-role="footer" id="instructions-footer" data-theme="z" class="hidden">
                 <table class="routesegment"><tr><td class="button left">
                 <span id="prev-segment" data-role="button" class="left" data-icon="arrow-l">Prev</span>
                 </td><td class="center-text">
                 <span id="summary"></span>
-                <span id='individualsegment'></span>
+                <span id="individualsegment"></span>
                 </td><td class="button">
                 <span id="next-segment" data-role="button" class="right" data-icon="arrow-r">Details</span>
                 </td></tr></table>
         </div> 
     </div>
-    
-</body> 
-</html> 
 
+</body>
+</html>
