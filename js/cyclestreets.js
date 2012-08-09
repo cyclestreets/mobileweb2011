@@ -622,10 +622,16 @@ if (window.google) {
     /* Routing functions.
     /******************************************************/    
 
+    // Get a route from an existing itinerary
+    function routeFromExistingItinerary(route_id, strategy) {
+	routeWithCycleStreets(null,null,null,null, route_id, strategy);
+    }
+
+
     // Route journey using CycleStreets API, display map. 
     function routeWithCycleStreets(start_lat, start_lng, finish_lat, finish_lng, route_id, strategy) {
 
-       // console.log('routeWithCycleStreets');
+	// console.log('routeWithCycleStreets');
 
 	// Animation that shows the page is loading
         $.mobile.showPageLoadingMsg();
@@ -657,11 +663,17 @@ if (window.google) {
         if (speedMph==null) {
           speedMph = "12";
         }
+
+	// Has an existing route id been requested?
         if (route_id!==null) {
-            // Look up by route. 
+
+            // Set the parameters to ask for the existing route
             journeydata['itinerary']=route_id;
             journeydata['plan']=strategy;
+
         } else {
+
+	    // Arrange the parameters to plan a new route
             journeydata['itinerarypoints'] = start_lng + ',' + start_lat + '|' + finish_lng + ',' + finish_lat;
             if (strategy===null) {
                 if (getItem("routetype")!==null) {
@@ -673,6 +685,8 @@ if (window.google) {
             journeydata['plan'] = strategy;
             journeydata['speed'] = kmph(speedMph);
         }
+
+	// Request the route
         $.ajax({
             url: journey_url,
             data: journeydata,
@@ -812,28 +826,30 @@ if (window.google) {
                     $("div:jqmData(role='content')").first().height(window_height);
                     $("#map-canvas").height(window_height);
                     map.fitBounds(findBounds(coords));
+
                     // Bind each strategy type to lookup.  
                     $('a#' + strategy).addClass('ui-btn-active');
                     if ($('a#fastest').data("events")===undefined){
                         $("a#fastest").bind('tap', function(e){  
                              e.preventDefault();
                              $.mobile.showPageLoadingMsg();
-                             routeWithCycleStreets(null,null,null,null,route_id,'fastest'); } );  
+                             routeFromExistingItinerary(route_id,'fastest'); } );  
                     }
                     if ($('a#balanced').data("events")===undefined){                
                         $("a#balanced").bind('tap', function(e){ 
                             e.preventDefault();
                             $.mobile.showPageLoadingMsg();
-                             routeWithCycleStreets(null,null,null,null,route_id,'balanced');} );
+                             routeFromExistingItinerary(route_id,'balanced');} );
                     }
                     if ($('a#quietest').data("events")===undefined){
                         $("a#quietest").bind('tap', function(e){  
                             e.preventDefault();
                             $.mobile.showPageLoadingMsg();
-                            routeWithCycleStreets(null,null,null,null,route_id,'quietest');
+                            routeFromExistingItinerary(route_id,'quietest');
                             return false; });
                    }
                     global_page_type = "existing_route";
+
                     // Check before leaving page now. 
                     $('#home-button').unbind('click');
                     $('#home-button').click(function() { 
@@ -1239,7 +1255,7 @@ function setUpPage(page_type) {
             } 
             global_page_type = "existing_route";
             is_user_position_initialised = true;
-            routeWithCycleStreets(null,null,null,null,route_id,strategy);
+            routeFromExistingItinerary(route_id,strategy);
         } else if ((getparams['s_lat'] !== undefined) && (getparams['s_lng'] !== undefined) && (getparams['f_lat'] !== undefined) && (getparams['f_lng'] !== undefined)){ 
             global_page_type = "existing_route";
             is_user_position_initialised = true;
