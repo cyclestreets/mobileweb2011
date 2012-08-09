@@ -35,6 +35,9 @@ var position_marker = null;
 var geodata = {};
 var start_coords = [];
 var finish_coords = [];
+// CycleStreets API key
+geodata['key'] = CS_API_KEY;
+
 
 // Saved routes. 
 var regexForRoutes = /^route-[\d]+$/;
@@ -922,22 +925,33 @@ if (window.google) {
         }); 
     }
 
+    /**
+     * This function supports the route by address feature at /#route-by-address
+     */
     function geocodeWithCycleStreets(place_from,place_to) {
-        //console.log('geocodeWithCycleStreets');
-        geodata['key'] = CS_API_KEY;
+
+	// Trace
+        // console.log('geocodeWithCycleStreets');
+
+	// Check from / to args
         if ((place_from=='')||(place_to=='')) {
+
+	    // If the current location is not known then empty locations cannot be defaulted
+	    // !! It is not clear how this ever gets set properly.
             if (current_latlng==null) {
                 toastMessage('Sorry, location not found, please try again in a few seconds.');
                 $.mobile.hidePageLoadingMsg();
-                return false;
+                return;
+	    }
+
+	    // Use the current location for the unspecified end
+            if (place_from=='') {
+                start_coords = [current_latlng[0], current_latlng[1]];  
             } else {
-                if (place_from=='') {
-                    start_coords = [current_latlng[0], current_latlng[1]];  
-                } else {
-                    finish_coords = [current_latlng[0], current_latlng[1]];         
-                }
+                finish_coords = [current_latlng[0], current_latlng[1]];         
             }
         }
+
         // The geocoder doesn't absolutely require these values,
         //  but add them if we do have a location fix. 
         if (current_latlng!==null) {
