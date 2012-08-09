@@ -18,7 +18,7 @@ var route_data;
 var routePath = null;
 var individualPath = null;
 var routetype = null;
-var speed = null;
+var speedMph = null;
 var photo_markers = [];
 
 // Geolocation. 
@@ -31,6 +31,9 @@ var position_marker = null;
 var geodata = {};
 var start_coords = [];
 var finish_coords = [];
+// CycleStreets API key
+geodata['key'] = CS_API_KEY;
+
 
 // Saved routes. 
 var regexForRoutes = /^route-[\d]+$/;
@@ -93,6 +96,9 @@ function supportsLocalStorage() {
     }
 }
 
+/**
+ * Gets the value of a locally stored setting, such as the cyclingspeed
+*/
 function getItem(key) {
     if (!supportsLocalStorage()) { return readCookie(key); }
     var val = window.localStorage.getItem(key);
@@ -213,25 +219,17 @@ function metresToMiles(metres) {
     return miles.toFixed(2);
 }
 
-function kmToMph(kph, mph) {
-    if (kph !== null) {
-        switch (kph) {
-        case 16:
-            return 10;
-        case 24:
-            return 15;
-        default:
-            return 12;    
-        }    
-    } else {
-        switch (mph) {
-        case 10:
-            return 16;
-        case 15:
-            return 24;
-        default:
-            return 20;
-        }
+/**
+* Convert speed in miles per hour to km/h, for the purposes of routing. 
+*/
+function kmph(mph) {
+    switch (mph) {
+    case 10:
+        return 16;
+    case 15:
+        return 24;
+    default:
+        return 20;
     }
 }
 
@@ -623,29 +621,58 @@ if (window.google) {
     /* Routing functions.
     /******************************************************/    
 
+    // Get a route from an existing itinerary
+    function routeFromExistingItinerary(route_id, strategy) {
+	routeWithCycleStreets(null,null,null,null, route_id, strategy);
+    }
+
+
     // Route journey using CycleStreets API, display map. 
     function routeWithCycleStreets(start_lat, start_lng, finish_lat, finish_lng, route_id, strategy) {
-       // console.log('routeWithCycleStreets');
+
+	// console.log('routeWithCycleStreets');
+
+	// Animation that shows the page is loading
         $.mobile.showPageLoadingMsg();
+
+	// Hide the main buttons
         $('#marker-instructions').hide();
         $('#marker-remove').hide();
+
+	// Update title
         $('#route-header').text("Fetching route...");
+
+	// Check end points are set
         if ((start_lat===undefined) || (start_lng===undefined) || (finish_lat===undefined) || (finish_lng===undefined)) { 
             toastMessage("Sorry, there's a problem with the route markers. Please refresh page and try again.");
             return false;
         }
+
+	// API url for journey planning
         var journey_url = CS_API + 'journey.json';
+
+	// Start an array of journey planner data
         var journeydata = {};
+
+	// Add the API key
         journeydata['key'] = CS_API_KEY;
-        speed = getItem("cyclingspeed");
-        if (speed==null) {
-          speed = "12";
+
+	// Speed of cycling (a global), read from the prefs page
+        speedMph = getItem("cyclingspeed");
+        if (speedMph==null) {
+          speedMph = "12";
         }
+
+	// Has an existing route id been requested?
         if (route_id!==null) {
-            // Look up by route. 
+
+            // Set the parameters to ask for the existing route
             journeydata['itinerary']=route_id;
             journeydata['plan']=strategy;
+
         } else {
+
+	    // Arrange the parameters to plan a new route
             journeydata['itinerarypoints'] = start_lng + ',' + start_lat + '|' + finish_lng + ',' + finish_lat;
             if (strategy===null) {
                 if (getItem("routetype")!==null) {
@@ -655,10 +682,10 @@ if (window.google) {
                 }   
             }  
             journeydata['plan'] = strategy;
-            // Convert speed to kph, for the purposes of routing. 
-            var speed_kph = kmToMph(null,speed);
-            journeydata['speed'] = speed_kph;
+            journeydata['speed'] = kmph(speedMph);
         }
+
+	// Request the route
         $.ajax({
             url: journey_url,
             data: journeydata,
@@ -697,7 +724,7 @@ if (window.google) {
                     var co2g = markers[0]['@attributes'].grammesCO2saved;
                     var calories = markers[0]['@attributes'].calories;
                     $('#route-header').text(toTitleCase(strategy) + ": " + secondsToMinutes(route_time) + ' min');
-                    var summary_html = metresToMiles(route_distance) + ' miles at ' + speed + ' mph<br/>';
+                    var summary_html = metresToMiles(route_distance) + ' miles at ' + speedMph + ' mph<br/>';
                     summary_html += calories + " kcal, " + gToKG(co2g) + " CO<sub>2</sub> saved"
                     $('#summary').html(summary_html);
                     $('#prev-segment').hide();
@@ -710,7 +737,7 @@ if (window.google) {
                     ls_values['time'] = secondsToMinutes(route_time);
                     ls_values['distance'] = metresToMiles(route_distance);
                     ls_values['strategy'] = journeydata['plan'];
-                    ls_values['speed'] = speed;
+                    ls_values['speed'] = speedMph;
                     ls_values['date'] = new Date();
                     setItem(ls_name,ls_values);
                     // Update hash and header.
@@ -798,28 +825,30 @@ if (window.google) {
                     $("div:jqmData(role='content')").first().height(window_height);
                     $("#map-canvas").height(window_height);
                     map.fitBounds(findBounds(coords));
+
                     // Bind each strategy type to lookup.  
                     $('a#' + strategy).addClass('ui-btn-active');
                     if ($('a#fastest').data("events")===undefined){
                         $("a#fastest").bind('tap', function(e){  
                              e.preventDefault();
                              $.mobile.showPageLoadingMsg();
-                             routeWithCycleStreets(null,null,null,null,route_id,'fastest'); } );  
+                             routeFromExistingItinerary(route_id,'fastest'); } );  
                     }
                     if ($('a#balanced').data("events")===undefined){                
                         $("a#balanced").bind('tap', function(e){ 
                             e.preventDefault();
                             $.mobile.showPageLoadingMsg();
-                             routeWithCycleStreets(null,null,null,null,route_id,'balanced');} );
+                             routeFromExistingItinerary(route_id,'balanced');} );
                     }
                     if ($('a#quietest').data("events")===undefined){
                         $("a#quietest").bind('tap', function(e){  
                             e.preventDefault();
                             $.mobile.showPageLoadingMsg();
-                            routeWithCycleStreets(null,null,null,null,route_id,'quietest');
+                            routeFromExistingItinerary(route_id,'quietest');
                             return false; });
                    }
                     global_page_type = "existing_route";
+
                     // Check before leaving page now. 
                     $('#home-button').unbind('click');
                     $('#home-button').click(function() { 
@@ -892,22 +921,33 @@ if (window.google) {
         }); 
     }
 
+    /**
+     * This function supports the route by address feature at /#route-by-address
+     */
     function geocodeWithCycleStreets(place_from,place_to) {
-        //console.log('geocodeWithCycleStreets');
-        geodata['key'] = CS_API_KEY;
+
+	// Trace
+        // console.log('geocodeWithCycleStreets');
+
+	// Check from / to args
         if ((place_from=='')||(place_to=='')) {
+
+	    // If the current location is not known then empty locations cannot be defaulted
+	    // !! It is not clear how this ever gets set properly.
             if (current_latlng==null) {
                 toastMessage('Sorry, location not found, please try again in a few seconds.');
                 $.mobile.hidePageLoadingMsg();
-                return false;
+                return;
+	    }
+
+	    // Use the current location for the unspecified end
+            if (place_from=='') {
+                start_coords = [current_latlng[0], current_latlng[1]];  
             } else {
-                if (place_from=='') {
-                    start_coords = [current_latlng[0], current_latlng[1]];  
-                } else {
-                    finish_coords = [current_latlng[0], current_latlng[1]];         
-                }
+                finish_coords = [current_latlng[0], current_latlng[1]];         
             }
         }
+
         // The geocoder doesn't absolutely require these values,
         //  but add them if we do have a location fix. 
         if (current_latlng!==null) {
@@ -1054,74 +1094,94 @@ if (window.google) {
             exp.setTime(exp.getTime() + (1000 * 60 * 5)); //set it 5 minutes ahead
             createCookie("map_last_location",cookiestring, exp); 
         });
+
+	// Click function for the 'Tap to set start' button sets up the 'New route page'.
         // If we are on a new route page, add reticle and listeners. 
         $('#marker-instructions').click(function() {
+
+	    // If end points are set plan a route.
              if ((finish_point!==null) && (start_point!=null)) {
                  $('#route-header').text('Getting route...');
                  routeWithCycleStreets(start_point.lat(),start_point.lng(),finish_point.lat(),finish_point.lng(),null,null);
-              } else if (start_point!==null) {
+		 return;
+              }
+
+	    // If just the start has been set add a finish
+	    if (start_point!==null) {
+
                 // Add finish point
-                    finish_point = map.getCenter();
-                    finish_marker = createMapMarker(finish_point, 'finish'); 
-                    // Check the two markers aren't too close together. 
-                    var dist = finish_point.distanceFrom(start_point);
-                    if (dist < 200) {
-                        toastMessage('Sorry, those points are too close together!');
+                finish_point = map.getCenter();
+                finish_marker = createMapMarker(finish_point, 'finish'); 
+
+                // Check the two markers aren't too close together. 
+                var dist = finish_point.distanceFrom(start_point);
+                if (dist < 200) {
+                    toastMessage('Sorry, those points are too close together!');
+                    finish_point = null;
+                    finish_marker.setMap(null);
+
+		    // Exit
+                    return;
+                }
+
+		// Setup the button to offer route planning
+                $('#marker-instructions .ui-btn-text').text(COMPLETE_ROUTE);
+                $('#marker-instructions').css({
+                    'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+                });
+                $('#marker-instructions').show(); 
+
+                // Set up the 'remove marker' button.
+                $('#marker-remove').unbind('click');
+                $('#marker-remove .ui-btn-text').text('Remove finish point');
+                $('#marker-remove').show();
+                $('#marker-remove').click(function() { 
+                    if (finish_point!==null) {
                         finish_point = null;
                         finish_marker.setMap(null);
-                        return false;
+                        $('#marker-remove .ui-btn-text').text('Remove start point');
+                        $('#marker-remove').click(function() { 
+                            if (start_point!==null) {
+                                start_point = null;
+                                start_marker.setMap(null);
+                            }
+                            $(this).hide();
+                            $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
+                            $('#marker-instructions').css({
+                                'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+                            });
+                        });
                     }
-                    $('#marker-instructions .ui-btn-text').text(COMPLETE_ROUTE);
+                    $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
                     $('#marker-instructions').css({
                         'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
                     });
-                    $('#marker-instructions').show(); 
-                    // Set up the 'remove marker' button.
-                    $('#marker-remove').unbind('click');
-                    $('#marker-remove .ui-btn-text').text('Remove finish point');
-                    $('#marker-remove').show();
-                    $('#marker-remove').click(function() { 
-                        if (finish_point!==null) {
-                            finish_point = null;
-                            finish_marker.setMap(null);
-                            $('#marker-remove .ui-btn-text').text('Remove start point');
-                            $('#marker-remove').click(function() { 
-                                if (start_point!==null) {
-                                    start_point = null;
-                                    start_marker.setMap(null);
-                                }
-                                $(this).hide();
-                                $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
-                                $('#marker-instructions').css({
-                                    'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
-                                });
-                            });
-                        }
-                        $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
-                        $('#marker-instructions').css({
-                            'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
-                        });
-                    });
-                } else {
-                // Add first marker. 
-                // Record the latlng of the map center.
-                start_point = map.getCenter();
-                start_marker = createMapMarker(start_point, 'start'); 
-                $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
-                $('#marker-instructions').show(); 
-                // Set up the 'remove marker' button.
-                $('#marker-remove').show();
-                $('#marker-remove').unbind('click');
-                $('#marker-remove').click(function() { 
-                    if (start_point!==null) {
-                        start_point = null;
-                        start_marker.setMap(null);
-                    }
-                    $(this).hide();
-                    $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
                 });
-            }
-          });
+		// Exit
+		return;
+                }
+
+            // Add start marker. 
+            // Record the latlng of the map center.
+            start_point = map.getCenter();
+            start_marker = createMapMarker(start_point, 'start'); 
+            $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
+            $('#marker-instructions').show(); 
+
+            // Set up the 'remove marker' button.
+            $('#marker-remove').show();
+            $('#marker-remove').unbind('click');
+            $('#marker-remove').click(function() { 
+                if (start_point!==null) {
+                    start_point = null;
+                    start_marker.setMap(null);
+                }
+                $(this).hide();
+                $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
+            });
+	});
+
+	// ???
         if (global_page_type=="new_route") {
             createCrosshairs();
             $('#marker-instructions').show();
@@ -1205,7 +1265,7 @@ function setUpPage(page_type) {
             } 
             global_page_type = "existing_route";
             is_user_position_initialised = true;
-            routeWithCycleStreets(null,null,null,null,route_id,strategy);
+            routeFromExistingItinerary(route_id,strategy);
         } else if ((getparams['s_lat'] !== undefined) && (getparams['s_lng'] !== undefined) && (getparams['f_lat'] !== undefined) && (getparams['f_lng'] !== undefined)){ 
             global_page_type = "existing_route";
             is_user_position_initialised = true;
