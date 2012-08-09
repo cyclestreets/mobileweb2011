@@ -7,10 +7,7 @@ var global_page_type = null;
 var SET_FIRST_MARKER = '1. Tap to set start';
 var SET_SECOND_MARKER = '2. Tap to set finish';
 var COMPLETE_ROUTE = '3. Tap to route';
-// #waypoints Create markers and points arrays.
-var start_marker = null;
-var finish_marker = null;
-// An array of waypoints to replace the above four variables.
+// List of waypoints
 var itineraryMarkers = [];
 
 // Route display. 
@@ -1098,7 +1095,7 @@ if (window.google) {
         $('#marker-instructions').click(function() {
 
 	    // If end points are set plan a route.
-	    // #waypoints this should be on a new button.
+	    // #waypoints Will need a new button to distinguish bewteen planning a route and adding further waypoints.
 	    if (itineraryMarkers.length > 1) {
                  $('#route-header').text('Getting route...');
                  routeWithCycleStreets(itineraryMarkers[0].position.lat(),itineraryMarkers[0].position.lng(),itineraryMarkers[1].position.lat(),itineraryMarkers[1].position.lng(),null,null);
@@ -1106,29 +1103,22 @@ if (window.google) {
               }
 
 	    // If just the start has been set add a finish
-	    // #waypoints If there are more than one. New
 	    if (itineraryMarkers.length > 0) {
 
-                // Add finish point
-		// #waypoints Add another marker New
-		itineraryMarkers.push(createMapMarker(map.getCenter(), 'finish'));
-		// console.log('Added another marker');
-		// console.log(itineraryMarkers);
+		// The new position
+		var waypointPosition = map.getCenter();
 
-                // Check the last two markers aren't too close together. 
-                var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(itineraryMarkers[itineraryMarkers.length - 2].position);
+                // Check the new position is not too close to the last
+                var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(waypointPosition);
                 if (dist < 200) {
                     toastMessage('Sorry, those points are too close together!');
-
-		    // #waypoints Remove New
-		    var lastItineraryMarker = itineraryMarkers.pop();
-		    lastItineraryMarker.setMap(null);
-		    // console.log('Removed finish marker when too close');
-		    // console.log(itineraryMarkers);
 
 		    // Exit
                     return;
                 }
+
+                // Add finish point
+		itineraryMarkers.push(createMapMarker(waypointPosition, 'finish'));
 
 		// Setup the button to offer route planning
                 $('#marker-instructions .ui-btn-text').text(COMPLETE_ROUTE);
@@ -1143,22 +1133,18 @@ if (window.google) {
                 $('#marker-remove').show();
                 $('#marker-remove').click(function() { 
 
-		    // #waypoints Remove the last one New
+		    // Remove the last waypoint
 		    if (itineraryMarkers.length > 0) {
 			var lastItineraryMarker = itineraryMarkers.pop();
 			lastItineraryMarker.setMap(null);
-			// console.log('Removed finish marker');
-			// console.log(itineraryMarkers);
 
                         $('#marker-remove .ui-btn-text').text('Remove start point');
                         $('#marker-remove').click(function() { 
 
-			    // #waypoints Remove the latest marker New
+			    // Remove the latest marker
 			    if (itineraryMarkers.length > 0) {
 				var lastItineraryMarker = itineraryMarkers.pop();
 				lastItineraryMarker.setMap(null);
-				// console.log('Remove start marker');
-				// console.log(itineraryMarkers);
 			    }
 
                             $(this).hide();			    
@@ -1178,12 +1164,8 @@ if (window.google) {
 		return;
                 }
 
-            // Add start marker. 
-            // Record the latlng of the map center.
-	    // #waypoints Add another marker New
+            // Add start marker
 	    itineraryMarkers.push(createMapMarker(map.getCenter(), 'start'));
-	    // console.log('Added first marker');
-	    // console.log(itineraryMarkers);
 
             $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
             $('#marker-instructions').show(); 
@@ -1192,12 +1174,10 @@ if (window.google) {
             $('#marker-remove').show();
             $('#marker-remove').unbind('click');
             $('#marker-remove').click(function() { 
-		// #waypoints Remove the latest marker New
+		// Remove the latest marker
 		if (itineraryMarkers.length > 0) {
 		    var lastItineraryMarker = itineraryMarkers.pop();
 		    lastItineraryMarker.setMap(null);
-		    // console.log('Remove the first item');
-		    // console.log(itineraryMarkers);
 		}
 
                 $(this).hide();
