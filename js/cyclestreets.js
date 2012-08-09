@@ -1,7 +1,6 @@
 // CycleStreets API details. 
 var CS_API_KEY = '68f786d958d1dbfb';
-//var CS_API = 'http://www.cyclestreets.net/api/';
-var CS_API = 'http://localhost/api/';
+var CS_API = 'http://www.cyclestreets.net/api/';
 var global_page_type = null;
 
 // Route markers and instructions. 
