@@ -10,10 +10,8 @@ var COMPLETE_ROUTE = '3. Tap to route';
 // #waypoints Create markers and points arrays.
 var start_marker = null;
 var finish_marker = null;
-var start_point = null;
-var finish_point = null;
 // An array of waypoints to replace the above four variables.
-var itineraryItems = [];
+var itineraryMarkers = [];
 
 // Route display. 
 var map;
@@ -429,18 +427,13 @@ if (window.google) {
 
     // Create marker of appropriate type, used on route page. 
     function createMapMarker (location, marker_type) {
+
         var marker_icon; 
-        if (marker_type === "finish") { 
-            marker_icon = new google.maps.MarkerImage('/images/cs_finish.png',
-              new google.maps.Size(50, 55),
-              new google.maps.Point(0, 0),
-              new google.maps.Point(13, 53));
-        } else {
-            marker_icon = new google.maps.MarkerImage('/images/cs_start.png',
-              new google.maps.Size(50, 55),
-              new google.maps.Point(0, 0),
-              new google.maps.Point(13, 53));            
-        }
+        marker_icon = new google.maps.MarkerImage(marker_type === "finish" ? '/images/cs_finish.png' : '/images/cs_start.png',
+						  new google.maps.Size(50, 55),
+						  new google.maps.Point(0, 0),
+						  new google.maps.Point(13, 53));
+	
         var map_marker = new google.maps.Marker({
             position: location, 
             map: map,
@@ -714,16 +707,15 @@ if (window.google) {
 
                     // Set up map, if we haven't already, and markers.
                     if (map===undefined) {
+
                         setupMap(start_lat, start_lng);
 
-// #waypoints Add all the waypoints
-                        if (start_marker==null) {
-                            start_marker = createMapMarker(startlatlng, 'start');
-                        }
-                        if (finish_marker==null) {
-                            finish_marker = createMapMarker(finishlatlng, 'finish');    
-                        }
+			// #waypoints Add all the waypoints
+			// Note this may be un-necessary (but non-problematic) duplication as the markers may already be present - if done by route on map.
+			createMapMarker(startlatlng, 'start');
+			createMapMarker(finishlatlng, 'finish');    
                     }
+
                     // Show route summary information. 
                     var route_distance = markers[0]['@attributes'].length;
                     var route_time = markers[0]['@attributes'].time;
@@ -1106,45 +1098,33 @@ if (window.google) {
         $('#marker-instructions').click(function() {
 
 	    // If end points are set plan a route.
-// #waypoints this should be on a new button.
-             if ((finish_point!==null) && (start_point!=null)) {
+	    // #waypoints this should be on a new button.
+	    if (itineraryMarkers.length > 1) {
                  $('#route-header').text('Getting route...');
-                 routeWithCycleStreets(start_point.lat(),start_point.lng(),finish_point.lat(),finish_point.lng(),null,null);
+                 routeWithCycleStreets(itineraryMarkers[0].position.lat(),itineraryMarkers[0].position.lng(),itineraryMarkers[1].position.lat(),itineraryMarkers[1].position.lng(),null,null);
 		 return;
               }
 
 	    // If just the start has been set add a finish
-// #waypoints If there are more than one. New
-	    if (itineraryItems.length > 1) {
-		console.log('Adding finish item...');
-	    }
-// #waypoints If there are more than one. Old
-	    if (start_point!==null) {
+	    // #waypoints If there are more than one. New
+	    if (itineraryMarkers.length > 0) {
 
                 // Add finish point
-// #waypoints Add another marker Old
-                finish_point = map.getCenter();
-                finish_marker = createMapMarker(finish_point, 'finish'); 
+		// #waypoints Add another marker New
+		itineraryMarkers.push(createMapMarker(map.getCenter(), 'finish'));
+		// console.log('Added another marker');
+		// console.log(itineraryMarkers);
 
-// #waypoints Add another marker New
-		itineraryItems.push({point: finish_point, marker: finish_marker});
-		console.log('Added finish item');
-		console.log(itineraryItems);
-
-                // Check the two markers aren't too close together. 
-                var dist = finish_point.distanceFrom(start_point);
+                // Check the last two markers aren't too close together. 
+                var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(itineraryMarkers[itineraryMarkers.length - 2].position);
                 if (dist < 200) {
                     toastMessage('Sorry, those points are too close together!');
 
-// #waypoints Remove Old
-                    finish_point = null;
-                    finish_marker.setMap(null);
-
-// #waypoints Remove New
-		    var lastItineraryItem = itineraryItems.pop();
-		    lastItineraryItem.marker.setMap(null);
-		    console.log('Removed finish item when too close');
-		    console.log(itineraryItems);
+		    // #waypoints Remove New
+		    var lastItineraryMarker = itineraryMarkers.pop();
+		    lastItineraryMarker.setMap(null);
+		    // console.log('Removed finish marker when too close');
+		    // console.log(itineraryMarkers);
 
 		    // Exit
                     return;
@@ -1163,35 +1143,22 @@ if (window.google) {
                 $('#marker-remove').show();
                 $('#marker-remove').click(function() { 
 
-// #waypoints Remove the last one New
-		    if (itineraryItems.length > 0) {
-			var lastItineraryItem = itineraryItems.pop();
-			lastItineraryItem.marker.setMap(null);
-			console.log('Removed finish item');
-			console.log(itineraryItems);
-
-			// Plus the other old stuff within the if below
-		    }
-
-
-// #waypoints Remove the last one Old
-                    if (finish_point!==null) {
-                        finish_point = null;
-                        finish_marker.setMap(null);
+		    // #waypoints Remove the last one New
+		    if (itineraryMarkers.length > 0) {
+			var lastItineraryMarker = itineraryMarkers.pop();
+			lastItineraryMarker.setMap(null);
+			// console.log('Removed finish marker');
+			// console.log(itineraryMarkers);
 
                         $('#marker-remove .ui-btn-text').text('Remove start point');
                         $('#marker-remove').click(function() { 
-// #waypoints Remove the latest marker Old
-                            if (start_point!==null) {
-                                start_point = null;
-                                start_marker.setMap(null);
-                            }
-// #waypoints Remove the latest marker New
-			    if (itineraryItems.length > 0) {
-				var lastItineraryItem = itineraryItems.pop();
-				lastItineraryItem.marker.setMap(null);
-				console.log('Remove start item');
-				console.log(itineraryItems);
+
+			    // #waypoints Remove the latest marker New
+			    if (itineraryMarkers.length > 0) {
+				var lastItineraryMarker = itineraryMarkers.pop();
+				lastItineraryMarker.setMap(null);
+				// console.log('Remove start marker');
+				// console.log(itineraryMarkers);
 			    }
 
                             $(this).hide();			    
@@ -1213,14 +1180,10 @@ if (window.google) {
 
             // Add start marker. 
             // Record the latlng of the map center.
-// #waypoints Add another marker Old
-            start_point = map.getCenter();
-            start_marker = createMapMarker(start_point, 'start');
-
-// #waypoints Add another marker New
-	    itineraryItems.push({point: start_point, marker: start_marker});
-	    console.log('Added first item');
-	    console.log(itineraryItems);
+	    // #waypoints Add another marker New
+	    itineraryMarkers.push(createMapMarker(map.getCenter(), 'start'));
+	    // console.log('Added first marker');
+	    // console.log(itineraryMarkers);
 
             $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
             $('#marker-instructions').show(); 
@@ -1229,17 +1192,12 @@ if (window.google) {
             $('#marker-remove').show();
             $('#marker-remove').unbind('click');
             $('#marker-remove').click(function() { 
-// #waypoints Remove the latest marker Old
-                if (start_point!==null) {
-                    start_point = null;
-                    start_marker.setMap(null);
-                }
-// #waypoints Remove the latest marker New
-		if (itineraryItems.length > 0) {
-		    var lastItineraryItem = itineraryItems.pop();
-		    lastItineraryItem.marker.setMap(null);
-		    console.log('Remove the first item');
-		    console.log(itineraryItems);
+		// #waypoints Remove the latest marker New
+		if (itineraryMarkers.length > 0) {
+		    var lastItineraryMarker = itineraryMarkers.pop();
+		    lastItineraryMarker.setMap(null);
+		    // console.log('Remove the first item');
+		    // console.log(itineraryMarkers);
 		}
 
                 $(this).hide();
