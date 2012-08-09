@@ -155,8 +155,8 @@ $('#home').live('pagecreate',function(event){
         android: ua.match(/Android/)
     };
     if (uachecker.android) {
-        $('#user-agent-link').attr('href','https://market.android.com/details?id=net.cyclestreets');
-        $('#market-name').text("Android Market");
+        $('#user-agent-link').attr('href','https://play.google.com/store/apps/details?id=net.cyclestreets');
+        $('#market-name').text("Google Play");
         $('#native-app').show();
     } else if ((uachecker.iphone) || (uachecker.ipad) || (uachecker.ipod)) {
         $('#user-agent-link').attr('href','http://itunes.apple.com/app/ishare/id391984737');
