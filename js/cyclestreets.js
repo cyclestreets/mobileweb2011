@@ -1,6 +1,10 @@
 // CycleStreets API details. 
 var CS_API_KEY = '68f786d958d1dbfb';
-var CS_API = 'http://www.cyclestreets.net/api/';
+
+// !! Test code
+//var CS_API = 'http://www.cyclestreets.net/api/';
+var CS_API = 'http://localhost/api/';
+
 var global_page_type = null;
 
 // Route markers and instructions. 
@@ -1054,74 +1058,94 @@ if (window.google) {
             exp.setTime(exp.getTime() + (1000 * 60 * 5)); //set it 5 minutes ahead
             createCookie("map_last_location",cookiestring, exp); 
         });
+
+	// Click function for the 'Tap to set start' button sets up the 'New route page'.
         // If we are on a new route page, add reticle and listeners. 
         $('#marker-instructions').click(function() {
+
+	    // If end points are set plan a route.
              if ((finish_point!==null) && (start_point!=null)) {
                  $('#route-header').text('Getting route...');
                  routeWithCycleStreets(start_point.lat(),start_point.lng(),finish_point.lat(),finish_point.lng(),null,null);
-              } else if (start_point!==null) {
+		 return;
+              }
+
+	    // If just the start has been set add a finish
+	    if (start_point!==null) {
+
                 // Add finish point
-                    finish_point = map.getCenter();
-                    finish_marker = createMapMarker(finish_point, 'finish'); 
-                    // Check the two markers aren't too close together. 
-                    var dist = finish_point.distanceFrom(start_point);
-                    if (dist < 200) {
-                        toastMessage('Sorry, those points are too close together!');
+                finish_point = map.getCenter();
+                finish_marker = createMapMarker(finish_point, 'finish'); 
+
+                // Check the two markers aren't too close together. 
+                var dist = finish_point.distanceFrom(start_point);
+                if (dist < 200) {
+                    toastMessage('Sorry, those points are too close together!');
+                    finish_point = null;
+                    finish_marker.setMap(null);
+
+		    // Exit
+                    return;
+                }
+
+		// Setup the button to offer route planning
+                $('#marker-instructions .ui-btn-text').text(COMPLETE_ROUTE);
+                $('#marker-instructions').css({
+                    'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+                });
+                $('#marker-instructions').show(); 
+
+                // Set up the 'remove marker' button.
+                $('#marker-remove').unbind('click');
+                $('#marker-remove .ui-btn-text').text('Remove finish point');
+                $('#marker-remove').show();
+                $('#marker-remove').click(function() { 
+                    if (finish_point!==null) {
                         finish_point = null;
                         finish_marker.setMap(null);
-                        return false;
+                        $('#marker-remove .ui-btn-text').text('Remove start point');
+                        $('#marker-remove').click(function() { 
+                            if (start_point!==null) {
+                                start_point = null;
+                                start_marker.setMap(null);
+                            }
+                            $(this).hide();
+                            $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
+                            $('#marker-instructions').css({
+                                'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+                            });
+                        });
                     }
-                    $('#marker-instructions .ui-btn-text').text(COMPLETE_ROUTE);
+                    $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
                     $('#marker-instructions').css({
                         'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
                     });
-                    $('#marker-instructions').show(); 
-                    // Set up the 'remove marker' button.
-                    $('#marker-remove').unbind('click');
-                    $('#marker-remove .ui-btn-text').text('Remove finish point');
-                    $('#marker-remove').show();
-                    $('#marker-remove').click(function() { 
-                        if (finish_point!==null) {
-                            finish_point = null;
-                            finish_marker.setMap(null);
-                            $('#marker-remove .ui-btn-text').text('Remove start point');
-                            $('#marker-remove').click(function() { 
-                                if (start_point!==null) {
-                                    start_point = null;
-                                    start_marker.setMap(null);
-                                }
-                                $(this).hide();
-                                $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
-                                $('#marker-instructions').css({
-                                    'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
-                                });
-                            });
-                        }
-                        $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
-                        $('#marker-instructions').css({
-                            'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
-                        });
-                    });
-                } else {
-                // Add first marker. 
-                // Record the latlng of the map center.
-                start_point = map.getCenter();
-                start_marker = createMapMarker(start_point, 'start'); 
-                $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
-                $('#marker-instructions').show(); 
-                // Set up the 'remove marker' button.
-                $('#marker-remove').show();
-                $('#marker-remove').unbind('click');
-                $('#marker-remove').click(function() { 
-                    if (start_point!==null) {
-                        start_point = null;
-                        start_marker.setMap(null);
-                    }
-                    $(this).hide();
-                    $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
                 });
-            }
-          });
+		// Exit
+		return;
+                }
+
+            // Add start marker. 
+            // Record the latlng of the map center.
+            start_point = map.getCenter();
+            start_marker = createMapMarker(start_point, 'start'); 
+            $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
+            $('#marker-instructions').show(); 
+
+            // Set up the 'remove marker' button.
+            $('#marker-remove').show();
+            $('#marker-remove').unbind('click');
+            $('#marker-remove').click(function() { 
+                if (start_point!==null) {
+                    start_point = null;
+                    start_marker.setMap(null);
+                }
+                $(this).hide();
+                $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
+            });
+	});
+
+	// ???
         if (global_page_type=="new_route") {
             createCrosshairs();
             $('#marker-instructions').show();
