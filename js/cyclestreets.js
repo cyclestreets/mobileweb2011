@@ -619,6 +619,16 @@ if (window.google) {
 	routeWithCycleStreets(null,null,null,null, route_id, strategy);
     }
 
+    // Route journey using CycleStreets API, display map. 
+    function routeStartFinishWithCycleStreets(start_lat, start_lng, finish_lat, finish_lng) {
+
+	// Check end points are set
+        if ((start_lat===undefined) || (start_lng===undefined) || (finish_lat===undefined) || (finish_lng===undefined)) { 
+            toastMessage("Sorry, there's a problem with the route markers. Please refresh page and try again.");
+            return false;
+        }
+	routeWithCycleStreets(start_lat, start_lng, finish_lat, finish_lng, null, null);
+    }
 
     // Route journey using CycleStreets API, display map. 
     function routeWithCycleStreets(start_lat, start_lng, finish_lat, finish_lng, route_id, strategy) {
@@ -634,12 +644,6 @@ if (window.google) {
 
 	// Update title
         $('#route-header').text("Fetching route...");
-
-	// Check end points are set
-        if ((start_lat===undefined) || (start_lng===undefined) || (finish_lat===undefined) || (finish_lng===undefined)) { 
-            toastMessage("Sorry, there's a problem with the route markers. Please refresh page and try again.");
-            return false;
-        }
 
 	// API url for journey planning
         var journey_url = CS_API + 'journey.json';
@@ -1281,7 +1285,7 @@ function setUpPage(page_type) {
         } else if ((getparams['s_lat'] !== undefined) && (getparams['s_lng'] !== undefined) && (getparams['f_lat'] !== undefined) && (getparams['f_lng'] !== undefined)){ 
             global_page_type = "existing_route";
             is_user_position_initialised = true;
-            routeWithCycleStreets(getparams['s_lat'],getparams['s_lng'],getparams['f_lat'],getparams['f_lng'],null,null);
+            routeStartFinishWithCycleStreets(getparams['s_lat'],getparams['s_lng'],getparams['f_lat'],getparams['f_lng']);
         } else {
             global_page_type = "new_route";
         }
