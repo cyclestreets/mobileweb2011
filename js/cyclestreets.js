@@ -1011,7 +1011,10 @@ if (window.google) {
 
     // Set up the map and its listeners, once we know its centre. 
     function setupMap(lat, lng) {
-        //console.log('setupMap');
+
+	// Trace
+        // console.log('setupMap');
+
         // Check if we know the user's recent location: use that instead, if it exists.
         var mapzoom = 14;
         var last_location_known = readCookie('map_last_location');
@@ -1023,12 +1026,14 @@ if (window.google) {
             lng = parseFloat(splitstr[1]);
             mapzoom = parseFloat(splitstr[2]); 
         }
+
+	// Hide message
         $('#getting-location').hide();
-        var loc = new google.maps.LatLng(lat, lng);
+
         // Basic setup. 
         var myOptions = {
             zoom: mapzoom,
-            center: loc,
+            center: new google.maps.LatLng(lat, lng),
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             panControl: false,
             zoomControl: true,
@@ -1041,19 +1046,23 @@ if (window.google) {
               style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
               position: google.maps.ControlPosition.RIGHT_TOP }
         };
+
+	// Bind the map global
         map = new google.maps.Map(document.getElementById("map-canvas"),myOptions);
-                // Map types. 
-                map.mapTypes.set('OSM',osmMapType);
-                map.mapTypes.set('OCM',ocmMapType);
-                map.mapTypes.set('OS',osMapType); 
-                var desired_map = getItem("maptype");
-                if (desired_map==null) {
-                  desired_map = "OSM";
-                }
-                map.setMapTypeId(desired_map);   
-                google.maps.event.addListener(map, 'maptypeid_changed', function() { 
-                    setItem("maptype", this.getMapTypeId());
-                 });
+
+        // Map types. 
+        map.mapTypes.set('OSM',osmMapType);
+        map.mapTypes.set('OCM',ocmMapType);
+        map.mapTypes.set('OS',osMapType); 
+
+	// Setup desired map style from preferences
+        var desired_map = getItem("maptype")==null ? "OSM" : getItem("maptype");
+
+        map.setMapTypeId(desired_map);   
+        google.maps.event.addListener(map, 'maptypeid_changed', function() { 
+            setItem("maptype", this.getMapTypeId());
+        });
+
         // Geolocate button: toggle geotracking. 
         $("#locate-me").bind('tap', function(e){ 
             if (watchId !== null) {
@@ -1140,7 +1149,7 @@ if (window.google) {
 
                 // Set up the 'remove marker' button.
                 $('#waypointDel').unbind('click');
-                $('#waypointDel .ui-btn-text').text('Remove finish point');
+                $('#waypointDel .ui-btn-text').text('Undo');
                 $('#waypointDel').show();
                 $('#waypointDel').click(function() { 
 
