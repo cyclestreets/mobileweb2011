@@ -5,10 +5,6 @@ var CS_API = 'http://www.cyclestreets.net/api/';
 var CS_API = 'http://localhost/api/';
 var global_page_type = null;
 
-// Route markers and instructions. 
-var SET_FIRST_MARKER = '1. Tap to set start';
-var SET_SECOND_MARKER = '2. Tap to set finish';
-var COMPLETE_ROUTE = '3. Tap to route';
 // List of waypoints
 var itineraryMarkers = [];
 
@@ -1154,7 +1150,7 @@ if (window.google) {
 
 	    // Inital state
 	    // Show the add button
-            $('#waypointAdd .ui-btn-text').text(SET_FIRST_MARKER);
+            $('#waypointAdd .ui-btn-text').text('1. Tap to set start');
             $('#waypointAdd').show(); 
 
 	    // Click will add a new marker
@@ -1177,7 +1173,7 @@ if (window.google) {
 	case 1:
 
 	    // Click will add a finish marker (if not too close to the last)
-            $('#waypointAdd .ui-btn-text').text(SET_SECOND_MARKER);
+            $('#waypointAdd .ui-btn-text').text('2. Tap to set finish');
             $('#waypointAdd').show(); 
             $('#waypointAdd').unbind('click');
             $('#waypointAdd').click(function() {
@@ -1219,10 +1215,7 @@ if (window.google) {
 	default:
 
 	    // Setup the button to offer route planning
-            $('#waypointAdd .ui-btn-text').text(COMPLETE_ROUTE);
-            $('#waypointAdd').css({
-		'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2
-            });
+            $('#waypointAdd .ui-btn-text').text('3. Tap to route');
             $('#waypointAdd').unbind('click');
             $('#waypointAdd').click(function() {
 		// #waypoints Will need a new button to distinguish bewteen planning a route and adding further waypoints.
@@ -1247,15 +1240,9 @@ if (window.google) {
 	    // Closes the switch()
 	}
 
-	// I think this is an attempt to make the buttons wide enough
-	if (false) {
-            $('#waypointAdd').css({
-		'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2
-            });
-            $('#waypointDel').css({
-		'left': ($('#map-canvas').width() - $('#waypointDel').width()) / 2
-            });
-	}
+	// Make the buttons appear centred
+        $('#waypointAdd').css({'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2});
+        $('#waypointDel').css({'left': ($('#map-canvas').width() - $('#waypointDel').width()) / 2});
     }
 
     // Remove the latest marker
