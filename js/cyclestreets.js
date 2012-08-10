@@ -2,7 +2,7 @@
 var CS_API_KEY = '68f786d958d1dbfb';
 var CS_API = 'http://www.cyclestreets.net/api/';
 // Use localhost for testing
-var CS_API = 'http://localhost/api/';
+// var CS_API = 'http://localhost/api/';
 var global_page_type = null;
 
 // Route markers and instructions. 
@@ -1109,6 +1109,27 @@ if (window.google) {
             exp.setTime(exp.getTime() + (1000 * 60 * 5)); //set it 5 minutes ahead
             createCookie("map_last_location",cookiestring, exp); 
         });
+
+	// When the map is moved
+	/* Unfinished wip
+	google.maps.event.addListener(map, 'center_changed', function() {
+
+	    // Nothing to do if there are no markers
+	    if (!itineraryMarkers.length) {return;}
+
+            // Check the new position is not too close to the last
+            var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(map.getCenter());
+            if (dist < 200) {
+
+		// Change the waypointAdd button to 'Move the map' first time around, and subsequently 'Tap to route'
+                console.log('Too close');
+	    } else {
+
+		// Change the waypointAdd button to 'Tap to add point'
+                console.log('OK');
+	    }
+
+	});*/
 
 	// Click function for the 'Tap to set start' button sets up the 'New route page'.
         // If we are on a new route page, add reticle and listeners. 
