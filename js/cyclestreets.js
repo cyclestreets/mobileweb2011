@@ -17,7 +17,6 @@ var map;
 var route_data;
 var routePath = null;
 var individualPath = null;
-var routetype = null;
 var speedMph = null;
 var photo_markers = [];
 
@@ -681,7 +680,7 @@ if (window.google) {
             journeydata['itinerarypoints'] = itineraryPoints;
             if (plan===null) {
 		// Default the route plan to the value in the prefs, else use balanced
-		plan = getItem("routetype")!==null ? getItem("routetype") : 'balanced';
+		plan = getItem("plan")!==null ? getItem("plan") : 'balanced';
             }  
             journeydata['plan'] = plan;
             journeydata['speed'] = kmph(speedMph);
