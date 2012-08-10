@@ -2,8 +2,22 @@
 var CS_API_KEY = '68f786d958d1dbfb';
 var CS_API = 'http://www.cyclestreets.net/api/';
 // Use localhost for testing
-//var CS_API = 'http://localhost/api/';
+// var CS_API = 'http://localhost/api/';
 var global_page_type = null;
+
+// Icons
+var startMarkerIcon = new google.maps.MarkerImage('/images/cs_start.png',
+						  new google.maps.Size(50, 55),
+						  new google.maps.Point(0, 0),
+						  new google.maps.Point(13, 53));
+var amberMarkerIcon = new google.maps.MarkerImage('/images/cs_amber.png',
+						  new google.maps.Size(50, 55),
+						  new google.maps.Point(0, 0),
+						  new google.maps.Point(13, 53));
+var finishMarkerIcon = new google.maps.MarkerImage('/images/cs_finish.png',
+						  new google.maps.Size(50, 55),
+						  new google.maps.Point(0, 0),
+						  new google.maps.Point(13, 53));
 
 // List of waypoints
 var itineraryMarkers = [];
@@ -423,15 +437,11 @@ if (window.google) {
     function createMapMarker (location, marker_type) {
 
         var marker_icon; 
-        marker_icon = new google.maps.MarkerImage(marker_type === "finish" ? '/images/cs_finish.png' : '/images/cs_start.png',
-						  new google.maps.Size(50, 55),
-						  new google.maps.Point(0, 0),
-						  new google.maps.Point(13, 53));
 	
         var map_marker = new google.maps.Marker({
             position: location, 
             map: map,
-            icon: marker_icon,
+            icon: (marker_type=='finish' ? finishMarkerIcon : startMarkerIcon),
             zIndex: 1000
         });
         return map_marker;
@@ -628,8 +638,16 @@ if (window.google) {
     }
 
     // Plan route using itinerary markers (currently expects just two markers)
-    function routeItineraryMarkersWithCycleStreets(itineraryMarkers) {
-	routeWithCycleStreets(itineraryMarkers[0].position.lng() + ',' + itineraryMarkers[0].position.lat() + '|' + itineraryMarkers[1].position.lng() + ',' + itineraryMarkers[1].position.lat(),null,null);
+    function routeItineraryMarkersWithCycleStreets() {
+
+	// Extract all the coordinates from the markers
+	var itineraryPoints = [];
+	for(var index=0;index<itineraryMarkers.length;index++) {
+	    itineraryPoints.push(itineraryMarkers[index].position.lng() + ',' + itineraryMarkers[index].position.lat());
+	}
+
+	// Implode and pass on the call
+	routeWithCycleStreets(itineraryPoints.join('|'),null,null);
     }
 
     // Route journey using CycleStreets API, display map. 
@@ -1153,9 +1171,24 @@ if (window.google) {
 
 	    } else {
 
-		// Plan a route
-                $('#route-header').text('Getting route...');
-                routeItineraryMarkersWithCycleStreets(itineraryMarkers);
+		// If the map has moved add another marker, if not, plan the route.
+		if (tooClose()) {
+
+		    // Plan a route
+                    $('#route-header').text('Getting route...');
+                    routeItineraryMarkersWithCycleStreets();
+
+		} else {
+
+		    // Change existing marker to amber
+		    itineraryMarkers[itineraryMarkers.length - 1].setIcon(amberMarkerIcon);
+
+		    // Add finish marker
+		    itineraryMarkers.push(createMapMarker(map.getCenter(), itineraryMarkers.length < 1 ? 'start' : 'finish'));
+
+		    // Choreograph
+		    choreographWaypointButtons();
+		}
 
 	    }
 	});
@@ -1216,7 +1249,7 @@ if (window.google) {
 	default:
 
 	    // Setup the button to offer route planning
-            $('#waypointAdd .ui-btn-text').text('3. Tap to route');
+            $('#waypointAdd .ui-btn-text').text(tooClose() ? '3. Tap to route' : '2. Tap to add point');
 	    $('#waypointAdd').show(); 
  
             // Set up the 'remove marker' button.
@@ -1240,6 +1273,11 @@ if (window.google) {
 
 	// Remove from map
 	lastItineraryMarker.setMap(null);
+
+	// Change any amber to finish
+	if (itineraryMarkers.length > 1) {
+	    itineraryMarkers[itineraryMarkers.length - 1].setIcon(finishMarkerIcon);
+	}
     }
 
     /**
