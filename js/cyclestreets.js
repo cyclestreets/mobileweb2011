@@ -1135,17 +1135,14 @@ if (window.google) {
 
 		    // Remove the last waypoint
 		    if (itineraryMarkers.length > 0) {
-			var lastItineraryMarker = itineraryMarkers.pop();
-			lastItineraryMarker.setMap(null);
+
+			removeLastMarker();
 
                         $('#marker-remove .ui-btn-text').text('Remove start point');
                         $('#marker-remove').click(function() { 
 
 			    // Remove the latest marker
-			    if (itineraryMarkers.length > 0) {
-				var lastItineraryMarker = itineraryMarkers.pop();
-				lastItineraryMarker.setMap(null);
-			    }
+			    removeLastMarker();
 
                             $(this).hide();			    
                             $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
@@ -1175,10 +1172,7 @@ if (window.google) {
             $('#marker-remove').unbind('click');
             $('#marker-remove').click(function() { 
 		// Remove the latest marker
-		if (itineraryMarkers.length > 0) {
-		    var lastItineraryMarker = itineraryMarkers.pop();
-		    lastItineraryMarker.setMap(null);
-		}
+		removeLastMarker();
 
                 $(this).hide();
                 $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
@@ -1192,6 +1186,20 @@ if (window.google) {
         }
     }
 
+    // Remove the latest marker
+    function removeLastMarker () {
+
+	// Skip if empty
+	if (!itineraryMarkers.length) {return;}
+
+	// Remove the latest marker
+	var lastItineraryMarker = itineraryMarkers.pop();
+
+	// Remove from map
+	lastItineraryMarker.setMap(null);
+    }
+
+// Close the if (window.google)
 }
 
 //******************************************************
