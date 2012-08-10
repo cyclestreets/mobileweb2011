@@ -1169,64 +1169,8 @@ if (window.google) {
 		return;
             }
 
-	    // If just the start has been set add a finish
-	    if (itineraryMarkers.length > 0) {
-
-		// The new position
-		var waypointPosition = map.getCenter();
-
-                // Check the new position is not too close to the last
-                var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(waypointPosition);
-                if (dist < 200) {
-		    toastMessage('Sorry, those points are too close together!');
-
-		    // Exit
-                    return;
-                }
-
-                // Add finish point
-		itineraryMarkers.push(createMapMarker(waypointPosition, 'finish'));
-
-		// Setup the button to offer route planning
-                $('#waypointAdd .ui-btn-text').text(COMPLETE_ROUTE);
-                $('#waypointAdd').css({
-                    'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2
-                });
-                $('#waypointAdd').show(); 
-
-                // Set up the 'remove marker' button.
-                $('#waypointDel').unbind('click');
-                $('#waypointDel .ui-btn-text').text('Undo');
-                $('#waypointDel').show();
-                $('#waypointDel').click(function() { 
-
-		    // Remove the last waypoint
-		    if (itineraryMarkers.length > 0) {
-
-			removeLastMarker();
-
-                        $('#waypointDel .ui-btn-text').text('Remove start point');
-                        $('#waypointDel').click(function() { 
-
-			    // Remove the latest marker
-			    removeLastMarker();
-
-                            $(this).hide();			    
-                            $('#waypointAdd .ui-btn-text').text(SET_FIRST_MARKER);
-                            $('#waypointAdd').css({
-                                'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2
-                            });
-                        });
-                    }
-
-                    $('#waypointAdd .ui-btn-text').text(SET_SECOND_MARKER);
-                    $('#waypointAdd').css({
-                        'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2
-                    });
-                });
-		// Exit
-		return;
-            }
+	    // If just the start has been set add a finish and leave it at that
+	    if (itineraryMarkers.length > 0) {waypointAddFinish();return;}
 
             // Add start marker
 	    itineraryMarkers.push(createMapMarker(map.getCenter(), 'start'));
@@ -1245,6 +1189,65 @@ if (window.google) {
                 $('#waypointAdd .ui-btn-text').text(SET_FIRST_MARKER);
             });
 	});
+    }
+
+    // A function to add finish marker
+    function waypointAddFinish() {
+
+	// The new position
+	var waypointPosition = map.getCenter();
+
+        // Check the new position is not too close to the last
+        var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(waypointPosition);
+        if (dist < 200) {
+	    toastMessage('Sorry, those points are too close together!');
+	    
+	    // Exit
+            return;
+        }
+
+        // Add finish point
+	itineraryMarkers.push(createMapMarker(waypointPosition, 'finish'));
+
+	// Setup the button to offer route planning
+        $('#waypointAdd .ui-btn-text').text(COMPLETE_ROUTE);
+        $('#waypointAdd').css({
+            'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2
+        });
+        $('#waypointAdd').show(); 
+
+        // Set up the 'remove marker' button.
+        $('#waypointDel').unbind('click');
+        $('#waypointDel .ui-btn-text').text('Undo');
+        $('#waypointDel').show();
+        $('#waypointDel').click(function() { 
+
+	    // Remove the last waypoint
+	    if (itineraryMarkers.length > 0) {
+
+		removeLastMarker();
+
+                $('#waypointDel .ui-btn-text').text('Remove start point');
+                $('#waypointDel').click(function() { 
+
+		    // Remove the latest marker
+		    removeLastMarker();
+
+                    $(this).hide();			    
+                    $('#waypointAdd .ui-btn-text').text(SET_FIRST_MARKER);
+                    $('#waypointAdd').css({
+                        'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2
+                    });
+                });
+            }
+
+            $('#waypointAdd .ui-btn-text').text(SET_SECOND_MARKER);
+            $('#waypointAdd').css({
+                'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2
+            });
+        });
+	// Exit
+	return;
     }
 
     // Remove the latest marker
