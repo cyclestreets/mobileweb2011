@@ -2,7 +2,7 @@
 var CS_API_KEY = '68f786d958d1dbfb';
 var CS_API = 'http://www.cyclestreets.net/api/';
 // Use localhost for testing
-// var CS_API = 'http://localhost/api/';
+var CS_API = 'http://localhost/api/';
 var global_page_type = null;
 
 // Route markers and instructions. 
@@ -646,8 +646,8 @@ if (window.google) {
         $.mobile.showPageLoadingMsg();
 
 	// Hide the main buttons
-        $('#marker-instructions').hide();
-        $('#marker-remove').hide();
+        $('#waypointAdd').hide();
+        $('#waypointDel').hide();
 
 	// Update title
         $('#route-header').text("Fetching route...");
@@ -1103,7 +1103,7 @@ if (window.google) {
 
 	// Click function for the 'Tap to set start' button sets up the 'New route page'.
         // If we are on a new route page, add reticle and listeners. 
-        $('#marker-instructions').click(function() {
+        $('#waypointAdd').click(function() {
 
 	    // If end points are set plan a route.
 	    // #waypoints Will need a new button to distinguish bewteen planning a route and adding further waypoints.
@@ -1132,40 +1132,40 @@ if (window.google) {
 		itineraryMarkers.push(createMapMarker(waypointPosition, 'finish'));
 
 		// Setup the button to offer route planning
-                $('#marker-instructions .ui-btn-text').text(COMPLETE_ROUTE);
-                $('#marker-instructions').css({
-                    'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+                $('#waypointAdd .ui-btn-text').text(COMPLETE_ROUTE);
+                $('#waypointAdd').css({
+                    'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2
                 });
-                $('#marker-instructions').show(); 
+                $('#waypointAdd').show(); 
 
                 // Set up the 'remove marker' button.
-                $('#marker-remove').unbind('click');
-                $('#marker-remove .ui-btn-text').text('Remove finish point');
-                $('#marker-remove').show();
-                $('#marker-remove').click(function() { 
+                $('#waypointDel').unbind('click');
+                $('#waypointDel .ui-btn-text').text('Remove finish point');
+                $('#waypointDel').show();
+                $('#waypointDel').click(function() { 
 
 		    // Remove the last waypoint
 		    if (itineraryMarkers.length > 0) {
 
 			removeLastMarker();
 
-                        $('#marker-remove .ui-btn-text').text('Remove start point');
-                        $('#marker-remove').click(function() { 
+                        $('#waypointDel .ui-btn-text').text('Remove start point');
+                        $('#waypointDel').click(function() { 
 
 			    // Remove the latest marker
 			    removeLastMarker();
 
                             $(this).hide();			    
-                            $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
-                            $('#marker-instructions').css({
-                                'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+                            $('#waypointAdd .ui-btn-text').text(SET_FIRST_MARKER);
+                            $('#waypointAdd').css({
+                                'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2
                             });
                         });
                     }
 
-                    $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
-                    $('#marker-instructions').css({
-                        'left': ($('#map-canvas').width() - $('#marker-instructions').width()) / 2
+                    $('#waypointAdd .ui-btn-text').text(SET_SECOND_MARKER);
+                    $('#waypointAdd').css({
+                        'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2
                     });
                 });
 		// Exit
@@ -1175,25 +1175,25 @@ if (window.google) {
             // Add start marker
 	    itineraryMarkers.push(createMapMarker(map.getCenter(), 'start'));
 
-            $('#marker-instructions .ui-btn-text').text(SET_SECOND_MARKER);
-            $('#marker-instructions').show(); 
+            $('#waypointAdd .ui-btn-text').text(SET_SECOND_MARKER);
+            $('#waypointAdd').show(); 
 
             // Set up the 'remove marker' button.
-            $('#marker-remove').show();
-            $('#marker-remove').unbind('click');
-            $('#marker-remove').click(function() { 
+            $('#waypointDel').show();
+            $('#waypointDel').unbind('click');
+            $('#waypointDel').click(function() { 
 		// Remove the latest marker
 		removeLastMarker();
 
                 $(this).hide();
-                $('#marker-instructions .ui-btn-text').text(SET_FIRST_MARKER);
+                $('#waypointAdd .ui-btn-text').text(SET_FIRST_MARKER);
             });
 	});
 
 	// ???
         if (global_page_type=="new_route") {
             createCrosshairs();
-            $('#marker-instructions').show();
+            $('#waypointAdd').show();
         }
     }
 
@@ -1246,22 +1246,22 @@ function organizeCSS(page_type) {
         }
         $("div:jqmData(role='content')").first().height(window_height);
         $("#map-canvas").height(window_height);
-        var left_margin = ($('#map-canvas').width() - $('#marker-instructions').width()) / 2;
+        var left_margin = ($('#map-canvas').width() - $('#waypointAdd').width()) / 2;
         if (left_margin < 0) { 
             left_margin = 10;
         }
-        $('#marker-instructions').css({
+        $('#waypointAdd').css({
             'position': 'absolute',
             'top': window_height - 20,
             'left': left_margin,
             'z-index': '1000',
             'color' : 'black'
         });
-        left_margin = ($('#map-canvas').width() - $('#marker-remove').width()) / 2;
+        left_margin = ($('#map-canvas').width() - $('#waypointDel').width()) / 2;
         if (left_margin < 0) { 
             left_margin = 10;
         }
-        $('#marker-remove').css({
+        $('#waypointDel').css({
             'position': 'absolute',
             'top': $("div:jqmData(role='header')").first().height() + 40,
             'left': left_margin,
