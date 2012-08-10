@@ -91,9 +91,7 @@ function supportsLocalStorage() {
     }
 }
 
-/**
- * Gets the value of a locally stored setting, such as the cyclingspeed
-*/
+// Gets the value of a locally stored setting, such as the cyclingspeed
 function getItem(key) {
     if (!supportsLocalStorage()) { return readCookie(key); }
     var val = window.localStorage.getItem(key);
@@ -469,13 +467,16 @@ if (window.google) {
     }
 
     // We have found the user's location.
-    function gpsSuccess(pos){
-        //console.log('gpsSuccess');  
+    function gpsSuccess(pos) {
+
+	// Trace
+        // console.log('gpsSuccess');  
+
+	// Use supplied position
         if (pos.coords) { 
             lat = pos.coords.latitude;
             lng = pos.coords.longitude;
-        }
-        else {
+        } else {
             lat = pos.latitude;
             lng = pos.longitude;
         }
@@ -495,11 +496,14 @@ if (window.google) {
                 setupMap(lat, lng);
             }
         }
-    }   
+    }
 
     // We can't find the user's location. 
     function gpsFail(err) {  
-        //console.log('gpsFail', err.code); 
+
+	// Trace
+        // console.log('gpsFail', err.code); 
+
         // Warn about errors IFF the user is not already located.
         if (is_user_position_initialised === false) {
             $('#locate-me').hide(); 
@@ -940,13 +944,11 @@ if (window.google) {
         }); 
     }
 
-    /**
-     * This function supports the route by address feature at /#route-by-address
-     */
+    // This function supports the route by address feature at /#route-by-address
     function geocodeWithCycleStreets(place_from,place_to) {
 
 	// Trace
-        // console.log('geocodeWithCycleStreets');
+	// console.log('geocodeWithCycleStreets');
 
 	// Check from / to args
         if ((place_from=='')||(place_to=='')) {
@@ -1085,8 +1087,7 @@ if (window.google) {
                 stopTracking();
             } else {
                 toastMessage('Tracking your location');
-                watchId = navigator.geolocation.watchPosition(gpsSuccess,
-                      gpsFail, {timeout:10000, maximumAge: 300000}); 
+                watchId = geolocationWatch();
                 if (current_latlng!==null) {
                     map.panTo(current_latlng);
                     addPosMarker(current_latlng.lat(), current_latlng.lng());
@@ -1108,9 +1109,9 @@ if (window.google) {
         }
 
         // If we are on the photomap page, add markers.
-        if (global_page_type==="photomap") {    
-            google.maps.event.addListener(map, 'tilesloaded', function() {
-              addMarkers();
+        if (global_page_type==="photomap") {
+	    google.maps.event.addListener(map, 'tilesloaded', function() {
+		addMarkers();
             });
             $('#photo').live('pageshow', function (event, ui) { 
                 getIndividualPhoto(current_marker, '');
@@ -1343,6 +1344,9 @@ function organizeCSS(page_type) {
 
 function setUpPage(page_type) {
 
+    // Trace
+    // console.log('setUpPage(' + page_type + ')');
+
     // Delete redirection cookie, if it exists. 
     document.cookie = "nomobileredirect=-1;domain=.cyclestreets.net;path=/";
 
@@ -1370,8 +1374,9 @@ function setUpPage(page_type) {
 
     if (navigator.geolocation) { 
         toastMessage('Getting your location...');
-        watchId = navigator.geolocation.watchPosition(gpsSuccess,
-              gpsFail, {timeout:10000, maximumAge: 300000});
+
+	// !! This may not work as the gpsSuccess and gpsFail functions are only defined if(window.google).
+        watchId = geolocationWatch();
     } else {
         toastMessage("Sorry, can't get your current location!");
         // Use default location of Cambridge. 
@@ -1387,4 +1392,8 @@ function setUpPage(page_type) {
     $(window).resize(function() {
       organizeCSS(global_page_type);
     });
+}
+
+function geolocationWatch () {
+    return navigator.geolocation.watchPosition(gpsSuccess, gpsFail, {timeout:10000, maximumAge: 300000});
 }
