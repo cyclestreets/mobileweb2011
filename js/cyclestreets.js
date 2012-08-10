@@ -5,20 +5,6 @@ var CS_API = 'http://www.cyclestreets.net/api/';
 // var CS_API = 'http://localhost/api/';
 var global_page_type = null;
 
-// Icons
-var startMarkerIcon = new google.maps.MarkerImage('/images/cs_start.png',
-						  new google.maps.Size(50, 55),
-						  new google.maps.Point(0, 0),
-						  new google.maps.Point(13, 53));
-var amberMarkerIcon = new google.maps.MarkerImage('/images/cs_amber.png',
-						  new google.maps.Size(50, 55),
-						  new google.maps.Point(0, 0),
-						  new google.maps.Point(13, 53));
-var finishMarkerIcon = new google.maps.MarkerImage('/images/cs_finish.png',
-						  new google.maps.Size(50, 55),
-						  new google.maps.Point(0, 0),
-						  new google.maps.Point(13, 53));
-
 // List of waypoints
 var itineraryMarkers = [];
 
@@ -349,6 +335,19 @@ function getIndividualPhoto(photo_id, caption) {
 
 if (window.google) {
 
+    // Icons
+    var startMarkerIcon = new google.maps.MarkerImage('/images/cs_start.png',
+						  new google.maps.Size(50, 55),
+						  new google.maps.Point(0, 0),
+						  new google.maps.Point(13, 53));
+    var amberMarkerIcon = new google.maps.MarkerImage('/images/cs_amber.png',
+						  new google.maps.Size(50, 55),
+						  new google.maps.Point(0, 0),
+						  new google.maps.Point(13, 53));
+    var finishMarkerIcon = new google.maps.MarkerImage('/images/cs_finish.png',
+						  new google.maps.Size(50, 55),
+						  new google.maps.Point(0, 0),
+						  new google.maps.Point(13, 53));
     // OSM/OCM/OS map types. 
     var osmMapType = new google.maps.ImageMapType({
         getTileUrl: function (coord, zoom) {
@@ -1145,7 +1144,7 @@ if (window.google) {
 		if (tooClose()) {
 
 		    // Inform user
-		    toastMessage('Sorry, those points are too close together. Please move the map and try again.');
+		    toastMessage('Move the map away from the last point to add another');
 		    return;
 		}
 
@@ -1225,7 +1224,7 @@ if (window.google) {
 	case 1:
 
 	    // Click will add a finish marker (if not too close to the last)
-	    $('#waypointAdd .ui-btn-text').text(tooClose() ? 'Move the map' : '2. Tap to set finish');
+	    $('#waypointAdd .ui-btn-text').text(tooClose() ? 'Move the map' : '2. Tap to add point');
 	    $('#waypointAdd').show(); 
 
             // Set up the 'remove marker' button.
@@ -1235,7 +1234,7 @@ if (window.google) {
 	default:
 
 	    // Setup the button to offer route planning
-            $('#waypointAdd .ui-btn-text').text(tooClose() ? '3. Tap to route' : '2. Tap to add point');
+            $('#waypointAdd .ui-btn-text').text(tooClose() ? '3. Tap to route' : '2. Tap to add another');
 	    $('#waypointAdd').show(); 
  
             // Set up the 'remove marker' button.
