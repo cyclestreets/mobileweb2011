@@ -88,8 +88,8 @@ $(document).ready(function() {
     metacategoryselect.val("bad");
 
     // Logic for the Prefs page.
-    if (getItem("routetype")!=null) {
-        $("#routetype").val(getItem("routetype"));
+    if (getItem("plan")!=null) {
+        $("#plan").val(getItem("plan"));
     }
     if (getItem("cyclingspeed")!=null) {
         $("#cyclingspeed").val(getItem("cyclingspeed"));
@@ -97,8 +97,8 @@ $(document).ready(function() {
     if (getItem("maptype")!=null) {
         $("#maptype").val(getItem("maptype"));
     }
-    $('#routetype').change(function() {
-        setItem("routetype", $('#routetype').val());
+    $('#plan').change(function() {
+        setItem("plan", $('#plan').val());
     });
     $('#cyclingspeed').change(function() {
         setItem("cyclingspeed", $('#cyclingspeed').val());
@@ -441,17 +441,17 @@ Get the Cyclestreets app!
         <h1>Preferences</h1> 
     </div> 
     <div data-role="content" data-position="inline"> 
-        <p>Set your preferred route type, map type, and typical cycling speed here.</p>
+        <p>Set your preferred route plan, map style, and cycling speed here.</p>
         <div data-role="fieldcontain"> 
-            <label for="routetype">Route type:</label> 
-            <select name="routetype" id="routetype"> 
+            <label for="plan">Plan:</label> 
+            <select name="plan" id="plan"> 
                 <option value="fastest">Fastest</option> 
                 <option value="balanced" selected="selected">Balanced</option> 
                 <option value="quietest">Quietest</option> 
             </select> 
         </div> 
         <div data-role="fieldcontain"> 
-            <label for="maptype">Map type:</label> 
+            <label for="maptype">Map:</label> 
             <select name="maptype" id="maptype"> 
                 <option value="OSM">OpenStreetMap</option> 
                 <option value="OCM">OpenCycleMap</option> 
@@ -459,7 +459,7 @@ Get the Cyclestreets app!
             </select> 
         </div>
         <div data-role="fieldcontain"> 
-            <label for="cyclingspeed">Typical speed:</label> 
+            <label for="cyclingspeed">Speed:</label> 
             <select name="cyclingspeed" id="cyclingspeed"> 
                 <option value="10">Unhurried (10 mph)</option> 
                 <option value="12" selected="selected">Cruising (12 mph)</option> 
@@ -467,7 +467,7 @@ Get the Cyclestreets app!
             </select> 
         </div> 
         <div data-role="fieldcontain" id="cleardetails"> 
-            <label for="clearusername">Clear saved username:</label> 
+            <label for="clearusername">Clear saved user name:</label> 
             <input type="button" data-theme="z" name="clearusername" id="clearusername" value="Clear" />
         </div>
         <div class="ui-grid-a"> 
