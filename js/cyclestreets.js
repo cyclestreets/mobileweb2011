@@ -2,7 +2,7 @@
 var CS_API_KEY = '68f786d958d1dbfb';
 var CS_API = 'http://www.cyclestreets.net/api/';
 // Use localhost for testing
-// var CS_API = 'http://localhost/api/';
+var CS_API = 'http://localhost/api/';
 var global_page_type = null;
 
 // Route markers and instructions. 
@@ -1083,6 +1083,7 @@ if (window.google) {
             }
             return false;
         });
+
         // If we are on a page that requires geolocation, add markers etc.
         if (global_page_type !== "new_route") {  
             if ((current_latlng !== null) && (is_user_position_initialised !== false)) {
@@ -1092,7 +1093,8 @@ if (window.google) {
                 $('#locate-me').hide();
             }
         }
-        // If we are on the photomap page, add markers. 
+
+        // If we are on the photomap page, add markers.
         if (global_page_type==="photomap") {    
             google.maps.event.addListener(map, 'tilesloaded', function() {
               addMarkers();
@@ -1101,6 +1103,7 @@ if (window.google) {
                 getIndividualPhoto(current_marker, '');
             });
         }
+
         // Add an event listener: save latest location, so we can reload it if the user navigates away from the page. 
         google.maps.event.addListener(map, 'tilesloaded', function() {
             var mapcenter=map.getCenter(); 
@@ -1131,6 +1134,29 @@ if (window.google) {
 
 	});*/
 
+	// Setup the waypoint buttons
+	updateWaypointButtons();
+
+	// ???
+        if (global_page_type=="new_route") {
+            createCrosshairs();
+            $('#waypointAdd').show();
+        }
+    }
+
+
+    // This function sets the behaviour of the waypoint(Add|Del) buttons according to the current state.
+    function updateWaypointButtons() {
+
+	// Inital state
+	if (!itineraryMarkers.length) {setWaypointButtonsInitialState();}
+
+	// More states WIP
+    }
+
+    // This function sets the behaviour of the waypoint(Add|Del) buttons according to the current state.
+    function setWaypointButtonsInitialState() {
+	
 	// Click function for the 'Tap to set start' button sets up the 'New route page'.
         // If we are on a new route page, add reticle and listeners. 
         $('#waypointAdd').click(function() {
@@ -1138,10 +1164,10 @@ if (window.google) {
 	    // If end points are set plan a route.
 	    // #waypoints Will need a new button to distinguish bewteen planning a route and adding further waypoints.
 	    if (itineraryMarkers.length > 1) {
-                 $('#route-header').text('Getting route...');
-                 routeItineraryMarkersWithCycleStreets(itineraryMarkers);
-		 return;
-              }
+                $('#route-header').text('Getting route...');
+                routeItineraryMarkersWithCycleStreets(itineraryMarkers);
+		return;
+            }
 
 	    // If just the start has been set add a finish
 	    if (itineraryMarkers.length > 0) {
@@ -1152,7 +1178,7 @@ if (window.google) {
                 // Check the new position is not too close to the last
                 var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(waypointPosition);
                 if (dist < 200) {
-                    toastMessage('Sorry, those points are too close together!');
+		    toastMessage('Sorry, those points are too close together!');
 
 		    // Exit
                     return;
@@ -1200,7 +1226,7 @@ if (window.google) {
                 });
 		// Exit
 		return;
-                }
+            }
 
             // Add start marker
 	    itineraryMarkers.push(createMapMarker(map.getCenter(), 'start'));
@@ -1219,12 +1245,6 @@ if (window.google) {
                 $('#waypointAdd .ui-btn-text').text(SET_FIRST_MARKER);
             });
 	});
-
-	// ???
-        if (global_page_type=="new_route") {
-            createCrosshairs();
-            $('#waypointAdd').show();
-        }
     }
 
     // Remove the latest marker
