@@ -1130,23 +1130,9 @@ if (window.google) {
 	// When the map is moved
 	google.maps.event.addListener(map, 'center_changed', function() {
 
+	    // Update the buttons state
+	    // !! This may be rather in efficient and a way of determining if the number of markers has changed could be needed.
 	    choreographWaypointButtons();
-/*
-	    // Nothing to do if there are no markers
-	    if (!itineraryMarkers.length) {return;}
-
-            // Check the new position is not too close to the last
-            var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(map.getCenter());
-            if (dist < 200) {
-
-		// Change the waypointAdd button to 'Move the map' first time around, and subsequently 'Tap to route'
-                console.log('Too close');
-	    } else {
-
-		// Change the waypointAdd button to 'Tap to add point'
-                console.log('OK');
-	    }*/
-
 	});
 
 	// Click command for waypoint add button
@@ -1200,7 +1186,7 @@ if (window.google) {
 
 	// Click command for waypoint remove button
         $('#waypointDel').unbind('click');
-        $('#waypointDel').click(function() { 
+        $('#waypointDel').click(function() {
 
 	    // Remove the latest marker
 	    removeLastMarker();
@@ -1239,7 +1225,7 @@ if (window.google) {
 	case 1:
 
 	    // Click will add a finish marker (if not too close to the last)
-	    $('#waypointAdd .ui-btn-text').text(tooClose() ? 'Too close: move the map' : '2. Tap to set finish');
+	    $('#waypointAdd .ui-btn-text').text(tooClose() ? 'Move the map' : '2. Tap to set finish');
 	    $('#waypointAdd').show(); 
 
             // Set up the 'remove marker' button.
@@ -1270,6 +1256,9 @@ if (window.google) {
 
 	// Remove the latest marker
 	var lastItineraryMarker = itineraryMarkers.pop();
+
+	// Go to the position where the marker was
+	map.setCenter(lastItineraryMarker.position);
 
 	// Remove from map
 	lastItineraryMarker.setMap(null);
