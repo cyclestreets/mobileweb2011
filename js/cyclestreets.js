@@ -2,7 +2,7 @@
 var CS_API_KEY = '68f786d958d1dbfb';
 var CS_API = 'http://www.cyclestreets.net/api/';
 // Use localhost for testing
-//var CS_API = 'http://localhost/api/';
+var CS_API = 'http://localhost/api/';
 var global_page_type = null;
 
 // List of waypoints
@@ -628,8 +628,16 @@ if (window.google) {
     }
 
     // Plan route using itinerary markers (currently expects just two markers)
-    function routeItineraryMarkersWithCycleStreets(itineraryMarkers) {
-	routeWithCycleStreets(itineraryMarkers[0].position.lng() + ',' + itineraryMarkers[0].position.lat() + '|' + itineraryMarkers[1].position.lng() + ',' + itineraryMarkers[1].position.lat(),null,null);
+    function routeItineraryMarkersWithCycleStreets() {
+
+	// Extract all the coordinates from the markers
+	var itineraryPoints = [];
+	for(var index=0;index<itineraryMarkers.length;index++) {
+	    itineraryPoints.push(itineraryMarkers[index].position.lng() + ',' + itineraryMarkers[index].position.lat());
+	}
+
+	// Implode and pass on the call
+	routeWithCycleStreets(itineraryPoints.join('|'),null,null);
     }
 
     // Route journey using CycleStreets API, display map. 
@@ -1153,9 +1161,21 @@ if (window.google) {
 
 	    } else {
 
-		// Plan a route
-                $('#route-header').text('Getting route...');
-                routeItineraryMarkersWithCycleStreets(itineraryMarkers);
+		// If the map has moved add another marker, if not, plan the route.
+		if (tooClose()) {
+
+		    // Plan a route
+                    $('#route-header').text('Getting route...');
+                    routeItineraryMarkersWithCycleStreets();
+
+		} else {
+
+		    // Add start marker
+		    itineraryMarkers.push(createMapMarker(map.getCenter(), itineraryMarkers.length < 1 ? 'start' : 'finish'));
+
+		    // Choreograph
+		    choreographWaypointButtons();
+		}
 
 	    }
 	});
@@ -1216,7 +1236,7 @@ if (window.google) {
 	default:
 
 	    // Setup the button to offer route planning
-            $('#waypointAdd .ui-btn-text').text('3. Tap to route');
+            $('#waypointAdd .ui-btn-text').text(tooClose() ? '3. Tap to route' : '2. Tap to add point');
 	    $('#waypointAdd').show(); 
  
             // Set up the 'remove marker' button.
