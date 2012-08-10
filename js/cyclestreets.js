@@ -1,6 +1,8 @@
 // CycleStreets API details. 
 var CS_API_KEY = '68f786d958d1dbfb';
 var CS_API = 'http://www.cyclestreets.net/api/';
+// !! Use localhost for testing
+// var CS_API = 'http://localhost/api/';
 var global_page_type = null;
 
 // Route markers and instructions. 
@@ -625,15 +627,20 @@ if (window.google) {
 	// Check end points are set
         if ((start_lat===undefined) || (start_lng===undefined) || (finish_lat===undefined) || (finish_lng===undefined)) { 
             toastMessage("Sorry, there's a problem with the route markers. Please refresh page and try again.");
-            return false;
+            return;
         }
-	routeWithCycleStreets(start_lat, start_lng, finish_lat, finish_lng, null, null);
+	routeWithCycleStreets(start_lng + ',' + start_lat + '|' + finish_lng + ',' + finish_lat, null, null);
+    }
+
+    // Plan route using itinerary markers (currently expects just two markers)
+    function routeItineraryMarkersWithCycleStreets(itineraryMarkers) {
+	routeWithCycleStreets(itineraryMarkers[0].position.lng() + ',' + itineraryMarkers[0].position.lat() + '|' + itineraryMarkers[1].position.lng() + ',' + itineraryMarkers[1].position.lat(),null,null);
     }
 
     // Route journey using CycleStreets API, display map. 
-    function routeWithCycleStreets(start_lat, start_lng, finish_lat, finish_lng, route_id, strategy) {
+    function routeWithCycleStreets(itineraryPoints, route_id, strategy) {
 
-	// console.log('routeWithCycleStreets');
+	 console.log('routeWithCycleStreets(' + itineraryPoints + ')');
 
 	// Animation that shows the page is loading
         $.mobile.showPageLoadingMsg();
@@ -670,7 +677,7 @@ if (window.google) {
         } else {
 
 	    // Arrange the parameters to plan a new route
-            journeydata['itinerarypoints'] = start_lng + ',' + start_lat + '|' + finish_lng + ',' + finish_lat;
+            journeydata['itinerarypoints'] = itineraryPoints;
             if (strategy===null) {
                 if (getItem("routetype")!==null) {
                    strategy = getItem("routetype");
@@ -1102,7 +1109,7 @@ if (window.google) {
 	    // #waypoints Will need a new button to distinguish bewteen planning a route and adding further waypoints.
 	    if (itineraryMarkers.length > 1) {
                  $('#route-header').text('Getting route...');
-                 routeWithCycleStreets(itineraryMarkers[0].position.lat(),itineraryMarkers[0].position.lng(),itineraryMarkers[1].position.lat(),itineraryMarkers[1].position.lng(),null,null);
+                 routeItineraryMarkersWithCycleStreets(itineraryMarkers);
 		 return;
               }
 
