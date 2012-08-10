@@ -2,8 +2,22 @@
 var CS_API_KEY = '68f786d958d1dbfb';
 var CS_API = 'http://www.cyclestreets.net/api/';
 // Use localhost for testing
-var CS_API = 'http://localhost/api/';
+// var CS_API = 'http://localhost/api/';
 var global_page_type = null;
+
+// Icons
+var startMarkerIcon = new google.maps.MarkerImage('/images/cs_start.png',
+						  new google.maps.Size(50, 55),
+						  new google.maps.Point(0, 0),
+						  new google.maps.Point(13, 53));
+var amberMarkerIcon = new google.maps.MarkerImage('/images/cs_amber.png',
+						  new google.maps.Size(50, 55),
+						  new google.maps.Point(0, 0),
+						  new google.maps.Point(13, 53));
+var finishMarkerIcon = new google.maps.MarkerImage('/images/cs_finish.png',
+						  new google.maps.Size(50, 55),
+						  new google.maps.Point(0, 0),
+						  new google.maps.Point(13, 53));
 
 // List of waypoints
 var itineraryMarkers = [];
@@ -423,15 +437,11 @@ if (window.google) {
     function createMapMarker (location, marker_type) {
 
         var marker_icon; 
-        marker_icon = new google.maps.MarkerImage(marker_type === "finish" ? '/images/cs_finish.png' : '/images/cs_start.png',
-						  new google.maps.Size(50, 55),
-						  new google.maps.Point(0, 0),
-						  new google.maps.Point(13, 53));
 	
         var map_marker = new google.maps.Marker({
             position: location, 
             map: map,
-            icon: marker_icon,
+            icon: (marker_type=='finish' ? finishMarkerIcon : startMarkerIcon),
             zIndex: 1000
         });
         return map_marker;
@@ -1170,7 +1180,10 @@ if (window.google) {
 
 		} else {
 
-		    // Add start marker
+		    // Change existing marker to amber
+		    itineraryMarkers[itineraryMarkers.length - 1].setIcon(amberMarkerIcon);
+
+		    // Add finish marker
 		    itineraryMarkers.push(createMapMarker(map.getCenter(), itineraryMarkers.length < 1 ? 'start' : 'finish'));
 
 		    // Choreograph
@@ -1260,6 +1273,11 @@ if (window.google) {
 
 	// Remove from map
 	lastItineraryMarker.setMap(null);
+
+	// Change any amber to finish
+	if (itineraryMarkers.length > 1) {
+	    itineraryMarkers[itineraryMarkers.length - 1].setIcon(finishMarkerIcon);
+	}
     }
 
     /**
