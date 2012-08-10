@@ -1110,9 +1110,10 @@ if (window.google) {
         });
 
 	// When the map is moved
-	/* Unfinished wip
 	google.maps.event.addListener(map, 'center_changed', function() {
 
+	    choreographWaypointButtons();
+/*
 	    // Nothing to do if there are no markers
 	    if (!itineraryMarkers.length) {return;}
 
@@ -1126,9 +1127,9 @@ if (window.google) {
 
 		// Change the waypointAdd button to 'Tap to add point'
                 console.log('OK');
-	    }
+	    }*/
 
-	});*/
+	});
 
 	// Setup the waypoint buttons
 	choreographWaypointButtons();
@@ -1172,31 +1173,35 @@ if (window.google) {
 
 	case 1:
 
-	    // Click will add a finish marker (if not too close to the last)
-            $('#waypointAdd .ui-btn-text').text('2. Tap to set finish');
-            $('#waypointAdd').show(); 
-            $('#waypointAdd').unbind('click');
-            $('#waypointAdd').click(function() {
+	    // The new position
+	    var waypointPosition = map.getCenter();
 
-		// The new position
-		var waypointPosition = map.getCenter();
+	    // Check the new position is not too close to the last
+	    var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(waypointPosition);
+	    if (dist < 200) {
+		
+		// toastMessage('Sorry, those points are too close together!');
+		// Click will add a finish marker (if not too close to the last)
+		$('#waypointAdd .ui-btn-text').text('2. Too close: move the map');
+		$('#waypointAdd').show(); 
+		$('#waypointAdd').unbind('click');
 
-		// Check the new position is not too close to the last
-		var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(waypointPosition);
-		if (dist < 200) {
-		    toastMessage('Sorry, those points are too close together!');
+	    } else {
 
-		    // Exit
-		    return;
-		}
+		// Click will add a finish marker (if not too close to the last)
+		$('#waypointAdd .ui-btn-text').text('2. Tap to set finish');
+		$('#waypointAdd').show(); 
+		$('#waypointAdd').unbind('click');
+		$('#waypointAdd').click(function() {
 
-		// Add start marker
-		itineraryMarkers.push(createMapMarker(map.getCenter(), 'finish'));
+		    // Add start marker
+		    itineraryMarkers.push(createMapMarker(map.getCenter(), 'finish'));
 
-		// Choreograph
-		choreographWaypointButtons();
+		    // Choreograph
+		    choreographWaypointButtons();
 
-	    });
+		});
+	    }
 
             // Set up the 'remove marker' button.
             $('#waypointDel .ui-btn-text').text('Undo');
