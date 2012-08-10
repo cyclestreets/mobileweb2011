@@ -2,7 +2,7 @@
 var CS_API_KEY = '68f786d958d1dbfb';
 var CS_API = 'http://www.cyclestreets.net/api/';
 // Use localhost for testing
-var CS_API = 'http://localhost/api/';
+//var CS_API = 'http://localhost/api/';
 var global_page_type = null;
 
 // List of waypoints
@@ -1131,123 +1131,94 @@ if (window.google) {
 
 	});
 
-	// Setup the waypoint buttons
-	choreographWaypointButtons();
+	// Click command for waypoint add button
+	$('#waypointAdd').unbind('click');
+	$('#waypointAdd').click(function() {
 
-	// ???
-        if (global_page_type=="new_route") {
-            createCrosshairs();
-            $('#waypointAdd').show();
-        }
-    }
-
-
-    // This function sets the behaviour of the waypoint(Add|Del) buttons according to the current state.
-    // The idea is that this function can be called at any time to get these buttons into the right state.
-    function choreographWaypointButtons() {
-
-	switch(itineraryMarkers.length) {
-	case 0:
-
-	    // Inital state
-	    // Show the add button
-            $('#waypointAdd .ui-btn-text').text('1. Tap to set start');
-            $('#waypointAdd').show(); 
-
-	    // Click will add a new marker
-            $('#waypointAdd').unbind('click');
-            $('#waypointAdd').click(function() {
+	    if (itineraryMarkers.length < 2) {
 
 		// Add start marker
-		itineraryMarkers.push(createMapMarker(map.getCenter(), 'start'));
+		itineraryMarkers.push(createMapMarker(map.getCenter(), itineraryMarkers.length < 1 ? 'start' : 'finish'));
 
 		// Choreograph
 		choreographWaypointButtons();
 
-	    });
+	    } else {
+
+		// Plan a route
+                $('#route-header').text('Getting route...');
+                routeItineraryMarkersWithCycleStreets(itineraryMarkers);
+
+	    }
+	});
+
+	// The waypoint remove button always has the text 'undo'
+        $('#waypointDel .ui-btn-text').text('Undo');
+	// Make it appear centred
+        $('#waypointDel').css({'left': ($('#map-canvas').width() - $('#waypointDel').width()) / 2});
+
+	// Click command for waypoint remove button
+        $('#waypointDel').unbind('click');
+        $('#waypointDel').click(function() { 
+
+	    // Remove the latest marker
+	    removeLastMarker();
+
+	    // Choreograph
+	    choreographWaypointButtons();
+        });
+
+	// Setup the waypoint buttons
+	choreographWaypointButtons();
+
+	// Setup cross hairs on the new_route page
+        if (global_page_type=="new_route") {createCrosshairs();}
+    }
+
+
+    // This function sets the appearance of the waypoint(Add|Del) buttons according to the current state.
+    // The idea is that this function can be called at any time to get these buttons into the right state.
+    function choreographWaypointButtons() {
+
+	// Once a route has been produced, that's it. The planner page is not re-entrant.
+	if (route_data) {return;}
+
+	switch(itineraryMarkers.length) {
+	case 0:
+
+	    // Initial state
+	    // Show the add button
+            $('#waypointAdd .ui-btn-text').text('1. Tap to set start');
+            $('#waypointAdd').show(); 
 
 	    // Hide the del button
-            $('#waypointDel').unbind('click');
             $('#waypointDel').hide();
 	    break;
 
 	case 1:
 
-	    // The new position
-	    var waypointPosition = map.getCenter();
-
-	    // Check the new position is not too close to the last
-	    var dist = itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(waypointPosition);
-	    if (dist < 200) {
-		
-		// toastMessage('Sorry, those points are too close together!');
-		// Click will add a finish marker (if not too close to the last)
-		$('#waypointAdd .ui-btn-text').text('2. Too close: move the map');
-		$('#waypointAdd').show(); 
-		$('#waypointAdd').unbind('click');
-
-	    } else {
-
-		// Click will add a finish marker (if not too close to the last)
-		$('#waypointAdd .ui-btn-text').text('2. Tap to set finish');
-		$('#waypointAdd').show(); 
-		$('#waypointAdd').unbind('click');
-		$('#waypointAdd').click(function() {
-
-		    // Add start marker
-		    itineraryMarkers.push(createMapMarker(map.getCenter(), 'finish'));
-
-		    // Choreograph
-		    choreographWaypointButtons();
-
-		});
-	    }
+	    // Click will add a finish marker (if not too close to the last)
+	    $('#waypointAdd .ui-btn-text').text(tooClose() ? 'Too close: move the map' : '2. Tap to set finish');
+	    $('#waypointAdd').show(); 
 
             // Set up the 'remove marker' button.
-            $('#waypointDel .ui-btn-text').text('Undo');
             $('#waypointDel').show();
-            $('#waypointDel').unbind('click');
-            $('#waypointDel').click(function() { 
-
-		// Remove the latest marker
-		removeLastMarker();
-
-		// Choreograph
-		choreographWaypointButtons();
-            });
 	    break;
 
 	default:
 
 	    // Setup the button to offer route planning
             $('#waypointAdd .ui-btn-text').text('3. Tap to route');
-            $('#waypointAdd').unbind('click');
-            $('#waypointAdd').click(function() {
-		// #waypoints Will need a new button to distinguish bewteen planning a route and adding further waypoints.
-                $('#route-header').text('Getting route...');
-                routeItineraryMarkersWithCycleStreets(itineraryMarkers);
-		return;
-            });
-
+	    $('#waypointAdd').show(); 
+ 
             // Set up the 'remove marker' button.
-            $('#waypointDel .ui-btn-text').text('Undo');
             $('#waypointDel').show();
-            $('#waypointDel').unbind('click');
-            $('#waypointDel').click(function() { 
-
-		// Remove the latest marker
-		removeLastMarker();
-
-		// Choreograph
-		choreographWaypointButtons();
-            });
 
 	    // Closes the switch()
 	}
 
-	// Make the buttons appear centred
+	// Make the button appear centred
         $('#waypointAdd').css({'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2});
-        $('#waypointDel').css({'left': ($('#map-canvas').width() - $('#waypointDel').width()) / 2});
     }
 
     // Remove the latest marker
@@ -1261,6 +1232,18 @@ if (window.google) {
 
 	// Remove from map
 	lastItineraryMarker.setMap(null);
+    }
+
+    /**
+     * @return bool True if the map centre is less than 200 metres from tha last itinerary point.
+     */
+    function tooClose () {
+
+	// Nothing to comare
+	if (!itineraryMarkers.length) {return false;}
+
+	// Check the new position is not too close to the last
+	return itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(map.getCenter())  < 200;
     }
 
 // Close the if (window.google)
