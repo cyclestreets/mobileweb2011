@@ -122,7 +122,7 @@ $(document).ready(function() {
             var key = all_keys[i];
             var route_num = key.split('-')[1]; 
             var route_info = getItem(key); 
-            var route_url = '/journey/#' + route_num + "/" + route_info.strategy;
+            var route_url = '/journey/#' + route_num + "/" + route_info.plan;
             var list_route = "<li><a rel='external' href='" + route_url + "'>";
             list_route += "<p><strong>";
             if (route_info.date !== undefined) {
@@ -133,7 +133,7 @@ $(document).ready(function() {
             list_route += route_info.from + " to " + route_info.to + "</strong></p>";
             list_route += "<p>" + route_info.distance +  " miles, ";
             list_route += route_info.time + " mins at ";
-            list_route += route_info.speed + "mph, " + route_info.strategy + "</p></a></li>";
+            list_route += route_info.speed + "mph, " + route_info.plan + "</p></a></li>";
             $('#saved-list').append($(list_route));  
         }());   
     }
