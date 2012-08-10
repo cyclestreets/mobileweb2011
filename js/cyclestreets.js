@@ -1137,6 +1137,14 @@ if (window.google) {
 
 	    if (itineraryMarkers.length < 2) {
 
+		// Skip if too close
+		if (tooClose()) {
+
+		    // Inform user
+		    toastMessage('Sorry, those points are too close together. Please move the map and try again.');
+		    return;
+		}
+
 		// Add start marker
 		itineraryMarkers.push(createMapMarker(map.getCenter(), itineraryMarkers.length < 1 ? 'start' : 'finish'));
 
