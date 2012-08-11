@@ -126,7 +126,8 @@ $(document).ready(function() {
             var list_route = "<li><a rel='external' href='" + route_url + "'>";
             list_route += "<p><strong>";
             if (route_info.date !== undefined) {
-                var d = new Date(route_info.date);
+                // This munging seems necessary for compatibility with Android
+                var d = new Date(route_info.date.replace(/\-/ig, '/').split('T')[0]);
                 var curr_month = d.getMonth() + 1; 
                 list_route += d.getDate() + "/" + curr_month + "/" + d.getFullYear() + "<br/>";
             }
