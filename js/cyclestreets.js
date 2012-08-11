@@ -1240,7 +1240,7 @@ if (window.google) {
 	default:
 
 	    // Setup the button to offer route planning
-            $('#waypointAdd .ui-btn-text').text(tooClose() ? '3. Tap to route, or move to add more' : '2. Tap to add another');
+            $('#waypointAdd .ui-btn-text').text(tooClose() ? '3. Tap to route, move for more' : '2. Tap to add another');
 	    $('#waypointAdd').show(); 
  
             // Set up the 'remove marker' button.
