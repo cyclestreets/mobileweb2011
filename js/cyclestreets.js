@@ -1179,17 +1179,21 @@ if (window.google) {
 	    }
 	});
 
-	// The waypoint remove button always has the text 'undo'
-        $('#waypointDel .ui-btn-text').text('Undo');
-	// Make it appear centred
-        $('#waypointDel').css({'left': ($('#map-canvas').width() - $('#waypointDel').width()) / 2});
-
 	// Click command for waypoint remove button
         $('#waypointDel').unbind('click');
         $('#waypointDel').click(function() {
 
-	    // Remove the latest marker
-	    removeLastMarker();
+	    // Proximity to the last marker determines button behaviour
+	    if(tooClose ()) {
+
+		// Remove the latest marker
+		removeLastMarker();
+
+	    } else {
+
+		// Go to the position of the last marker
+		map.setCenter(itineraryMarkers[itineraryMarkers.length - 1].position);
+	    }
 
 	    // Choreograph
 	    choreographWaypointButtons();
@@ -1229,6 +1233,7 @@ if (window.google) {
 	    $('#waypointAdd').show(); 
 
             // Set up the 'remove marker' button.
+            $('#waypointDel .ui-btn-text').text(tooClose() ? 'Remove' : 'Go to start point');
             $('#waypointDel').show();
 	    break;
 
@@ -1239,6 +1244,7 @@ if (window.google) {
 	    $('#waypointAdd').show(); 
  
             // Set up the 'remove marker' button.
+            $('#waypointDel .ui-btn-text').text(tooClose() ? 'Remove' : 'Go to last point');
             $('#waypointDel').show();
 
 	    // Closes the switch()
@@ -1246,6 +1252,7 @@ if (window.google) {
 
 	// Make the button appear centred
         $('#waypointAdd').css({'left': ($('#map-canvas').width() - $('#waypointAdd').width()) / 2});
+        $('#waypointDel').css({'left': ($('#map-canvas').width() - $('#waypointDel').width()) / 2});
     }
 
     // Remove the latest marker
@@ -1256,9 +1263,6 @@ if (window.google) {
 
 	// Remove the latest marker
 	var lastItineraryMarker = itineraryMarkers.pop();
-
-	// Go to the position where the marker was
-	map.setCenter(lastItineraryMarker.position);
 
 	// Remove from map
 	lastItineraryMarker.setMap(null);
