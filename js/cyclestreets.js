@@ -35,6 +35,10 @@ var regexForRoutes = /^route-[\d]+$/;
 
 var current_marker = null;
 
+// Copyrights
+var copyrights = {};
+var copyrightNode;
+  
 /*********************************************************
 / Styled popup (toast) messages.
 *********************************************************/
@@ -1073,10 +1077,15 @@ if (window.google) {
 	// Setup desired map style from preferences
         var desired_map = getItem("maptype")==null ? "OSM" : getItem("maptype");
 
-        map.setMapTypeId(desired_map);   
+	// Initialize copyright info
+	initCopyright();
         google.maps.event.addListener(map, 'maptypeid_changed', function() { 
             setItem("maptype", this.getMapTypeId());
+            // Update copyright info
+            updateCopyrights();
         });
+        map.setMapTypeId(desired_map);
+
 
         // Geolocate button: toggle geotracking. 
         $("#locate-me").bind('tap', function(e){ 
@@ -1401,3 +1410,79 @@ function setUpPage(page_type) {
 function geolocationWatch () {
     return navigator.geolocation.watchPosition(gpsSuccess, gpsFail, {timeout:10000, maximumAge: 300000});
 }
+
+
+/**
+ * Map copyright attribution has been modelled on this site:
+`* http://www.busitlondon.co.uk/
+ */
+  function initCopyright() {
+	    // Create div for showing copyrights.
+	    copyrightNode = document.createElement('div');
+	    copyrightNode.id = 'copyright-control';
+	    copyrightNode.style.fontSize = '10px';
+	    copyrightNode.style.fontFamily = 'sans-serif';
+	    copyrightNode.style.margin = '0 2px 2px 0';
+	    copyrightNode.style.whiteSpace = 'nowrap';
+	    copyrightNode.style.color = '#444';
+	    copyrightNode.index = 0;
+	    map.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(copyrightNode);
+
+
+	    // Copyritght attribution
+	    // Lack of space on mobile platforms means these compromises are made:
+	    // 'contributors' is left out of these notices for space reasons
+	    // No links, eg to:
+	    // <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>
+	    // <a href="http://www.opencyclemap.org/">OpenCycleMap</a>
+
+
+	    // OpenStreetMap
+	    var collection = new CopyrightCollection();
+	    collection.addCopyright(new Copyright(
+	      1,
+	      new google.maps.LatLngBounds(
+	          new google.maps.LatLng( -180, -90), new google.maps.LatLng(180,90)),
+	      0,
+	      '&copy; OpenStreetMap, CC-BY-SA'));
+	    copyrights['OSM'] = collection;
+
+	    // OpenCycleMap
+	    // Re-use the same var for a new collection
+	    collection = new CopyrightCollection();
+	    collection.addCopyright(new Copyright(
+	      2,
+	      new google.maps.LatLngBounds(
+	          new google.maps.LatLng( -180, -90), new google.maps.LatLng(180,90)),
+	      0,
+	      'OpenCycleMap &copy; OpenStreetMap, CC-BY-SA'));
+	    copyrights['OCM'] = collection;
+
+	    // OS Open data
+	    // Re-use the same var for a new collection
+	    // Full quote should be: 'Contains Ordnance Survey data (c) Crown copyright and database right 2010'
+	    collection = new CopyrightCollection();
+	    collection.addCopyright(new Copyright(
+	      3,
+	      new google.maps.LatLngBounds(
+	          new google.maps.LatLng( -180, -90), new google.maps.LatLng(180,90)),
+	      0,
+	      'Ordnance Survey &copy; Crown copyright'));
+	    copyrights['OS'] = collection;
+
+  }
+  
+  function updateCopyrights() {
+	    var notice = '';
+	    var collection = copyrights[map.getMapTypeId()];
+	    var zoom = map.getZoom();
+	    // Allowing bounds to default if the map hasn't got bounds allows a notice to be obtained while the map is still being set up
+	    var bounds = map.getBounds() || new google.maps.LatLngBounds(new google.maps.LatLng(0, 0), new google.maps.LatLng(0, 0));
+	    if (collection && bounds && zoom) {
+	      notice = collection.getCopyrightNotice(bounds, zoom);
+	    }
+	    copyrightNode.innerHTML = notice;
+
+	    // This was in the original code, but not clear why it is needed:
+	    // google.maps.event.trigger(map, 'bounds_changed');
+  }
