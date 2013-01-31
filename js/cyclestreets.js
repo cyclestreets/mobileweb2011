@@ -1291,7 +1291,7 @@ if (window.google) {
 	if (!itineraryMarkers.length) {return false;}
 
 	// Check the new position is not too close to the last
-	return itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(map.getCenter())  < 200;
+	return itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(map.getCenter())  < 20;
     }
 
 // Close the if (window.google)
