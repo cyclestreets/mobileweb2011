@@ -280,7 +280,7 @@ function getIndividualPhoto(photo_id, caption) {
                }
                var uploaded_by = data.result.username;
                var d = new Date(data.result.datetime*1000);
-               var uploaded_on = d.getDate() + "/" + d.getMonth() + "/" + d.getFullYear();
+               var uploaded_on = d.getDate() + "/" + (d.getMonth()+1) + "/" + d.getFullYear();
                // Get the best size to display the photo. 
                var live_sizes = data.result.thumbnailSizes;
                live_sizes = live_sizes.split("|").reverse();
@@ -1291,7 +1291,7 @@ if (window.google) {
 	if (!itineraryMarkers.length) {return false;}
 
 	// Check the new position is not too close to the last
-	return itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(map.getCenter())  < 200;
+	return itineraryMarkers[itineraryMarkers.length - 1].position.distanceFrom(map.getCenter())  < 20;
     }
 
 // Close the if (window.google)
