@@ -1,1 +1,9 @@
+# Ignore emacs temporary files, which end in ~
+*~
+# Ignore emacs autosave files, which are of the form #file#
+\#*#
+# Ignore emacs interlock files, which are of the form .#file
+.\#*
+# Ignore the instantiated copy of the config template
+.config.php
 test.html

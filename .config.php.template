@@ -1,0 +1,4 @@
+<?php
+
+# CycleStreets mobile api key
+$config['registeredapikey'] = '';

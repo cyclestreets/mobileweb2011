@@ -1,6 +1,8 @@
 <?php
 
-$key = '68f786d958d1dbfb';
+// Load the config
+require_once ('./.config.php');
+
 $message = '';
 
 // Check whether we need to register the user first. 
@@ -12,7 +14,7 @@ if (($_POST["login"])=='register') {
         'email'=>($_POST["email"])
     );
     $fields_string = http_build_query($registration_fields);
-    $url = 'https://www.cyclestreets.net/api/usercreate.json?key=' . $key;
+    $url = 'https://www.cyclestreets.net/api/usercreate.json?key=' . $config['registeredapikey'];
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,$url);
     curl_setopt($ch,CURLOPT_POST,count($fields));
@@ -52,7 +54,7 @@ if ($_FILES["file"]["error"] > 0) {
         'caption'=>($_POST["description"])
     );
     $fields_string = http_build_query($fields);
-    $url = 'https://www.cyclestreets.net/api/addphoto.json?key=' . $key;
+    $url = 'https://www.cyclestreets.net/api/addphoto.json?key=' . $config['registeredapikey'];
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,$url);
     curl_setopt($ch,CURLOPT_POST,count($fields));
