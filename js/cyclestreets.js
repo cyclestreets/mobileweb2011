@@ -353,7 +353,6 @@ if (window.google) {
     // OSM/OCM/OS map types. 
     var osmMapType = new google.maps.ImageMapType({
         getTileUrl: function (coord, zoom) {
-            // Alternative: tile.openstreetmap.org
             return "http://tile.cyclestreets.net/mapnik/" +
                 zoom + "/" + coord.x + "/" + coord.y + ".png";
         },
@@ -365,7 +364,6 @@ if (window.google) {
     });
     var ocmMapType = new google.maps.ImageMapType({
         getTileUrl: function (coord, zoom) {
-            // Alternative: tile.opencyclemap.org
             return "http://tile.cyclestreets.net/opencyclemap/" +
                 zoom + "/" + coord.x + "/" + coord.y + ".png";
         },
