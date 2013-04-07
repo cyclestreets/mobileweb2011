@@ -252,6 +252,9 @@ function toTitleCase(str) {
 /* Get an individual photo.
 /******************************************************/
 
+// Helper function to pad with leading zero
+function pad(n){return n<10 ? '0'+n : n}
+
 function getIndividualPhoto(photo_id, caption) {
     //console.log('getIndividualPhoto');
 
@@ -280,7 +283,7 @@ function getIndividualPhoto(photo_id, caption) {
                }
                var uploaded_by = data.result.username;
                var d = new Date(data.result.datetime*1000);
-               var uploaded_on = d.getDate() + "/" + (d.getMonth()+1) + "/" + d.getFullYear();
+               var uploaded_on = pad(d.getDate()) + "/" + pad(d.getMonth()+1) + "/" + d.getFullYear();
                // Get the best size to display the photo. 
                var live_sizes = data.result.thumbnailSizes;
                live_sizes = live_sizes.split("|").reverse();
