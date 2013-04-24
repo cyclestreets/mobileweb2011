@@ -912,7 +912,7 @@ if (window.google) {
     }
 
     // Look up individual address from the CycleStreets geocoder. 
-    function geocode(address, geodata, route_type) {
+    function geocode (address, geodata, route_type) {
         //console.log('geocode', address, geodata);
         geodata['street'] = address;
         return $.ajax({
@@ -921,26 +921,25 @@ if (window.google) {
             data: geodata,
             dataType: 'jsonp',
             success: function(from_data) {
-                if (from_data.results.result!==undefined){
-                   var from_result = from_data.results.result;
-                   if (from_result.length===undefined) {
-                       if (route_type=="start") {
-                           start_coords = [parseFloat(from_result.latitude), parseFloat(from_result.longitude)];
-                       } else {
-                           finish_coords = [parseFloat(from_result.latitude), parseFloat(from_result.longitude)];
-                       } 
-                   } else {
-                       if (route_type=="start") {
-                           start_coords = [parseFloat(from_result[0].latitude), parseFloat(from_result[0].longitude)];   
-                       } else {
-                           finish_coords = [parseFloat(from_result[0].latitude), parseFloat(from_result[0].longitude)];
-                       }
-                       return true;
-                  }
-                } else {
-                    toastMessage("Sorry, unable to geocode " + address);
+                if (from_data.results.result===undefined) {
+                    toastMessage("Unable to locate " + address);
                     $.mobile.hidePageLoadingMsg();
                     return false;
+                }
+		var from_result = from_data.results.result;
+                if (from_result.length===undefined) {
+                    if (route_type=="start") {
+                        start_coords = [parseFloat(from_result.latitude), parseFloat(from_result.longitude)];
+                    } else {
+                        finish_coords = [parseFloat(from_result.latitude), parseFloat(from_result.longitude)];
+                    } 
+                } else {
+                    if (route_type=="start") {
+                        start_coords = [parseFloat(from_result[0].latitude), parseFloat(from_result[0].longitude)];   
+                    } else {
+                        finish_coords = [parseFloat(from_result[0].latitude), parseFloat(from_result[0].longitude)];
+                    }
+                    return true;
                 }
             },
             error: function(data) {
