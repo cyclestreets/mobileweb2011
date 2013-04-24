@@ -912,7 +912,7 @@ if (window.google) {
     }
 
     // Look up individual address from the CycleStreets geocoder. 
-    function geocode(address, geodata, route_type) {
+    function geocode (address, geodata, route_type) {
         //console.log('geocode', address, geodata);
         geodata['street'] = address;
         return $.ajax({
@@ -952,52 +952,52 @@ if (window.google) {
     }
 
     // This function supports the route by address feature at /#route-by-address
-    function geocodeWithCycleStreets(place_from,place_to) {
-
-	// Trace
-	// console.log('geocodeWithCycleStreets');
+    function geocodeWithCycleStreets(startName,finishName) {
 
 	// Check from / to args
-        if ((place_from=='')||(place_to=='')) {
+        if (startName=='' || finishName=='') {
 
-	    // If the current location is not known then empty locations cannot be defaulted
-	    // !! It is not clear how this ever gets set properly.
+	    // When the current location is not known empty locations cannot be defaulted
             if (current_latlng==null) {
-                toastMessage('Sorry, location not found, please try again in a few seconds.');
+                toastMessage('Sorry, location not found, please try again in a few seconds, or type a place name.');
                 $.mobile.hidePageLoadingMsg();
                 return;
 	    }
 
 	    // Use the current location for the unspecified end
-            if (place_from=='') {
-                start_coords = [current_latlng[0], current_latlng[1]];  
+            if (startName=='') {
+                start_coords  = [current_latlng[0], current_latlng[1]];  
             } else {
                 finish_coords = [current_latlng[0], current_latlng[1]];         
             }
         }
 
-        // The geocoder doesn't absolutely require these values,
-        //  but add them if we do have a location fix. 
+	// If there is a location fix, then providing boundary data can hint the geocoder.
         if (current_latlng!==null) {
             geodata['n'] = current_latlng[0] + 0.1;
             geodata['e'] = current_latlng[1] + 0.1;
             geodata['s'] = current_latlng[0] - 0.1;
             geodata['w'] = current_latlng[1] - 0.1;
         }
-        if (place_from=='') {
-            $.when(geocode(place_to,geodata,'finish')).then(function(){
-                window.location = '/journey/?s_lat=' + start_coords[0] + '&s_lng=' + start_coords[1] +  
-                                        '&f_lat=' + finish_coords[0] + '&f_lng=' + finish_coords[1]; });
-        } else if (place_to=="") {
-            $.when(geocode(place_from,geodata,'start')).then(function(){  
-                window.location = '/journey/?s_lat=' + start_coords[0] + '&s_lng=' + start_coords[1] +  
-                                        '&f_lat=' + finish_coords[0] + '&f_lng=' + finish_coords[1]; });
-        } else {
-            $.when(geocode(place_from,geodata,'start'),geocode(place_to,geodata,'finish')).then(function(){
-                window.location = '/journey/?s_lat=' + start_coords[0] + '&s_lng=' + start_coords[1] +  
-                                        '&f_lat=' + finish_coords[0] + '&f_lng=' + finish_coords[1]; });
+
+	// Geocode finish
+        if (startName=='') {
+            $.when(geocode(finishName,geodata,'finish')).then(redirectToJourney);
+	    return;
         }
-        return true;
+
+	// Geocode start
+	if (finishName=='') {
+            $.when(geocode(startName,geodata,'start')).then(redirectToJourney);
+	    return;
+        }
+
+	// Geocode both ends
+        $.when(geocode(startName,geodata,'start'),geocode(finishName,geodata,'finish')).then(redirectToJourney);
+    }
+
+    function redirectToJourney () {
+        window.location = '/journey/?s_lat=' + start_coords[0] + '&s_lng=' + start_coords[1] + '&f_lat=' + finish_coords[0] + '&f_lng=' + finish_coords[1];
     }
 
     // CSS for crosshairs. 
