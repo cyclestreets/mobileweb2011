@@ -912,7 +912,7 @@ if (window.google) {
     }
 
     // Look up individual address from the CycleStreets geocoder. 
-    function geocode (address, geodata, route_type) {
+    function geocode(address, geodata, route_type) {
         //console.log('geocode', address, geodata);
         geodata['street'] = address;
         return $.ajax({
@@ -920,27 +920,28 @@ if (window.google) {
             crossDomain: true, 
             data: geodata,
             dataType: 'jsonp',
-            success: function(from_data) {
-                if (from_data.results.result===undefined) {
+            success: function(data) {
+
+		// No results
+                if (data.results.result===undefined) {
                     toastMessage("Unable to locate " + address);
                     $.mobile.hidePageLoadingMsg();
                     return false;
                 }
-		var from_result = from_data.results.result;
-                if (from_result.length===undefined) {
-                    if (route_type=="start") {
-                        start_coords = [parseFloat(from_result.latitude), parseFloat(from_result.longitude)];
-                    } else {
-                        finish_coords = [parseFloat(from_result.latitude), parseFloat(from_result.longitude)];
-                    } 
+
+		// Bind result - either a single property list or list of them
+		var result = data.results.result;
+
+		// If the result is not a list use it, else bind to first element
+                if (result.length!==undefined) {result=result[0];}
+
+		// Add the result coordinates at the desired end
+                if (route_type=="start") {
+                    start_coords = [parseFloat(result.latitude), parseFloat(result.longitude)];
                 } else {
-                    if (route_type=="start") {
-                        start_coords = [parseFloat(from_result[0].latitude), parseFloat(from_result[0].longitude)];   
-                    } else {
-                        finish_coords = [parseFloat(from_result[0].latitude), parseFloat(from_result[0].longitude)];
-                    }
-                    return true;
+                    finish_coords = [parseFloat(result.latitude), parseFloat(result.longitude)];
                 }
+                return true;
             },
             error: function(data) {
                 toastMessage("Sorry, there's a problem with the geocoding server.");
