@@ -35,7 +35,7 @@ if (($_POST["login"])=='register') {
     curl_close ($ch);
 }
 
-if ($_FILES["file"]["error"] > 0) {
+if ($_FILES["mediaupload"]["error"] > 0) {
     $message = "File error: " . $_FILES["mediaupload"]["error"];
     $photo_url = '/location/#-1/' . rawurlencode($message);        
     header("Location: $photo_url");
