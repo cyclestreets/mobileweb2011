@@ -46,9 +46,6 @@ if ($_FILES["file"]["error"] > 0) {
         'mediaupload'=>$file_field,
         'username'=>urlencode($_POST["username"]),
         'password'=>urlencode($_POST["password"]),
-        'latitude'=>urlencode($_POST["latitude"]),
-        'longitude'=>urlencode($_POST["longitude"]),
-        'datetime'=>urlencode($_POST["datetime"]),
         'category'=>urlencode($_POST["category"]),
         'metacategory'=>urlencode($_POST["metacategory"]),
         'caption'=>($_POST["description"])
