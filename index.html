@@ -149,7 +149,6 @@ $(document).ready(function() {
 $('#home').live('pagecreate',function(event){
 	
     // Detect iPhone/Android OS and suggest native apps.    
-    // Also, disable photo upload for iPhone/iPad/iPod.
     var ua = navigator.userAgent;
     var uachecker = {
         iphone: ua.match(/iPhone/),
@@ -167,8 +166,6 @@ $('#home').live('pagecreate',function(event){
         $('#user-agent-link').attr('href','http://itunes.apple.com/app/ishare/id391984737');
         $('#market-name').text("iTunes");
         $('#native-app').show();
-        $('#uploadfields').hide();    
-        $('#not-available-apple').show(); 
     } else if (uachecker.blackberry10) {
         $('#user-agent-link').attr('href','http://appworld.blackberry.com/webstore/content/21867253/');
         $('#market-name').text("BlackBerry World");
@@ -182,6 +179,12 @@ $('#home').live('pagecreate',function(event){
         $('#native-app').fadeOut();
     });
 
+    // Disable photo upload for iPhone/iPad/iPod (iOS5 and below): http://stackoverflow.com/questions/12840810
+    if ($('#uploadfields').prop('disabled')) {
+        $('#uploadfields').hide();    
+        $('#uploads-not-available').show(); 
+    }
+    
     // Logic to load the Category lists. 
     var categoryselect = $('#category');
     var metacategoryselect = $('#metacategory');
@@ -371,8 +374,8 @@ Get the Cyclestreets app!
   <div data-role="content"> 
       <form id="account-form" method="post" enctype="multipart/form-data" data-ajax="false" action="upload.php" > 
           <!-- Upload div, initially visible -->
-          <div id="not-available-apple" class="hidden">
-       <p>Sorry - to upload photos, you need to install the CycleStreets iPhone app, as Mobile Safari does not support uploads.</p>
+          <div id="uploads-not-available" class="hidden">
+       <p>Sorry - to upload photos, you need to install the CycleStreets iPhone app, as your device's browser does not support uploads.</p>
 <a href="http://itunes.apple.com/app/ishare/id391984737" data-role="button" class="itunes-button">Find CycleStreets on iTunes</a>
           </div>
           <div id="uploadfields">
