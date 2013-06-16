@@ -156,7 +156,8 @@ $('#home').live('pagecreate',function(event){
         ipad: ua.match(/iPad/),
         ipod: ua.match(/iPod/),
         android: ua.match(/Android/),
-        blackberry10: ua.match(/BB10/)
+        blackberry10: ua.match(/BB10/),
+        winphone: ua.match(/Windows Phone [8-9]/)
     };
     if (uachecker.android) {
         $('#user-agent-link').attr('href','https://play.google.com/store/apps/details?id=net.cyclestreets');
@@ -171,6 +172,10 @@ $('#home').live('pagecreate',function(event){
     } else if (uachecker.blackberry10) {
         $('#user-agent-link').attr('href','http://appworld.blackberry.com/webstore/content/21867253/');
         $('#market-name').text("BlackBerry World");
+        $('#native-app').show();
+    } else if (uachecker.winphone) {
+        $('#user-agent-link').attr('href','http://www.windowsphone.com/en-gb/store/app/cyclestreets/823e41bf-889c-4102-863f-11cfee11f652');
+        $('#market-name').text("Windows Phone Store");
         $('#native-app').show();
     }
     $('#hide-native').click(function() {
