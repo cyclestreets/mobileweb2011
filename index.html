@@ -155,7 +155,8 @@ $('#home').live('pagecreate',function(event){
         iphone: ua.match(/iPhone/),
         ipad: ua.match(/iPad/),
         ipod: ua.match(/iPod/),
-        android: ua.match(/Android/)
+        android: ua.match(/Android/),
+        blackberry10: ua.match(/BB10/)
     };
     if (uachecker.android) {
         $('#user-agent-link').attr('href','https://play.google.com/store/apps/details?id=net.cyclestreets');
@@ -167,7 +168,11 @@ $('#home').live('pagecreate',function(event){
         $('#native-app').show();
         $('#uploadfields').hide();    
         $('#not-available-apple').show(); 
-    } 
+    } else if (uachecker.blackberry10) {
+        $('#user-agent-link').attr('href','http://appworld.blackberry.com/webstore/content/21867253/');
+        $('#market-name').text("BlackBerry World");
+        $('#native-app').show();
+    }
     $('#hide-native').click(function() {
         $('#native-app').fadeOut();
     });
