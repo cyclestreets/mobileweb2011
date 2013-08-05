@@ -31,7 +31,10 @@
 <!-- Should track device location if found and can display a journey track using j parameter. -->
 <!-- Example: http://m.cyclestreets.net/l.html?j=37480393 -->
 	<script>
-		var map = L.map('map');
+		var map = L.map('map', {attributionControl: false});
+		// Top right is more out of way on mobile
+		L.control.attribution({position: 'topright'}).addTo(map);
+
 		var myLocation = false;
 
 		L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
