@@ -281,60 +281,59 @@ function getIndividualPhoto(photo_id, caption) {
         dataType: 'jsonp',
         jsonpCallback: 'photo',
         success: function(data) {
-           if (data.result.id!=undefined) {
-               // Get URL, date etc. 
-               $('#getting-photo').hide();  
-               var image_url = data.result.imageUrl;
-               if (typeof(data.result.caption)==='string') {
-                    caption += data.result.caption;
-               }
-               var uploaded_by = data.result.username;
-               var d = new Date(data.result.datetime*1000);
-               var uploaded_on = pad(d.getDate()) + "/" + pad(d.getMonth()+1) + "/" + d.getFullYear();
-               // Get the best size to display the photo. 
-               var live_sizes = data.result.thumbnailSizes;
-               live_sizes = live_sizes.split("|").reverse();
-               var chosen_size = live_sizes[0];
-               var viewPortWidth = 600, viewPortHeight=800;
-               if (typeof window.innerWidth != 'undefined') {
-                    viewPortWidth = window.innerWidth;
-                    viewPortHeight = window.innerHeight;
-               }
-               $.each(live_sizes, function(i, val) { 
-                    if (viewPortWidth > val) {
-                        chosen_size = val;
-                        return false;
-                    }
-               });
-               image_url = image_url.replace('.jpg','-size' + chosen_size + ".jpg");
-                $('#photo-image').attr({
-                    src: image_url,
-                    alt: caption,
-                    title: caption
-                });
-                $('#photo-image').load(function() {
-                    $('#loading-icon').hide();
-                    //$('#photo-image').show();
-                });
-                $('#photo-header').text('Photo ' + data.result.id);
-                caption += '<br/><em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>";
-                $("a#twitter_link").attr("href", "http://twitter.com/?status=Great+photo+on+%40CycleStreets%21+http%3A%2F%2Fcycle.st%2Fp" + photo_id + "%2F");
-                $("a#facebook_link").attr("href", "http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fcycle.st%2Fp" + photo_id + "%2F");
-                $("a#permalink").attr("href", "http://www.cyclestreets.net/location/" + photo_id + "/");
-                $('#social_links').show();
-                $('#photo-caption').html(caption);
+            if (data.result.id==undefined) {
+		getIndividualPhotoError();
+		return;
+            }
+            // Get URL, date etc. 
+            $('#getting-photo').hide();  
+            var image_url = data.result.imageUrl;
+            if (typeof(data.result.caption)==='string') {
+                caption += data.result.caption;
+            }
+            var uploaded_by = data.result.username;
+            var d = new Date(data.result.datetime*1000);
+            var uploaded_on = pad(d.getDate()) + "/" + pad(d.getMonth()+1) + "/" + d.getFullYear();
+            // Get the best size to display the photo. 
+            var live_sizes = data.result.thumbnailSizes;
+            live_sizes = live_sizes.split("|").reverse();
+            var chosen_size = live_sizes[0];
+            var viewPortWidth = 600, viewPortHeight=800;
+            if (typeof window.innerWidth != 'undefined') {
+                viewPortWidth = window.innerWidth;
+                viewPortHeight = window.innerHeight;
+            }
+            $.each(live_sizes, function(i, val) { 
+                if (viewPortWidth > val) {
+                    chosen_size = val;
+                    return false;
+                }
+            });
+            image_url = image_url.replace('.jpg','-size' + chosen_size + ".jpg");
+            $('#photo-image').attr({
+                src: image_url,
+                alt: caption,
+                title: caption
+            });
+            $('#photo-image').load(function() {
+                $('#loading-icon').hide();
+                //$('#photo-image').show();
+            });
+            $('#photo-header').text('Photo ' + data.result.id);
+            caption += '<br/><em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>";
+            $("a#twitter_link").attr("href", "http://twitter.com/?status=Great+photo+on+%40CycleStreets%21+http%3A%2F%2Fcycle.st%2Fp" + photo_id + "%2F");
+            $("a#facebook_link").attr("href", "http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fcycle.st%2Fp" + photo_id + "%2F");
+            $("a#permalink").attr("href", "http://www.cyclestreets.net/location/" + photo_id + "/");
+            $('#social_links').show();
+            $('#photo-caption').html(caption);
 
-	       // Street, district and distant maplets
-                $('#photomaplet16').attr({src: mapletUrl + '16.png'});
-                $('#photomaplet13').attr({src: mapletUrl + '13.png'});
-                $('#photomaplet10').attr({src: mapletUrl + '10.png'});
-
-          } else {
-	      getIndividualPhotoError();
-          }
-        },
+	    // Street, district and distant maplets
+            $('#photomaplet16').attr({src: mapletUrl + '16.png'});
+            $('#photomaplet13').attr({src: mapletUrl + '13.png'});
+            $('#photomaplet10').attr({src: mapletUrl + '10.png'});
+	},
         error: getIndividualPhotoError
-   });
+    });
 }
 
 if (window.google) {
