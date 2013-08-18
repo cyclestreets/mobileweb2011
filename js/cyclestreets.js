@@ -327,6 +327,9 @@ function getIndividualPhoto(photo_id, caption) {
             $('#social_links').show();
             $('#photo-caption').html(caption);
 
+	    // Link through to the largest available thumbnail
+            $('#photo-biglink').attr('href', data.result.imageUrl.replace('.jpg','-size640.jpg'));
+
 	    // Street, district and distant maplets
             $('#photomaplet16').attr({src: mapletUrl + '16.png'});
             $('#photomaplet13').attr({src: mapletUrl + '13.png'});
