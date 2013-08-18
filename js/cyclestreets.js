@@ -255,6 +255,13 @@ function toTitleCase(str) {
 // Helper function to pad with leading zero
 function pad(n){return n<10 ? '0'+n : n}
 
+function getIndividualPhotoError (jqXHR, textStatus, errorThrown) {
+    $('#photo-header').text('Sorry...');
+    $('#photo-caption').html("Sorry, could not retrieve data for photo.");
+    $('#loading-icon').hide();
+    $('#getting-photo').hide();
+}
+
 function getIndividualPhoto(photo_id, caption) {
     //console.log('getIndividualPhoto');
 
@@ -323,18 +330,10 @@ function getIndividualPhoto(photo_id, caption) {
                 $('#photomaplet10').attr({src: mapletUrl + '10.png'});
 
           } else {
-              $('#photo-header').text('Sorry...');
-              $('#photo-caption').html("Sorry, could not retrieve data for photo number " + photo_id + ".");
-              $('#loading-icon').hide();
-              $('#getting-photo').hide();
+	      getIndividualPhotoError();
           }
         },
-        error: function(data) {
-            $('#photo-header').text('Sorry...');
-            $('#photo-caption').html("Sorry, could not retrieve data for photo number " + photo_id + ".");
-            $('#loading-icon').hide();
-            $('#getting-photo').hide();
-        }
+        error: getIndividualPhotoError
    });
 }
 
