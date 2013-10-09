@@ -875,8 +875,7 @@ if (window.google) {
                         $("a#quietest").bind('tap', function(e){  
                             e.preventDefault();
                             $.mobile.showPageLoadingMsg();
-                            routeFromExistingItinerary(route_id,'quietest');
-                            return false; });
+                            routeFromExistingItinerary(route_id,'quietest');} );
                    }
                     global_page_type = "existing_route";
 
