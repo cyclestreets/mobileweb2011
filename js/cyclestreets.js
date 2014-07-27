@@ -16,6 +16,9 @@ var individualPath = null;
 var speedMph = null;
 var photo_markers = [];
 
+// A time id used to control fading of the crosshairs
+var crossHairFader = 0;
+
 // Geolocation. 
 var current_latlng = null;
 var watchId = null;
@@ -1163,22 +1166,22 @@ if (window.google) {
 	// When the map is moved
 	google.maps.event.addListener(map, 'dragstart', function() {
 
-	    // Fade in the cross hair immediately
-	    $('#crosshairs_img').fadeTo(0, 0.5);
+	    // Bring the cross hair back immediately
+	    fadeInCrossHair ();
 	});
 
 	// When the map is moved
 	google.maps.event.addListener(map, 'zoom_changed', function() {
 
-	    // Fade in the cross hair immediately
-	    $('#crosshairs_img').fadeTo(0, 0.5);
+	    // Bring the cross hair back immediately
+	    fadeInCrossHair ();
 	});
 
 	// When the map is done zooming / panning
 	google.maps.event.addListener(map, 'idle', function() {
 
-	    // Fade out the cross hair slowly
-	    $('#crosshairs_img').fadeTo(2100, 0);
+	    // Hide the cross hair
+	    scheduleFadeOutCrossHair ();
 	});
 
 	// Click command for waypoint add button
@@ -1197,6 +1200,9 @@ if (window.google) {
 
 		// Add start marker
 		itineraryMarkers.push(createMapMarker(map.getCenter(), itineraryMarkers.length < 1 ? 'start' : 'finish'));
+
+		// Hide crosshairs
+		fadeOutCrossHairImmediately();
 
 		// Choreograph
 		choreographWaypointButtons();
@@ -1218,6 +1224,9 @@ if (window.google) {
 		    // Add finish marker
 		    itineraryMarkers.push(createMapMarker(map.getCenter(), itineraryMarkers.length < 1 ? 'start' : 'finish'));
 
+		    // Hide crosshairs
+		    fadeOutCrossHairImmediately();
+
 		    // Choreograph
 		    choreographWaypointButtons();
 		}
@@ -1235,6 +1244,9 @@ if (window.google) {
 		// Remove the latest marker
 		removeLastMarker();
 
+		// Show the crosshair
+		fadeInCrossHair ();
+
 	    } else {
 
 		// Go to the position of the last marker
@@ -1249,6 +1261,31 @@ if (window.google) {
 	choreographWaypointButtons();
    }
 
+    function fadeInCrossHair ()
+    {
+	// Cancel any scheduled fading
+	clearTimeout(crossHairFader);
+
+	// Fade in the cross hair immediately
+	$('#crosshairs_img').fadeTo(0, 0.5);
+    }
+
+    function fadeOutCrossHairImmediately ()
+    {
+	// Cancel any scheduled fading
+	clearTimeout(crossHairFader);
+
+	// Fade out the cross hair quickly
+	$('#crosshairs_img').fadeTo('fast', 0);
+    }
+
+    function scheduleFadeOutCrossHair ()
+    {
+	crossHairFader = setTimeout(function () {
+	    // Fade out the cross hair slowly
+	    $('#crosshairs_img').fadeTo('slow', 0);
+	}, 2000);
+    }
 
     // This function sets the appearance of the waypoint(Add|Del) buttons according to the current state.
     // The idea is that this function can be called at any time to get these buttons into the right state.
