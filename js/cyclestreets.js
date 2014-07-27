@@ -1000,18 +1000,24 @@ if (window.google) {
         window.location = '/journey/?s_lat=' + start_coords[0] + '&s_lng=' + start_coords[1] + '&f_lat=' + finish_coords[0] + '&f_lng=' + finish_coords[1];
     }
 
-    // CSS for crosshairs. 
-    function createCrosshairs() { 
-        var img = $("#crosshairs_img"); 
-        // Only use large crosshairs in browsers known to support pointer-events CSS property.
+    // CSS for crosshairs
+    function createCrosshairs () { 
+
+	// Crosshair img element - which is setup by index.html to contain small crosshairs
+        var img = $("#crosshairs_img");
+
+        // Use large crosshairs in browsers known to support pointer-events CSS property.
         var ua = navigator.userAgent;
         if ((ua.indexOf("Firefox") !== -1) || (ua.indexOf("Fennec") !== -1) || (ua.indexOf("Chrome") !== -1)
             || (ua.indexOf("WebKit") !== -1)) {
+
+            // Change to large crosshairs
             $(img).attr('src', '/images/crosshairs.png');
         }
+
         var map_height = $('#map-canvas').height();
         if (map_height!==0) {
-            $("<img/>")
+            $('<img>')
                 .attr("src", $(img).attr("src"))
                 .load(function() {
                     pic_real_width = this.width;   
@@ -1022,6 +1028,7 @@ if (window.google) {
                         'position': 'absolute',
                         'top': top_position,
                         'left': left_position,
+                        opacity: 0.5,
                         'margin': 0,
                         'padding': 0,
                         'z-index': '1000'
