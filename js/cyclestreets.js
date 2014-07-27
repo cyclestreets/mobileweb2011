@@ -1029,7 +1029,7 @@ if (window.google) {
                         'position': 'absolute',
                         'top': top_position,
                         'left': left_position,
-                        'opacity': 0.5,
+                        'opacity': 0,
                         'margin': 0,
                         'padding': 0,
                         'z-index': '1000'
@@ -1038,6 +1038,9 @@ if (window.google) {
 
 	    // Show them as they are initially hidden by css
 	    $('#crosshairs').show();
+	    $('#crosshairs_img').fadeTo(0, 0);
+	    $('#crosshairs_img').fadeTo('slow', 0.5);
+
         }
     }
 
@@ -1155,6 +1158,27 @@ if (window.google) {
 	    // Update the buttons state
 	    // !! This may be rather in efficient and a way of determining if the number of markers has changed could be needed.
 	    choreographWaypointButtons();
+	});
+
+	// When the map is moved
+	google.maps.event.addListener(map, 'dragstart', function() {
+
+	    // Fade in the cross hair immediately
+	    $('#crosshairs_img').fadeTo(0, 0.5);
+	});
+
+	// When the map is moved
+	google.maps.event.addListener(map, 'zoom_changed', function() {
+
+	    // Fade in the cross hair immediately
+	    $('#crosshairs_img').fadeTo(0, 0.5);
+	});
+
+	// When the map is done zooming / panning
+	google.maps.event.addListener(map, 'idle', function() {
+
+	    // Fade out the cross hair slowly
+	    $('#crosshairs_img').fadeTo(2100, 0);
 	});
 
 	// Click command for waypoint add button
