@@ -1036,7 +1036,7 @@ if (window.google) {
                     });
                 });
 
-	    // Show them as they are initially hidden
+	    // Show them as they are initially hidden by css
 	    $('#crosshairs').show();
         }
     }
@@ -1223,10 +1223,7 @@ if (window.google) {
 
 	// Setup the waypoint buttons
 	choreographWaypointButtons();
-
-	// Setup cross hairs on the new_route page
-        if (global_page_type=="new_route") {createCrosshairs();}
-    }
+   }
 
 
     // This function sets the appearance of the waypoint(Add|Del) buttons according to the current state.
