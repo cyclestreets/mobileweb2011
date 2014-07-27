@@ -1020,21 +1020,24 @@ if (window.google) {
             $('<img>')
                 .attr("src", $(img).attr("src"))
                 .load(function() {
-                    pic_real_width = this.width;   
-                    pic_real_height = this.height; 
-                    var top_position = (($("div#map-canvas").height() - pic_real_height) / 2) + $("div:jqmData(role='header')").first().outerHeight();
-                    var left_position = ($("div#map-canvas").width() - pic_real_width) / 2;
+
+		    // Centre the crosshair
+                    var top_position = (($("div#map-canvas").height() - this.height) / 2) + $("div:jqmData(role='header')").first().outerHeight();
+                    var left_position = ($("div#map-canvas").width() - this.width) / 2;
+
                     $('#crosshairs_img').css({
                         'position': 'absolute',
                         'top': top_position,
                         'left': left_position,
-                        opacity: 0.5,
+                        'opacity': 0.5,
                         'margin': 0,
                         'padding': 0,
                         'z-index': '1000'
                     });
                 });
-            $('#crosshairs').show();
+
+	    // Show them as they are initially hidden
+	    $('#crosshairs').show();
         }
     }
 
