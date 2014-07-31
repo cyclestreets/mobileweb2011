@@ -1042,7 +1042,7 @@ if (window.google) {
 	    // Show them as they are initially hidden by css
 	    $('#crosshairs').show();
 	    $('#crosshairs_img').fadeTo(0, 0);
-	    $('#crosshairs_img').fadeTo('slow', 0.5);
+	    $('#crosshairs_img').fadeTo('slow', 0.8);
 
         }
     }
@@ -1267,7 +1267,7 @@ if (window.google) {
 	clearTimeout(crossHairFader);
 
 	// Fade in the cross hair immediately
-	$('#crosshairs_img').fadeTo(0, 0.5);
+	$('#crosshairs_img').fadeTo(0, 0.8);
     }
 
     function fadeOutCrossHairImmediately ()
