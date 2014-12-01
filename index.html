@@ -35,7 +35,7 @@ $(document).ready(function() {
     var metacategoryselect = $('#metacategory');  
     if ((getItem('categories')==null)||(getItem('metacategories')==null)) { 
         $.mobile.pageLoading(); 
-        var category_url = CS_API_V1 + 'photomapcategories.json';
+        var category_url = CS_API_V2 + 'photomap.categories';
         var catdata = { 'key' : CS_API_KEY };
         $.ajax({
             url: category_url,
@@ -47,16 +47,16 @@ $(document).ready(function() {
                 if ($(data).length > 0) {
                     var category_list = '';
                     var metacategory_list = '';
-                    var categories = data.categories.category;
-                    var metacategories = data.metacategories.metacategory;
+                    var categories = data.categories;
+                    var metacategories = data.metacategories;
                     $.each(categories, function(i,v) {
                         var name = v.name;
-                        var tag = v.tag;
+                        var tag = i;
                         categoryselect.append("<option value="+tag+">"+name+"</option>");
                     });
                     $.each(metacategories, function(i,v) {
                         var name = v.name;
-                        var tag = v.tag;
+                        var tag = i;
                         metacategoryselect.append("<option value="+tag+">"+name+"</option>");
                     
                     });
