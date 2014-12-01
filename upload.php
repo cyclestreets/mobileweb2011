@@ -5,39 +5,44 @@ require_once ('./.config.php');
 
 $message = '';
 
-// Check whether we need to register the user first. 
+// Check whether we need to register the user first.
 if (($_POST["login"])=='register') {
     $registration_fields = array(
         'username'=>urlencode($_POST["username"]),
         'password'=>urlencode($_POST["password"]),
+        'email'=>$_POST["email"],
         'name'=>urlencode($_POST["name"]),
-        'email'=>($_POST["email"])
     );
     $fields_string = http_build_query($registration_fields);
-    $url = 'https://www.cyclestreets.net/api/usercreate.json?key=' . $config['registeredapikey'];
+    $url = 'https://api.cyclestreets.net/v2/user.create?key=' . $config['registeredapikey'];
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,$url);
     curl_setopt($ch,CURLOPT_POST,count($fields));
     curl_setopt($ch,CURLOPT_POSTFIELDS,$fields_string);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    $response = curl_exec ($ch); 
-    $obj = json_decode($response);
-    $message = $obj->{'result'}->{'message'};
-    if (isset($obj->{'result'}->{'code'})) {
-        if ($obj->{'result'}->{'code'}=="0") {
-            $photo_url = '/location/#-1/' . rawurlencode($message);        
-            header("Location: $photo_url");
-        } 
-    } else {
-        $photo_url = '/location/#-1/' . rawurlencode('Problem creating new user');     
-        header("Location: $photo_url");
-    }
+    $response = curl_exec ($ch);
     curl_close ($ch);
+    
+    // Process the result, and show any error
+    $result = json_decode ($response, true);
+    if (!$result) {
+        $photo_url = '/location/#-1/' . rawurlencode('Problem creating new user account - please try again later.');
+        header("Location: $photo_url");
+        return;
+    }
+    if (isSet ($result['error'])) {
+        $photo_url = '/location/#-1/' . rawurlencode($result['error']);
+        header("Location: $photo_url");
+        return;
+    } else {
+        $message = $result['successmessage'];
+        // Carry on below
+    }
 }
 
 if ($_FILES["mediaupload"]["error"] > 0) {
     $message = "File error: " . $_FILES["mediaupload"]["error"];
-    $photo_url = '/location/#-1/' . rawurlencode($message);        
+    $photo_url = '/location/#-1/' . rawurlencode($message);
     header("Location: $photo_url");
 } else {
     $file = $_FILES['mediaupload'];
@@ -63,7 +68,7 @@ if ($_FILES["mediaupload"]["error"] > 0) {
     $obj = json_decode($response);
     if (isset($obj->{'error'}->{'message'})) {
         $message = $obj->{'error'}->{'message'};
-        $photo_url = '/location/#-1/' . rawurlencode($message);        
+        $photo_url = '/location/#-1/' . rawurlencode('The image could not be uploaded because: ' . $message);
         header("Location: $photo_url");
     } else {
         $photo_url = $obj->{'result'}->{'url'};
@@ -71,7 +76,7 @@ if ($_FILES["mediaupload"]["error"] > 0) {
         $photo_url = explode("/",$photo_url);
         $num = (count($photo_url) - 2);
         $photo_id = $photo_url[$num];
-        $photo_url = '/location/#' . rawurlencode($photo_id) . '/' . rawurlencode('Photo successfully uploaded');
+        $photo_url = '/location/#' . rawurlencode($photo_id) . '/' . rawurlencode('Thank you - the photo has been successfully uploaded:');
         header("Location: $photo_url");
     }
 }
