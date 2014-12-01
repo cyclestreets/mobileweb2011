@@ -35,7 +35,7 @@ $(document).ready(function() {
     var metacategoryselect = $('#metacategory');  
     if ((getItem('categories')==null)||(getItem('metacategories')==null)) { 
         $.mobile.pageLoading(); 
-        var category_url = CS_API + 'photomapcategories.json';
+        var category_url = CS_API_V1 + 'photomapcategories.json';
         var catdata = { 'key' : CS_API_KEY };
         $.ajax({
             url: category_url,

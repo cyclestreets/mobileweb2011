@@ -1,8 +1,8 @@
 // CycleStreets API details. 
 var CS_API_KEY = '68f786d958d1dbfb';
-var CS_API = 'http://www.cyclestreets.net/api/';
+var CS_API_V1 = 'http://www.cyclestreets.net/api/';
 // Use localhost for testing
-// var CS_API = 'http://localhost/api/';
+// var CS_API_V1 = 'http://localhost/api/';
 var global_page_type = null;
 
 // List of waypoints
@@ -273,7 +273,7 @@ function getIndividualPhoto(photo_id, caption) {
     var mapletUrl = 'http://www.cyclestreets.net/location/' + photo_id + '/photomaplet'+ photo_id + 'zoom';
 
     var photo_title = 'Photo from CycleStreets';
-    var photo_url = CS_API + 'photo.json';
+    var photo_url = CS_API_V1 + 'photo.json';
     var photodata = {};
     photodata['key'] = CS_API_KEY;
     photodata['id'] = photo_id
@@ -564,7 +564,7 @@ if (window.google) {
         var ne = bounds.getNorthEast();
         var sw = bounds.getSouthWest();
         var center = bounds.getCenter();
-        var pm_url = CS_API + "photos.json"; 
+        var pm_url = CS_API_V1 + "photos.json"; 
         var pmdata = {};
         pmdata['key'] = CS_API_KEY;
         pmdata['longitude'] = center.lng();
@@ -681,7 +681,7 @@ if (window.google) {
         $('#route-header').text("Fetching route...");
 
 	// API url for journey planning
-        var journey_url = CS_API + 'journey.json';
+        var journey_url = CS_API_V1 + 'journey.json';
 
 	// Start an array of journey planner data
         var journeydata = {};
@@ -919,7 +919,7 @@ if (window.google) {
         //console.log('geocode', address, geodata);
         geodata['street'] = address;
         return $.ajax({
-            url: CS_API + 'geocoder.json',
+            url: CS_API_V1 + 'geocoder.json',
             crossDomain: true, 
             data: geodata,
             dataType: 'jsonp',
