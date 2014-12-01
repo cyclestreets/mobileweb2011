@@ -1,6 +1,7 @@
 // CycleStreets API details. 
 var CS_API_KEY = '68f786d958d1dbfb';
 var CS_API_V1 = 'http://www.cyclestreets.net/api/';
+var CS_API_V2 = 'https://api.cyclestreets.net/v2/';
 // Use localhost for testing
 // var CS_API_V1 = 'http://localhost/api/';
 var global_page_type = null;
@@ -564,20 +565,14 @@ if (window.google) {
         var ne = bounds.getNorthEast();
         var sw = bounds.getSouthWest();
         var center = bounds.getCenter();
-        var pm_url = CS_API_V1 + "photos.json"; 
+        var pm_url = CS_API_V2 + "photomap.locations"; 
         var pmdata = {};
         pmdata['key'] = CS_API_KEY;
-        pmdata['longitude'] = center.lng();
-        pmdata['latitude'] = center.lat();
-        pmdata['n'] = ne.lat();
-        pmdata['e'] = ne.lng();
-        pmdata['s'] = sw.lat();
-        pmdata['w'] = sw.lng();
-        pmdata['zoom'] = map_zoom;
-        pmdata['limit'] = 25;
+        pmdata['bbox'] = sw.lng() + ',' + sw.lat() + ',' + ne.lng() + ',' + ne.lat();
+        pmdata['limit'] = 50;
         pmdata['suppressplaceholders'] = 1;
-        pmdata['minimaldata'] = 1;
-        pmdata['thumbnailsize'] = 200;  
+        pmdata['fields'] = 'id,latitude,longitude,caption';
+        pmdata['thumbnailsize'] = 200;
         removeMarkers();
         $.ajax({
            url: pm_url,
@@ -585,20 +580,19 @@ if (window.google) {
            dataType: 'jsonp',
            data: pmdata,
            success: function(data) {
-               if (data.marker!==undefined) {
+               if (data.features!==undefined) {
                    // We have some results. 
-                   function addNewMarker(v) { 
-                       var marker = v['@attributes'];
-                       if ($(marker).length > 0) {
-                           var marker_latlng = new google.maps.LatLng(marker.latitude, marker.longitude);
+                   function addNewFeature(feature) { 
+                       if ($(feature).length > 0) {
+                           var marker_latlng = new google.maps.LatLng(feature.geometry.coordinates[1], feature.geometry.coordinates[0]);
                            var map_marker = new google.maps.Marker({
                              position: marker_latlng,
-                             title: marker.caption,
+                             title: feature.properties.caption,
                              icon: '/images/photomap.png'
                            });
                            map_marker.setMap(map);                           
                            google.maps.event.addListener(map_marker, 'click', function() {
-                               current_marker = marker.id;
+                               current_marker = feature.properties.id;
                                $.mobile.changePage( "#photo", {
                                	transition: "pop",
                                	changeHash: false
@@ -607,14 +601,10 @@ if (window.google) {
                            photo_markers.push(map_marker);
                        }
                    }   
-                   // We may have one marker as a dict, or many as an array.
-                   if (data.marker.length!==undefined) {
-                       $.each(data.marker, function(i,v) {
-                           addNewMarker(v);
-                       });           
-                   } else {
-                       addNewMarker(data.marker);
-                   }
+                   // Add each feature
+                   $.each(data.features, function(i,v) {
+                       addNewFeature(v);
+                   });           
                    $.mobile.hidePageLoadingMsg();
                } else {
                   // Empty results. 
