@@ -271,13 +271,17 @@ function getIndividualPhoto(photo_id, caption) {
 
     // Maplets have this form:
     // http://www.cyclestreets.net/location/34751/photomaplet34751zoom16.png
+    // #!# This should be changed using the new photomapletLocation parameter in the V2 API when that supports multiple zoom levels
     var mapletUrl = 'http://www.cyclestreets.net/location/' + photo_id + '/photomaplet'+ photo_id + 'zoom';
 
     var photo_title = 'Photo from CycleStreets';
-    var photo_url = CS_API_V1 + 'photo.json';
+    var photo_url = CS_API_V2 + 'photomap.location';
     var photodata = {};
     photodata['key'] = CS_API_KEY;
     photodata['id'] = photo_id
+    photodata['fields'] = 'id,imageUrl,caption,username,datetime,thumbnailSizes,shortlink,url';
+    photodata['datetime'] = 'friendly';
+    photodata['format'] = 'flat';
     // Get photo information - latlng etc.
     $.ajax({
         url: photo_url,
@@ -285,21 +289,18 @@ function getIndividualPhoto(photo_id, caption) {
         dataType: 'jsonp',
         jsonpCallback: 'photo',
         success: function(data) {
-            if (data.result.id==undefined) {
+            if (data.error!==undefined) {
 		getIndividualPhotoError();
 		return;
             }
             // Get URL, date etc. 
             $('#getting-photo').hide();  
-            var image_url = data.result.imageUrl;
-            if (typeof(data.result.caption)==='string') {
-                caption += data.result.caption;
+            var image_url = data.imageUrl;
+            if (typeof(data.caption)==='string') {
+                caption += data.caption;
             }
-            var uploaded_by = data.result.username;
-            var d = new Date(data.result.datetime*1000);
-            var uploaded_on = pad(d.getDate()) + "/" + pad(d.getMonth()+1) + "/" + d.getFullYear();
             // Get the best size to display the photo. 
-            var live_sizes = data.result.thumbnailSizes;
+            var live_sizes = data.thumbnailSizes;
             live_sizes = live_sizes.split("|").reverse();
             var chosen_size = live_sizes[0];
             var viewPortWidth = 600, viewPortHeight=800;
@@ -323,16 +324,16 @@ function getIndividualPhoto(photo_id, caption) {
                 $('#loading-icon').hide();
                 //$('#photo-image').show();
             });
-            $('#photo-header').text('Photo ' + data.result.id);
-            caption += '<br/><em>Uploaded by ' + uploaded_by + " on " + uploaded_on + "</em>";
-            $("a#twitter_link").attr("href", "http://twitter.com/?status=Great+photo+on+%40CycleStreets%21+http%3A%2F%2Fcycle.st%2Fp" + photo_id + "%2F");
-            $("a#facebook_link").attr("href", "http://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fcycle.st%2Fp" + photo_id + "%2F");
-            $("a#permalink").attr("href", "http://www.cyclestreets.net/location/" + photo_id + "/");
+            $('#photo-header').text('Photo ' + data.id);
+            caption += '<br/><em>Uploaded by ' + data.username + " at " + data.datetime + "</em>.";
+            $("a#twitter_link").attr("href", "http://twitter.com/?status=Great+photo+on+%40CycleStreets%21+" + encodeURIComponent(data.shortlink));
+            $("a#facebook_link").attr("href", "http://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(data.shortlink));
+            $("a#permalink").attr("href", data.url);
             $('#social_links').show();
             $('#photo-caption').html(caption);
 
 	    // Link through to the largest available thumbnail
-            $('#photo-biglink').attr('href', data.result.imageUrl.replace('.jpg','-size640.jpg'));
+            $('#photo-biglink').attr('href', data.imageUrl);
 
 	    // Street, district and distant maplets
             $('#photomaplet16').attr({src: mapletUrl + '16.png'});
