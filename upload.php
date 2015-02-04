@@ -56,7 +56,7 @@ if ($_FILES["mediaupload"]["error"] > 0) {
         'caption'=>($_POST["description"])
     );
     $fields_string = http_build_query($fields);
-    $url = 'https://www.cyclestreets.net/api/addphoto.json?key=' . $config['registeredapikey'];
+    $url = 'https://api.cyclestreets.net/v2/photomap.add?key=' . $config['registeredapikey'];
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,$url);
     curl_setopt($ch,CURLOPT_POST,count($fields));
@@ -64,21 +64,15 @@ if ($_FILES["mediaupload"]["error"] > 0) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     $response = curl_exec($ch);
     curl_close($ch);
-    $string='{"name":"John Adams"}';
-    $obj = json_decode($response);
-    if (isset($obj->{'error'}->{'message'})) {
-        $message = $obj->{'error'}->{'message'};
+    $result = json_decode($response, true);
+    if (isset($result['error'])) {
+        $message = $result['error'];
         $photo_url = '/location/#-1/' . rawurlencode('The image could not be uploaded because: ' . $message);
-        header("Location: $photo_url");
     } else {
-        $photo_url = $obj->{'result'}->{'url'};
-        $photo_url = str_replace("\\","",$photo_url);
-        $photo_url = explode("/",$photo_url);
-        $num = (count($photo_url) - 2);
-        $photo_id = $photo_url[$num];
+        $photo_id = $result['id'];
         $photo_url = '/location/#' . rawurlencode($photo_id) . '/' . rawurlencode('Thank you - the photo has been successfully uploaded:');
-        header("Location: $photo_url");
     }
+    header("Location: $photo_url");
 }
 
 ?>
