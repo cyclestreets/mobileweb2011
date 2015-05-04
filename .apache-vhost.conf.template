@@ -1,0 +1,19 @@
+
+<VirtualHost *:80>
+
+	# Available URL(s)
+	ServerName m.cyclestreets.net
+	
+	# Where the files are
+	DocumentRoot /path/to/files/
+	
+	# Logging
+	CustomLog /path/to/logs/mobile-access.log combined
+	ErrorLog /path/to/logs/mobile-error.log
+
+	# Allow photo uploads to a reasonable size
+	php_value upload_max_filesize 10M
+	php_value post_max_size 10M
+
+</VirtualHost>
+
