@@ -1,13 +1,16 @@
 // CycleStreets API details. 
 var CS_API_KEY = '68f786d958d1dbfb';
-var CS_API_V1 = 'http://www.cyclestreets.net/api/';
+// var CS_API_V1 = 'http://www.cyclestreets.net/api/';
 var CS_API_V2 = 'https://api.cyclestreets.net/v2/';
 // Use localhost for testing
-// var CS_API_V1 = 'http://localhost/api/';
+var CS_API_V1 = 'http://localhost/api/';
 var global_page_type = null;
 
 // List of waypoints
 var itineraryMarkers = [];
+
+// Limit the number of waypoints to that permitted by the api
+var maxMarkers = 12;
 
 // Route display. 
 var map;
@@ -1201,7 +1204,7 @@ if (window.google) {
 	    } else {
 
 		// If the map has moved add another marker, if not, plan the route.
-		if (tooClose()) {
+		if (tooClose() || (itineraryMarkers.length >= maxMarkers)) {
 
 		    // Plan a route
                     $('#route-header').text('Getting route...');
@@ -1305,6 +1308,21 @@ if (window.google) {
 
             // Set up the 'remove marker' button.
             $('#waypointDel .ui-btn-text').text(tooClose() ? 'Remove' : 'Go to start point');
+            $('#waypointDel').show();
+	    break;
+
+	case maxMarkers:
+
+	    // Setup the button to offer route planning
+	    if (tooClose()) {
+	    	$('#waypointAdd .ui-btn-text').text('3. Tap to route');
+	    	$('#waypointAdd').show();
+	    } else {
+	    	$('#waypointAdd').hide();
+	    }
+ 
+            // Set up the 'remove marker' button.
+            $('#waypointDel .ui-btn-text').text(tooClose() ? 'Remove' : 'Go to last point');
             $('#waypointDel').show();
 	    break;
 
