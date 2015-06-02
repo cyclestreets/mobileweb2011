@@ -1,9 +1,9 @@
 // CycleStreets API details. 
 var CS_API_KEY = '68f786d958d1dbfb';
-// var CS_API_V1 = 'http://www.cyclestreets.net/api/';
+var CS_API_V1 = 'http://www.cyclestreets.net/api/';
 var CS_API_V2 = 'https://api.cyclestreets.net/v2/';
 // Use localhost for testing
-var CS_API_V1 = 'http://localhost/api/';
+// var CS_API_V1 = 'http://localhost/api/';
 var global_page_type = null;
 
 // List of waypoints
