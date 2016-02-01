@@ -377,7 +377,7 @@ if (window.google) {
     var ocmMapType = new google.maps.ImageMapType({
         getTileUrl: function (coord, zoom) {
             return "http://tile.cyclestreets.net/opencyclemap/" +
-                zoom + "/" + coord.x + "/" + coord.y + ".png";
+                zoom + "/" + coord.x + "/" + coord.y + (window.devicePixelRatio == 1 ? '' : '@2x') + ".png";
         },
         tileSize: new google.maps.Size(256, 256),
         isPng: true,
