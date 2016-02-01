@@ -1074,7 +1074,7 @@ if (window.google) {
                 position: google.maps.ControlPosition.LEFT_TOP
             },
             mapTypeControlOptions: {
-              mapTypeIds: ['OSM', 'OCM', 'OS'],
+              mapTypeIds: ['OCM', 'OSM', 'OS'],
               style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
               position: google.maps.ControlPosition.RIGHT_TOP }
         };
@@ -1083,12 +1083,12 @@ if (window.google) {
         map = new google.maps.Map(document.getElementById("map-canvas"),myOptions);
 
         // Map types. 
-        map.mapTypes.set('OSM',osmMapType);
         map.mapTypes.set('OCM',ocmMapType);
+        map.mapTypes.set('OSM',osmMapType);
         map.mapTypes.set('OS',osMapType); 
 
 	// Setup desired map style from preferences
-        var desired_map = getItem("maptype")==null ? "OSM" : getItem("maptype");
+        var desired_map = getItem("maptype")==null ? "OCM" : getItem("maptype");
 
 	// Initialize copyright info
 	initCopyright();
