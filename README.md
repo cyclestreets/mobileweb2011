@@ -3,7 +3,7 @@ CycleStreets Mobile HTML
 What is it?
 -----------
 
-A version of http://cyclestreets.net specifically for mobile browsers. 
+A version of https://cyclestreets.net specifically for mobile browsers. 
 Coded using HTM5 and jQuery Mobile. 
 
 - Point-to-point cycle routing using crosshairs interface
@@ -17,7 +17,7 @@ Coded using HTM5 and jQuery Mobile.
 The Latest Version
 ------------------
 
-- Deployed code at http://m.cyclestreets.net
+- Deployed code at https://m.cyclestreets.net
 - Source at https://github.com/cyclestreets/mobileweb
 
 Contribute
@@ -25,7 +25,7 @@ Contribute
 
 Code contributions are welcome! 
 
-You should fork the repo as described here: http://help.github.com/fork-a-repo/
+You should fork the repo as described here: https://help.github.com/articles/fork-a-repo/
 
 See the Issues list for bug reports: https://github.com/cyclestreets/mobileweb/issues
 
@@ -46,7 +46,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Contacts
 --------

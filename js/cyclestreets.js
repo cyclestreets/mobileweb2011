@@ -329,8 +329,8 @@ function getIndividualPhoto(photo_id, caption) {
             });
             $('#photo-header').text('Photo ' + data.id);
             caption += '<br/><em>Uploaded by ' + data.username + " at " + data.datetime + "</em>.";
-            $("a#twitter_link").attr("href", "http://twitter.com/?status=Great+photo+on+%40CycleStreets%21+" + encodeURIComponent(data.shortlink));
-            $("a#facebook_link").attr("href", "http://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(data.shortlink));
+            $("a#twitter_link").attr("href", "https://twitter.com/intent/tweet?text=Great+photo+on+%40CycleStreets%21+" + encodeURIComponent(data.shortlink));
+            $("a#facebook_link").attr("href", "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(data.shortlink));
             $("a#permalink").attr("href", data.url);
             $('#social_links').show();
             $('#photo-caption').html(caption);
@@ -1509,11 +1509,11 @@ function geolocationWatch () {
 	    map.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(copyrightNode);
 
 
-	    // Copyritght attribution
+	    // Copyright attribution
 	    // Lack of space on mobile platforms means these compromises are made:
 	    // 'contributors' is left out of these notices for space reasons
 	    // No links, eg to:
-	    // <a href="http://www.openstreetmap.org/">&copy; OpenStreetMap</a>, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>
+	    // <a href="https://www.openstreetmap.org/">&copy; OpenStreetMap</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>
 	    // <a href="http://www.opencyclemap.org/">OpenCycleMap</a>
 
 
