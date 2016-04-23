@@ -1,6 +1,6 @@
 // CycleStreets API details. 
 var CS_API_KEY = '68f786d958d1dbfb';
-var CS_API_V1 = 'http://www.cyclestreets.net/api/';
+var CS_API_V1 = 'https://www.cyclestreets.net/api/';
 var CS_API_V2 = 'https://api.cyclestreets.net/v2/';
 // Use localhost for testing
 // var CS_API_V1 = 'http://localhost/api/';
@@ -273,9 +273,9 @@ function getIndividualPhoto(photo_id, caption) {
     //console.log('getIndividualPhoto');
 
     // Maplets have this form:
-    // http://www.cyclestreets.net/location/34751/photomaplet34751zoom16.png
+    // https://www.cyclestreets.net/location/34751/photomaplet34751zoom16.png
     // #!# This should be changed using the new photomapletLocation parameter in the V2 API when that supports multiple zoom levels
-    var mapletUrl = 'http://www.cyclestreets.net/location/' + photo_id + '/photomaplet'+ photo_id + 'zoom';
+    var mapletUrl = 'https://www.cyclestreets.net/location/' + photo_id + '/photomaplet'+ photo_id + 'zoom';
 
     var photo_title = 'Photo from CycleStreets';
     var photo_url = CS_API_V2 + 'photomap.location';
@@ -365,7 +365,7 @@ if (window.google) {
     // OSM/OCM/OS map types. 
     var osmMapType = new google.maps.ImageMapType({
         getTileUrl: function (coord, zoom) {
-            return "http://tile.cyclestreets.net/mapnik/" +
+            return "https://tile.cyclestreets.net/mapnik/" +
                 zoom + "/" + coord.x + "/" + coord.y + ".png";
         },
         tileSize: new google.maps.Size(256, 256),
@@ -376,7 +376,7 @@ if (window.google) {
     });
     var ocmMapType = new google.maps.ImageMapType({
         getTileUrl: function (coord, zoom) {
-            return "http://tile.cyclestreets.net/opencyclemap/" +
+            return "https://tile.cyclestreets.net/opencyclemap/" +
                 zoom + "/" + coord.x + "/" + coord.y + (window.devicePixelRatio == 1 ? '' : '@2x') + ".png";
         },
         tileSize: new google.maps.Size(256, 256),
