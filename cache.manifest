@@ -11,9 +11,9 @@ CACHE MANIFEST
 # Local CSS
 #css/cyclestreets.css
 # jQuery JS
-http://code.jquery.com/jquery-1.6.1.min.js"></script>
-http://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js
+https://code.jquery.com/jquery-1.6.1.min.js"></script>
+https://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js
 # jQuery CSS
-http://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css
+https://code.jquery.com/mobile/1.0a4.1/jquery.mobile-1.0a4.1.min.css
 # Google Maps JS
-http://maps.google.com/maps/api/js?region=GB
+https://maps.google.com/maps/api/js?region=GB
