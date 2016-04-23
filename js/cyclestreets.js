@@ -387,7 +387,7 @@ if (window.google) {
     });
     var osMapType = new google.maps.ImageMapType({
         getTileUrl: function (coord, zoom) {
-            return "http://c.os.openstreetmap.org/sv/" +
+            return "https://tile.cyclestreets.net/osopendata/" +
                 zoom + "/" + coord.x + "/" + coord.y + ".png";
         },
         tileSize: new google.maps.Size(256, 256),
