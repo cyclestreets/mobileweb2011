@@ -7,6 +7,11 @@
 	# Where the files are
 	DocumentRoot /path/to/files/
 	
+	# Allow access
+	<Location />
+		Require all granted
+	</Location>
+	
 	# Logging
 	CustomLog /path/to/logs/mobile-access.log combined
 	ErrorLog /path/to/logs/mobile-error.log
