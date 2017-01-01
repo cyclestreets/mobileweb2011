@@ -5,7 +5,7 @@
 	ServerName m.cyclestreets.net
 	
 	# Where the files are
-	DocumentRoot /path/to/files/
+	DocumentRoot /var/www/mobileweb/
 	
 	# Allow access
 	<Location />
@@ -13,8 +13,8 @@
 	</Location>
 	
 	# Logging
-	CustomLog /path/to/logs/mobile-access.log combined
-	ErrorLog /path/to/logs/mobile-error.log
+	CustomLog /var/log/apache2/mobile-access.log combined
+	ErrorLog /var/log/apache2/mobile-error.log
 
 	# Allow photo uploads to a reasonable size
 	php_value upload_max_filesize 10M
