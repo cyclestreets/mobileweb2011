@@ -339,9 +339,9 @@ function getIndividualPhoto(photo_id, caption) {
             $('#photo-biglink').attr('href', data.imageUrl);
 
 	    // Street, district and distant maplets
-            $('#photomaplet16').attr({src: mapletUrl + '16.png'});
-            $('#photomaplet13').attr({src: mapletUrl + '13.png'});
-            $('#photomaplet10').attr({src: mapletUrl + '10.png'});
+            $('#photomaplet16').attr({src: mapletUrl + '16size256x256.png'});
+            $('#photomaplet13').attr({src: mapletUrl + '13size256x256.png'});
+            $('#photomaplet10').attr({src: mapletUrl + '10size256x256.png'});
 	},
         error: getIndividualPhotoError
     });
