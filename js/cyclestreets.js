@@ -10,7 +10,7 @@ var global_page_type = null;
 var itineraryMarkers = [];
 
 // Limit the number of waypoints to that permitted by the api
-var maxMarkers = 12;
+var maxMarkers = 30;
 
 // Route display. 
 var map;
