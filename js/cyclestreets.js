@@ -372,7 +372,7 @@ if (window.google) {
         isPng: true,
         alt: "OpenStreetMap layer",
         name: "OSM",
-        maxZoom: 18
+        maxZoom: 19
     });
     var ocmMapType = new google.maps.ImageMapType({
         getTileUrl: function (coord, zoom) {
@@ -383,7 +383,7 @@ if (window.google) {
         isPng: true,
         alt: "OpenCycleMap layer",
         name: "OCM",
-        maxZoom: 18
+        maxZoom: 20
     });
     var osMapType = new google.maps.ImageMapType({
         getTileUrl: function (coord, zoom) {
