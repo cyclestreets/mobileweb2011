@@ -956,7 +956,7 @@ if (window.google) {
 
 	    // When the current location is not known empty locations cannot be defaulted
             if (current_latlng==null) {
-                toastMessage('Sorry, location not found, please try again in a few seconds, or type a place name.');
+                toastMessage('Sorry, current (start) location not found, please try again in a few seconds, or type a place name.');
                 $.mobile.hidePageLoadingMsg();
                 return;
 	    }

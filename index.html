@@ -23,7 +23,8 @@
 <link rel="stylesheet" href="https://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.css" />
 <link rel="stylesheet" href="css/cyclestreets.css" />
 <!-- Scripts --> 
-<script type="text/javascript" src="https://code.jquery.com/jquery-1.6.1.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.7.0.min.js"></script>
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?region=GB"></script>
 <script type="text/javascript" src="js/cyclestreets.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
@@ -146,7 +147,7 @@ $(document).ready(function() {
 <script type="text/javascript" src="https://code.jquery.com/mobile/1.0b1/jquery.mobile-1.0b1.min.js"></script>
 <script type="text/javascript">
 
-$('#home').live('pagecreate',function(event){
+$(function() {
 	
     // Detect iPhone/Android OS and suggest native apps.    
     var ua = navigator.userAgent;
@@ -188,7 +189,7 @@ $('#home').live('pagecreate',function(event){
     // Logic to load the Category lists. 
     var categoryselect = $('#category');
     var metacategoryselect = $('#metacategory');
-
+	
     // Route by Address: validate form. 
     $('#route-form').submit(function(event) {
       event.preventDefault();
@@ -197,8 +198,8 @@ $('#home').live('pagecreate',function(event){
       var routefrom = $('#routefrom').val().trim();
       var routeto = $('#routeto').val().trim();
       // Make sure that the user has entered something. 
-      if ((routeto==='')&&(routefrom==='')) {
-        toastMessage("Please enter at least one address!");
+      if ((routeto==='')||(routefrom==='')) {
+        toastMessage("Please enter both a start and destination address!");
         $.mobile.pageLoading(true); 
         return false;
       }
@@ -308,7 +309,7 @@ $('#home').live('pagecreate',function(event){
   <div data-role="content">      
     <p>Welcome to CycleStreets! Plan a cycle route &amp; add/view cycling-related photos.</p>    
       <p><a href="/journey/" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Route on map</a></p>  
-      <p><a href="#route-by-address" data-role="button" data-icon="arrow-r" data-iconpos="right">Route by address</a></p>  
+      <p><a href="#route-by-address" data-role="button" data-icon="arrow-r" data-iconpos="right">Route by address</a></p>
       <p><a href="#saved-routes" data-role="button" data-icon="arrow-r" data-iconpos="right">Saved routes</a></p>  
       <p><a href="#upload" data-role="button" data-icon="arrow-r" data-iconpos="right">Upload a photo</a></p>
       <p><a href="/photomap/" rel="external" data-role="button" data-icon="arrow-r" data-iconpos="right">Photos near me</a></p>   
@@ -333,7 +334,10 @@ Get the Cyclestreets app!
 <form id="route-form" action="route-without-js.php" method="get" data-ajax="false" class="inset">
     <div data-role="fieldcontain">
         <label for="routefrom">From:</label>
+<!--
         <input type="text" id="routefrom" placeholder="Leave blank to use current location" />
+-->
+        <input type="text" id="routefrom" />
 <div data-role="fieldcontain">
 </div>
         <label for="routeto">To:</label>
